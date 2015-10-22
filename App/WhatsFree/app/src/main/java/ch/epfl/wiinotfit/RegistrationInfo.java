@@ -1,4 +1,4 @@
-package ch.epfl.whatsfree;
+package ch.epfl.sweng.whatsfree;
 
 /**
  * Created by lois on 10/21/15.
