@@ -2,6 +2,9 @@ package ch.epfl.sweng.freeapp;
 
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -43,7 +46,7 @@ public class CommunicationLayer {
         //Note: needs to use a method from the server (such as myServer.checkLogInInfo(logInInfo))
 
         try {
-            URL url = new URL(SERVER_URL + "/login?user=[" + logInInfo.getUsername() +"]&password=[" + logInInfo.getPassword() + ")]");
+            URL url = new URL(SERVER_URL + "/login?user=" + logInInfo.getUsername() +"&password=" + logInInfo.getPassword() + ")");
             HttpURLConnection conn = networkProvider.getConnection(url);
             conn.setRequestMethod("GET");
             conn.setDoInput(true);
@@ -54,19 +57,29 @@ public class CommunicationLayer {
                 throw new CommunicationLayerException("Invalid HTTP response code");
             }
 
-            String serverResponse = fetchContent(conn);
+            String serverResponseString = fetchContent(conn);
+            JSONObject serverResponse = new JSONObject(serverResponseString);
+            JSONObject registerJson = serverResponse.getJSONObject("register");
 
-            if(serverResponse.contains("failure")){
-                if(serverResponse.contains("user")){
-                    return ResponseStatus.USERNAME;
-                } else if(serverResponse.contains("password")){
-                    return ResponseStatus.PASSWORD;
+            if(serverResponse.getString("status").equals("failure")){
+
+                switch (registerJson.getString("reason")) {
+                    case "email": return ResponseStatus.EMAIL;
+                        break;
+                    case "username": return ResponseStatus.USERNAME;
+                        break;
+                    case "password": return ResponseStatus.PASSWORD;
+                        break;
+                    default: throw new CommunicationLayerException();
                 }
             }
 
+            assert(registerJson.get("status").equals("ok"));
             return ResponseStatus.OK;
 
         } catch (IOException e) {
+            throw new CommunicationLayerException();
+        } catch (JSONException e) {
             throw new CommunicationLayerException();
         }
 

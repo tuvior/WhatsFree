@@ -1,13 +1,27 @@
 package ch.epfl.sweng.freeapp;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.util.Log;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 /**
- * Created by francisdamachi on 22/10/15.
+ * Created by lois on 10/20/15.
  */
 public class CommunicationLayer {
 
-
-    private static final String SERVER_URL = "HttpExample";
-    private String serverUrl;
+    private static final String SERVER_URL = "http://sweng-wiinotfit.appspot.com";
+    private NetworkProvider networkProvider;
+    private final static int HTTP_SUCCESS_START = 200;
+    private final static int HTTP_SUCCESS_END = 299;
+    private enum ResponseStatus {OK, PASSWORD, USERNAME, EMAIL};
 
     /**
      * Creates a new CommunicationLayer instance that communicates with the
@@ -17,10 +31,9 @@ public class CommunicationLayer {
      * Its purposes are:
      * 1.Establish a connection with the server
      * 2.Get responses from the server and return them to the app
-     * @param serverUrl the base URL for the server
      */
-    public CommunicationLayer(String serverUrl) {
-        this.serverUrl = serverUrl;
+    public CommunicationLayer(NetworkProvider networkProvider) {
+        this.networkProvider = networkProvider;
     }
 
     /**
@@ -29,10 +42,45 @@ public class CommunicationLayer {
      * @param logInInfo
      * @return "ok" if the operation was successful, or "failed" otherwise
      */
-    public String sendLogInInfo(LogInInfo logInInfo) {
+    public ResponseStatus sendLogInInfo(LogInInfo logInInfo) throws CommunicationLayerException {
         //Note: needs to use a method from the server (such as myServer.checkLogInInfo(logInInfo))
 
-        return null;
+        try {
+            URL url = new URL(SERVER_URL + "/login?user=" + logInInfo.getUsername() +"&password=" + logInInfo.getPassword() + ")");
+            HttpURLConnection conn = networkProvider.getConnection(url);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
+            conn.connect();
+
+            int response = conn.getResponseCode();
+            if (response < HTTP_SUCCESS_START || response > HTTP_SUCCESS_END) {
+                throw new CommunicationLayerException("Invalid HTTP response code");
+            }
+
+            String serverResponseString = fetchContent(conn);
+            JSONObject serverResponse = new JSONObject(serverResponseString);
+
+            if(serverResponse.get("status") == "failure"){
+
+
+                switch (serverResponse.getString("reason")) {
+                    case "email": return ResponseStatus.EMAIL;
+                        break;
+                    case "username": return ResponseStatus.USERNAME;
+                        break;
+                    case "password": return ResponseStatus.PASSWORD;
+                        break;
+                    default: throw new CommunicationLayerException();
+                }
+            }
+
+            assert(serverResponse.get("status") == "ok");
+            return ResponseStatus.OK;
+
+        } catch (IOException e) {
+            throw new CommunicationLayerException();
+        }
+
     }
 
     /**
@@ -41,9 +89,33 @@ public class CommunicationLayer {
      * @param registrationInfo
      * @return "ok" if the operation was successful, or "failed" otherwise
      */
-    public String sendRegistrationInfo(RegistrationInfo registrationInfo){
+    public ResponseStatus sendRegistrationInfo(RegistrationInfo registrationInfo){
         //Note: needs to use a method from the server (such as myServer.createAccount(registrationInfo))
 
         return null;
     }
+
+    private String fetchContent(HttpURLConnection conn) throws IOException {
+        StringBuilder out = new StringBuilder();
+        BufferedReader reader = null;
+
+        try {
+            reader = new BufferedReader(new InputStreamReader(
+                    conn.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                out.append(line);
+            }
+
+            String result = out.toString();
+            Log.d("HTTPFetchContent", "Fetched string of length "
+                    + result.length());
+            return result;
+        } finally {
+            if (reader != null) {
+                reader.close();
+            }
+        }
+    }
+
 }
