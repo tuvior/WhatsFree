@@ -1,4 +1,4 @@
-package ch.epfl.whatsfree;
+package ch.epfl.sweng.whatsfree;
 
 
 import android.support.v7.app.AppCompatActivity;
