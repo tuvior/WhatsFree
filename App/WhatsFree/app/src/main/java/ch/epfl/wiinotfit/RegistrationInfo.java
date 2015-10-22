@@ -1,4 +1,4 @@
-package ch.epfl.wiinotfit;
+package ch.epfl.whatsfree;
 
 /**
  * Created by lois on 10/21/15.
