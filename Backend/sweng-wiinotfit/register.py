@@ -60,6 +60,7 @@ class Register(webapp2.RequestHandler):
                     self.response.write(json_response(0))
                 else:
                     """ database error, what do? """
+                    self.response.write('something went wrong')
 
 app = webapp2.WSGIApplication([
     ('/register', Register),
