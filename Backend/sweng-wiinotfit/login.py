@@ -47,17 +47,23 @@ class Login(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
         
         if not username or not password:
+            # some fields were missing in the request
             self.response.write(json_response(-1))
         else:
+            # check if username exists in db
             query_user = User.query(User.username == username).fetch()
             if query_user:
+                # check if password is correct
                 query = User.query(ndb.AND(User.username == username, User.pswd == password)).fetch()
                 if query:
+                    # generate 64 char session cookie and send it back
                     cookie = ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(64))
                     self.response.write(json_response(0, cookie))   
                 else: 
+                    # password was incorrect
                     self.response.write(json_response(2))
             else:
+                # user didn't exist
                 self.response.write(json_response(1))
 
 app = webapp2.WSGIApplication([

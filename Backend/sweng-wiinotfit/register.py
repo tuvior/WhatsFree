@@ -45,21 +45,26 @@ class Register(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
          
         if not username or not password or not email:
+            # some fields were missing in the request
             self.response.write(json_response(-1))
         else:
             query_user = User.query(User.username == username).fetch()
             query_email = User.query(User.email == email).fetch()
             if query_user:
+                # a user with this username exists already
                 self.response.write(json_response(2))
             elif query_email:
+                # a user with this email exists already
                 self.response.write(json_response(1))
             else: 
+                # create a new user with the data recieved
                 user = User(username = username, pswd = password, email = email)
                 db_result = user.put()
                 if not db_result:
+                    # confirm succeful user creation
                     self.response.write(json_response(0))
                 else:
-                    """ database error, what do? """
+                    # database error, what do?
                     self.response.write('something went wrong')
 
 app = webapp2.WSGIApplication([
