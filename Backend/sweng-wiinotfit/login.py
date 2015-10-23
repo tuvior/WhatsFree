@@ -3,35 +3,35 @@ import string
 import random
 from google.appengine.ext import ndb
 
-def response( status = 0, cookie='' ):
+def json_response( status , cookie = '' ):
     if status == 0:
         res = """{
     "login": {
         "status": "ok",
         "cookie": \"""" + cookie + """\"
     }
-}
-        """
+}"""
     elif status == 1:
         res = """{
     "login": {
         "status": "failure",
         "reason": "user"
     }
-}
-        """
+}"""
     elif status == 2:
         res = """{
     "login": {
         "status": "failure",
         "reason": "password"
     }
-}
-        """
+}"""
     elif status == -1:
-        res = "invalid request"
+        res = """{
+    "login": {
+        "status": "invalid"
+    }
+}"""
     return res
-
 
 class User(ndb.Model):
     username = ndb.StringProperty()
@@ -47,19 +47,18 @@ class Login(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
         
         if not username or not password:
-            self.response.write(response(-1))
+            self.response.write(json_response(-1))
         else:
-            cookie = ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(64)) 
             query_user = User.query(User.username == username).fetch()
             if query_user:
                 query = User.query(ndb.AND(User.username == username, User.pswd == password)).fetch()
                 if query:
-                    self.response.write(response(0, cookie))   
+                    cookie = ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(64))
+                    self.response.write(json_response(0, cookie))   
                 else: 
-                    self.response.write(response(2))   
+                    self.response.write(json_response(2))
             else:
-                self.response.write(response(1))
-
+                self.response.write(json_response(1))
 
 app = webapp2.WSGIApplication([
     ('/login', Login),
