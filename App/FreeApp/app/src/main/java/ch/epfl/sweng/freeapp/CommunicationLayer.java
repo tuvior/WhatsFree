@@ -182,27 +182,6 @@ public class CommunicationLayer {
     }
 
 
-    /*
-    public ResponseStatus getOK(){
-
-        return  ResponseStatus.OK;
-
-    }
-    public ResponseStatus getPass(){
-        return ResponseStatus.PASSWORD;
-
-    }
-    public ResponseStatus getUser(){
-        return ResponseStatus.USERNAME;
-
-    }
-    public ResponseStatus getMail(){
-        return ResponseStatus.EMAIL;
-
-    }
-
-    */
-
 
 
 }
