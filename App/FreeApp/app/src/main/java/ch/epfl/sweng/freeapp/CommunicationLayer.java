@@ -8,9 +8,9 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.CookieManager;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
 
 /**
  * Created by lois on 10/20/15.
@@ -21,6 +21,10 @@ public class CommunicationLayer {
     private NetworkProvider networkProvider;
     private final static int HTTP_SUCCESS_START = 200;
     private final static int HTTP_SUCCESS_END = 299;
+    private String cookieSession;
+
+
+
     private enum ResponseStatus {OK, PASSWORD, USERNAME, EMAIL};
 
     /**
@@ -46,7 +50,9 @@ public class CommunicationLayer {
         //Note: needs to use a method from the server (such as myServer.checkLogInInfo(logInInfo))
 
         try {
+
             URL url = new URL(SERVER_URL + "/login?user=" + logInInfo.getUsername() +"&password=" + logInInfo.getPassword() + ")");
+
             HttpURLConnection conn = networkProvider.getConnection(url);
             conn.setRequestMethod("GET");
             conn.setDoInput(true);
@@ -59,28 +65,34 @@ public class CommunicationLayer {
 
             String serverResponseString = fetchContent(conn);
             JSONObject serverResponse = new JSONObject(serverResponseString);
-            JSONObject registerJson = serverResponse.getJSONObject("register");
+            JSONObject logInJson = serverResponse.getJSONObject("login");
 
             if(serverResponse.getString("status").equals("failure")){
 
-                switch (registerJson.getString("reason")) {
-                    case "email": return ResponseStatus.EMAIL;
-                        break;
+                switch (logInJson.getString("reason")) {
+
                     case "username": return ResponseStatus.USERNAME;
-                        break;
+
                     case "password": return ResponseStatus.PASSWORD;
-                        break;
+
                     default: throw new CommunicationLayerException();
                 }
             }
 
-            assert(registerJson.get("status").equals("ok"));
+            assert(logInJson.get("status").equals("ok"));
+
+            this.cookieSession = logInJson.getString("cookie");
+
+
+
             return ResponseStatus.OK;
 
         } catch (IOException e) {
             throw new CommunicationLayerException();
+
         } catch (JSONException e) {
             throw new CommunicationLayerException();
+
         }
 
     }
@@ -91,11 +103,60 @@ public class CommunicationLayer {
      * @param registrationInfo
      * @return "ok" if the operation was successful, or "failed" otherwise
      */
-    public ResponseStatus sendRegistrationInfo(RegistrationInfo registrationInfo){
+
+    public ResponseStatus sendRegistrationInfo(RegistrationInfo registrationInfo)  throws CommunicationLayerException {
+
         //Note: needs to use a method from the server (such as myServer.createAccount(registrationInfo))
 
-        return null;
+        if(registrationInfo == null ){
+            throw new CommunicationLayerException("null registrationInfo");
+        }
+
+        try {
+
+            URL url = new URL(SERVER_URL + "register?user="+registrationInfo.getUsername()+"&password="+registrationInfo.getPassword()+"&email="+registrationInfo.getEmail());
+            HttpURLConnection conn = networkProvider.getConnection(url);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
+            conn.connect();
+
+            int response = conn.getResponseCode();
+            if (response < HTTP_SUCCESS_START || response > HTTP_SUCCESS_END) {
+                throw new CommunicationLayerException("Invalid HTTP response code");
+            }
+
+            String serverResponse = fetchContent(conn);
+            JSONObject jsonObject = new JSONObject(serverResponse);
+
+            JSONObject serverResponseJson = jsonObject.getJSONObject("register");
+
+            if(serverResponseJson.getString("status").equals("failure")){
+
+                switch(serverResponseJson.getString("reason")){
+
+                    case "email" : return ResponseStatus.EMAIL;
+
+                    case "password": return ResponseStatus.PASSWORD;
+
+                    case "user"  : return ResponseStatus.EMAIL;
+
+                    default: throw new CommunicationLayerException();
+                }
+            }
+
+            assert(serverResponseJson.getString("status").equals("ok"));
+
+            return  ResponseStatus.OK;
+
+        }catch(IOException e ){
+            throw new CommunicationLayerException();
+        }catch(JSONException e ){
+            throw new CommunicationLayerException();
+        }
+
+
     }
+
 
     private String fetchContent(HttpURLConnection conn) throws IOException {
         StringBuilder out = new StringBuilder();
@@ -120,4 +181,7 @@ public class CommunicationLayer {
         }
     }
 
+
 }
+
+
