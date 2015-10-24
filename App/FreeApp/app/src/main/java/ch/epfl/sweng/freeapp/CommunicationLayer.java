@@ -51,7 +51,7 @@ public class CommunicationLayer {
 
         try {
 
-            URL url = new URL(SERVER_URL + "/login?user=" + logInInfo.getUsername() +"&password=" + logInInfo.getPassword() + ")");
+            URL url = new URL(SERVER_URL + "/login?user=" + logInInfo.getUsername() +"&password=" + logInInfo.getPassword());
 
             HttpURLConnection conn = networkProvider.getConnection(url);
             conn.setRequestMethod("GET");
@@ -114,7 +114,7 @@ public class CommunicationLayer {
 
         try {
 
-            URL url = new URL(SERVER_URL + "register?user="+registrationInfo.getUsername()+"&password="+registrationInfo.getPassword()+"&email="+registrationInfo.getEmail());
+            URL url = new URL(SERVER_URL + "/register?user="+registrationInfo.getUsername()+"&password="+registrationInfo.getPassword()+"&email="+registrationInfo.getEmail());
             HttpURLConnection conn = networkProvider.getConnection(url);
             conn.setRequestMethod("GET");
             conn.setDoInput(true);
