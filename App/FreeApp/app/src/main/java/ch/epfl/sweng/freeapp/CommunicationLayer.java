@@ -25,7 +25,7 @@ public class CommunicationLayer {
 
 
 
-    private enum ResponseStatus {OK, PASSWORD, USERNAME, EMAIL};
+
 
     /**
      * Creates a new CommunicationLayer instance that communicates with the
@@ -138,7 +138,7 @@ public class CommunicationLayer {
 
                     case "password": return ResponseStatus.PASSWORD;
 
-                    case "user"  : return ResponseStatus.EMAIL;
+                    case "user"  : return ResponseStatus.USERNAME;
 
                     default: throw new CommunicationLayerException();
                 }
@@ -180,6 +180,8 @@ public class CommunicationLayer {
             }
         }
     }
+
+
 
 
 }
