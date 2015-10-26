@@ -1,5 +1,6 @@
 package ch.epfl.sweng.freeapp;
 
+
 public class LogInInfo {
 
     private String username;
@@ -13,10 +14,12 @@ public class LogInInfo {
 
     }
     public String getUsername() {
-        return  username;
-    }
+        return username;
 
+    }
     public String getPassword() {
+
         return  password;
+
     }
 }
