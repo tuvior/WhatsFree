@@ -100,6 +100,7 @@ public class LoginActivity extends AppCompatActivity {
             if(responseStatus == responseStatus.OK){
 
                 Intent intent = new Intent(context,MainActivity.class);
+                startActivity(intent);
 
             }else {
                 EditText passwordField = (EditText)findViewById(R.id.password);
