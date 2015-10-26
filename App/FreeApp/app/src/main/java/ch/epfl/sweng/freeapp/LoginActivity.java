@@ -91,10 +91,10 @@ public class LoginActivity extends AppCompatActivity {
         protected ResponseStatus doInBackground(LogInInfo... params) {
 
             try {
-                return communicationLayer.sendLogInInfo(params[0]);
+                ResponseStatus status = communicationLayer.sendLogInInfo(params[0]);
+                return status;
             } catch (CommunicationLayerException e) {
                 e.printStackTrace();
-
                 alertUser("Server unable to answer request please try again");
                 return null;
             }
@@ -104,28 +104,33 @@ public class LoginActivity extends AppCompatActivity {
         protected void onPostExecute(ResponseStatus responseStatus){
 
 
-            if(responseStatus == responseStatus.OK){
+            if(responseStatus == ResponseStatus.OK){
 
                 Intent intent = new Intent(context,MainActivity.class);
                 startActivity(intent);
 
             }else {
+                //Failure
+
                 EditText passwordField = (EditText)findViewById(R.id.password);
 
-                if( responseStatus == responseStatus.PASSWORD){
+                if( responseStatus == ResponseStatus.PASSWORD){
 
                      alertUser("wrong password");
-
                      passwordField.setText("");
 
-                }else{
-                     assert(responseStatus == responseStatus.USERNAME);
+                }else if(responseStatus == ResponseStatus.USERNAME){
 
-                     alertUser("wrong userName");
+                    alertUser("wrong userName");
                     EditText userField = (EditText)findViewById(R.id.username);
 
                     userField.setText("");
                     passwordField.setText("");
+
+                }else{
+                    assert(responseStatus == ResponseStatus.EMAIL.EMPTY);
+
+                    alertUser("Empty Field(s)");
 
                 }
 

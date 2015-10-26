@@ -2,8 +2,10 @@ package ch.epfl.sweng.freeapp;
 
 import android.support.test.rule.ActivityTestRule;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -18,14 +20,27 @@ public class LogInActivityTest {
 
 
     private LogInInfo logInfo = new LogInInfo("username", "password");
+    private CommunicationLayer communicationLayer;
+    private NetworkProvider networkProvider;
 
     @Rule
     public ActivityTestRule<LoginActivity> mActivityRule = new ActivityTestRule<>(
             LoginActivity.class);
 
 
-    private void configureResponseFromCommuncationLayer(ResponseStatus status){
+    @Before
+    public void setUp(){
 
+       networkProvider = Mockito.mock(NetworkProvider.class);
+       communicationLayer = new CommunicationLayer(networkProvider);
+
+    }
+
+
+    private void configureResponseFromCommuncationLayer(ResponseStatus status) throws CommunicationLayerException {
+
+        assert(status == ResponseStatus.OK || status ==ResponseStatus.USERNAME|| status== ResponseStatus.PASSWORD);
+        Mockito.doReturn(status).when(communicationLayer).sendLogInInfo(logInfo);
 
 
     }
@@ -42,13 +57,15 @@ public class LogInActivityTest {
         assertEquals(loginActivity.getLogin().getUsername(), logInfo.getUsername());
         assertEquals(loginActivity.getLogin().getPassword(), logInfo.getPassword());
 
-
     }
 
+    @Test
+    public void testGoToNewScreen(){
 
 
 
 
+    }
 
 
 }

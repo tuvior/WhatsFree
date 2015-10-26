@@ -25,6 +25,7 @@ public class CommunicationLayer {
     public CommunicationLayer(NetworkProvider networkProvider) {
         this.networkProvider = networkProvider;
     }
+
     /**
      * Used by the app to
      * send user-entered log in information to the user
@@ -53,10 +54,14 @@ public class CommunicationLayer {
                     case "password": return ResponseStatus.PASSWORD;
                     default: throw new CommunicationLayerException();
                 }
+            }else if(logInJson.getString("status").equals("invalid")){
+                     return ResponseStatus.EMPTY;
+            }else {
+
+                assert (logInJson.get("status").equals("ok"));
+                this.cookieSession = logInJson.getString("cookie");
+                return ResponseStatus.OK;
             }
-            assert(logInJson.get("status").equals("ok"));
-            this.cookieSession = logInJson.getString("cookie");
-            return ResponseStatus.OK;
         } catch (IOException | JSONException e) {
             throw new CommunicationLayerException();
         }

@@ -6,5 +6,5 @@ package ch.epfl.sweng.freeapp;
 
 public enum ResponseStatus {
 
-    OK, PASSWORD, USERNAME, EMAIL
+    OK, PASSWORD, USERNAME, EMAIL,EMPTY
 }
