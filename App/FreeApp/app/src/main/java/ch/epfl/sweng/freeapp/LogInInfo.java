@@ -7,9 +7,6 @@ public class LogInInfo {
 
     public LogInInfo(String username, String password){
 
-        if(username == null || password == null ){
-            throw new NullPointerException("empty username or password");
-        }
         this.username = username;
         this.password = password;
 
