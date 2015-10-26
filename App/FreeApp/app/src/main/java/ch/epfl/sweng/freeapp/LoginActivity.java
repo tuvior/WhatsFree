@@ -94,10 +94,15 @@ public class LoginActivity extends AppCompatActivity {
                 ResponseStatus status = communicationLayer.sendLogInInfo(params[0]);
                 return status;
             } catch (CommunicationLayerException e) {
-                e.printStackTrace();
-                alertUser("Server unable to answer request please try again");
+                //e.printStackTrace();
+
+               // alertUser(e.getMessage());
                 return null;
             }
+
+
+
+
         }
 
         @Override
@@ -127,14 +132,20 @@ public class LoginActivity extends AppCompatActivity {
                     userField.setText("");
                     passwordField.setText("");
 
+                }else if(responseStatus == null ){
+
+
+                    alertUser("Server unable to respond, check Internet");
+
                 }else{
-                    assert(responseStatus == ResponseStatus.EMAIL.EMPTY);
+
+                assert(responseStatus == ResponseStatus.EMAIL.EMPTY);
 
                     alertUser("Empty Field(s)");
 
-                }
-
             }
+
+        }
 
         }
 

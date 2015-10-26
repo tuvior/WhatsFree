@@ -102,7 +102,9 @@ public class CommunicationLayer {
             }
             assert(serverResponseJson.getString("status").equals("ok"));
             return  ResponseStatus.OK;
-        }catch(IOException | JSONException e ){
+        }catch(IOException e){
+            throw new CommunicationLayerException("Server Unresponsive");
+        }catch (JSONException e){
             throw new CommunicationLayerException();
         }
     }

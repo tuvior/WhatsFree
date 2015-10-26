@@ -59,13 +59,28 @@ public class LogInActivityTest {
 
     }
 
-    @Test
+
     public void testGoToNewScreen(){
 
+    }
+
+    @Test
+    public void testPasswordAndLogInFieldsClearsFailureUser(){
 
 
 
     }
+
+    @Test
+    public void testPasswordFieldClearsButUserFieldRemainsFailurePassowrd(){
+
+
+
+    }
+
+
+
+
 
 
 }
