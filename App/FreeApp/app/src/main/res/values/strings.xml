@@ -4,7 +4,7 @@
     <string name="title_activity_login">WhatsFree</string>
     <string name="login">LOGIN</string>
     <string name="register_question">No account yet ? Create one</string>
-    <string name="register">REGISTER</string>
+    <string name="register">SIGN UP</string>
     <string name="title_activity_registration">RegistrationActivity</string>
     <string name="username">Username </string>
     <string name="password">Password </string>
