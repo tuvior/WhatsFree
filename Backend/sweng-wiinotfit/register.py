@@ -60,12 +60,7 @@ class Register(webapp2.RequestHandler):
                 # create a new user with the data recieved
                 user = User(username = username, pswd = password, email = email)
                 db_result = user.put()
-                if not db_result:
-                    # confirm succeful user creation
-                    self.response.write(json_response(0))
-                else:
-                    # database error, what do?
-                    self.response.write('something went wrong')
+                self.response.write(json_response(0))
 
 app = webapp2.WSGIApplication([
     ('/register', Register),
