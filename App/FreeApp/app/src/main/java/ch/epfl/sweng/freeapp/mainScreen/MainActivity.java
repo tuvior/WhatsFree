@@ -1,9 +1,11 @@
-package ch.epfl.sweng.freeapp;
+package ch.epfl.sweng.freeapp.mainScreen;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import ch.epfl.sweng.freeapp.R;
 
 public class MainActivity extends AppCompatActivity {
 
