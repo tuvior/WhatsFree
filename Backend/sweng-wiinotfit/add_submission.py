@@ -53,8 +53,8 @@ class Submission(ndb.Model):
 	location = ndb.StringProperty()
 	image = ndb.BlobProperty()
 	keywords = ndb.StringProperty()
+    rating = ndb.IntegerProperty()
     # should add time + duration field
-    # should add rating of submission
 
 
 class AddSubmission(webapp2.RequestHandler):
@@ -65,6 +65,7 @@ class AddSubmission(webapp2.RequestHandler):
 		subLocation = self.request.get('location')
 		subImage = self.request.get('image')
 		subKeywords = self.request.get('keywords')
+        subRating = self.request.get('rating')
 
 		# Name, Category, Location and Image are the required fields. Time will also be a required field once created
 		if not subName:
@@ -80,7 +81,8 @@ class AddSubmission(webapp2.RequestHandler):
             self.response.write(json_response(-4))
         
 
-		submission = Submission(name = subName, category = subCategory, description = subDescription, location = subLocation, image = subImage, keywords = subKeywords)
+		submission = Submission(name = subName, category = subCategory, description = subDescription, 
+                                location = subLocation, image = subImage, keywords = subKeywords, rating = subRating)
 		submission.put()
 
 app = webapp2.WSGIApplication([
