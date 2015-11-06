@@ -4,4 +4,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_create_new_submission">CreateNewSubmission</string>
+    <string name="description">Description </string>
+    <string name="name_of_event">What's Free </string>
+    <string name="location">Location</string>
 </resources>
