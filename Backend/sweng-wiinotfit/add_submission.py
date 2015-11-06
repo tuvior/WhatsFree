@@ -72,18 +72,20 @@ class Submission(ndb.Model):
 	keywords = ndb.StringProperty()
     rating = ndb.IntegerProperty()
     submitter = ndb.StringProperty()
+    submitted = ndb.DateTimeProperty(auto_now_add=True)
+    tfrom = ndb.DateTimeProperty()
+    tto = ndb.DateTimeProperty()
     # should add time + duration field
 
 
 class AddSubmission(webapp2.RequestHandler):
-	def get(self):
+	def post(self):
 		subName = self.request.get('name')
         subCategory = self.request.get('category')
 		subDescription = self.request.get('description')
 		subLocation = self.request.get('location')
 		subImage = str(self.request.get('image'))
 		subKeywords = self.request.get('keywords')
-        subRating = self.request.get('rating')
         cookie = self.request.get('cookie')
 
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
@@ -105,7 +107,7 @@ class AddSubmission(webapp2.RequestHandler):
         else:
             session = Session.query(Session.cookie == cookie).get()
             if session:
-                submission = Submission(name = subName, category = subCategory, description = subDescription, location = subLocation, image = subImage, keywords = subKeywords, rating = subRating, submitter = session.user)
+                submission = Submission(name = subName, category = subCategory, description = subDescription, location = subLocation, image = subImage, keywords = subKeywords, rating = 0, submitter = session.user)
                 submission.put()
                 self.response.write(json_response(0))
             else:
