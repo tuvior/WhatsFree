@@ -1,5 +1,6 @@
 import webapp2
 import string
+import json
 from google.appengine.ext import ndb
 
 
@@ -78,7 +79,7 @@ class Submission(ndb.Model):
     # should add time + duration field
 
 
-class AddSubmission(webapp2.RequestHandler):
+class addSubmission(webapp2.RequestHandler):
 	def post(self):
 		subName = self.request.get('name')
         subCategory = self.request.get('category')
@@ -90,9 +91,10 @@ class AddSubmission(webapp2.RequestHandler):
 
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
 
-		# Name, Category, Location and Image are the required fields. Time will also be a required field once created
+		# Name, Category, Location, Image and Cookie are the required fields. 
         if not cookie:
             self.response.write(json_response(5))
+            
 		elif not subName:
 			self.response.write(json_response(1))
             
@@ -104,16 +106,22 @@ class AddSubmission(webapp2.RequestHandler):
             
         elif not subImage:
             self.response.write(json_response(4))
+            
         else:
             session = Session.query(Session.cookie == cookie).get()
             if session:
                 submission = Submission(name = subName, category = subCategory, description = subDescription, location = subLocation, image = subImage, keywords = subKeywords, rating = 0, submitter = session.user)
                 submission.put()
-                self.response.write(json_response(0))
+                
+                # Give back submission under json format in order to display it as soon as it is created
+                response = {'name': subName, 'category': subCategory, 'description': subDescription, 'location': subLocation, 'image': subImage, 'keywords': subKeywords}
+                json_response = json.dumps(response)     
+                self.response.write(json_response)           
+                # self.response.write(json_response(0))
             else:
                 self.response.write(json_response(6))
 
 
 app = webapp2.WSGIApplication([
-    ('/new_submission', AddSubmission),
+    ('/new_submission', addSubmission),
 ], debug=True)
