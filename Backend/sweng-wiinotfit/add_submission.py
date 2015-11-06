@@ -11,40 +11,57 @@ def json_response(status):
     }
 }"""
 
-    elif status == -1:
+    elif status == 1:
         res = """{
-    "login": {
+    "submission": {
         "status": "failure",
-        "reason": "Name"
+        "reason": "name"
     }
 }"""
 
-    elif status == -2:
+    elif status == 2:
         res = """{
-    "login": {
+    "submission": {
         "status": "failure",
-        "reason": "Category"
+        "reason": "category"
     }
 }"""
 
-    elif status == -3:
+    elif status == 3:
         res = """{
-    "login": {
+    "submission": {
         "status": "failure",
-        "reason": "Location"
+        "reason": "location"
     }
 }"""
 
-    elif status == -4:
+    elif status == 4:
         res = """{
-    "login": {
+    "submission": {
         "status": "failure",
-        "reason": "Location"
+        "reason": "image"
+    }
+}"""
+    elif status == 5:
+        res = """{
+    "submission": {
+        "status": "failure",
+        "reason": "cookie"
+    }
+}"""
+    elif status == 6:
+        res = """{
+    "submission": {
+        "status": "failure",
+        "reason": "session"
     }
 }"""
 
     return res
 
+class Session(ndb.Model):
+    cookie = ndb.StringProperty()
+    user = ndb.StringProperty()
 
 class Submission(ndb.Model):
 	name = ndb.StringProperty()
@@ -54,6 +71,7 @@ class Submission(ndb.Model):
 	image = ndb.BlobProperty()
 	keywords = ndb.StringProperty()
     rating = ndb.IntegerProperty()
+    submitter = ndb.StringProperty()
     # should add time + duration field
 
 
@@ -63,27 +81,36 @@ class AddSubmission(webapp2.RequestHandler):
         subCategory = self.request.get('category')
 		subDescription = self.request.get('description')
 		subLocation = self.request.get('location')
-		subImage = self.request.get('image')
+		subImage = str(self.request.get('image'))
 		subKeywords = self.request.get('keywords')
         subRating = self.request.get('rating')
+        cookie = self.request.get('cookie')
+
+        self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
 
 		# Name, Category, Location and Image are the required fields. Time will also be a required field once created
-		if not subName:
-			self.response.write(json_response(-1))
+        if not cookie:
+            self.response.write(json_response(5))
+		elif not subName:
+			self.response.write(json_response(1))
             
         elif not subCategory:
-            self.response.write(json_response(-2))
+            self.response.write(json_response(2))
             
         elif not subLocation:
-            self.response.write(json_response(-3))
+            self.response.write(json_response(3))
             
         elif not subImage:
-            self.response.write(json_response(-4))
-        
+            self.response.write(json_response(4))
+        else:
+            session = Session.query(Session.cookie == cookie).get()
+            if session:
+                submission = Submission(name = subName, category = subCategory, description = subDescription, location = subLocation, image = subImage, keywords = subKeywords, rating = subRating, submitter = session.user)
+                submission.put()
+                self.response.write(json_response(0))
+            else:
+                self.response.write(json_response(6))
 
-		submission = Submission(name = subName, category = subCategory, description = subDescription, 
-                                location = subLocation, image = subImage, keywords = subKeywords, rating = subRating)
-		submission.put()
 
 app = webapp2.WSGIApplication([
     ('/new_submission', AddSubmission),

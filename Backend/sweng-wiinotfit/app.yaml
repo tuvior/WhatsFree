@@ -5,15 +5,9 @@ api_version: 1
 threadsafe: yes
 
 handlers:
-<<<<<<< HEAD
-- url: /hello
-  script: helloworld.app
-  
-=======
->>>>>>> 7fd71192286338bf8eba5bb39d4edd88c34ce452
 - url: /login
   script: login.app
-  
+
 - url: /register
   script: register.app
 
@@ -22,8 +16,4 @@ handlers:
 
 libraries:
 - name: webapp2
-<<<<<<< HEAD
   version: "2.5.2"
-=======
-  version: "2.5.2"
->>>>>>> 7fd71192286338bf8eba5bb39d4edd88c34ce452
