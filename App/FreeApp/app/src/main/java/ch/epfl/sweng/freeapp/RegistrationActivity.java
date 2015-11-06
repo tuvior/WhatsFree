@@ -10,9 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,24 +20,27 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
     private CommunicationLayer communicationLayer;
 
     private EditText usernameView;
-    private TextView hintUsernameView;
 
     private EditText emailView;
-    private TextView hintEmailView;
 
     private EditText passwordView;
     private EditText confirmPasswordView;
-    private TextView hintPasswordView;
 
     private Button signUpView;
 
     private final String usernamePattern = "( )";
-    private final String passwordPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z0-9]).+$"; // )(?=.*(_|[^\w]))
-    private final String EmailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-            + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+    private final String passwordPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z0-9]).+$";
+    private final String EmailPattern = "^(.+)@(.+)\\.(.+)$"; // Loose local email validation
 
-    private static final int USERNAME_MINIMAL_LENGTH = 6;
-    private static final int PASSWORD_MINIMAL_LENGTH = 8;
+    protected static final int USERNAME_MIN_LENGTH = 6;
+    protected static final int USERNAME_MAX_LENGTH = 30; // arbitrary
+
+    protected static final int PASSWORD_MIN_LENGTH = 8;
+    protected static final int PASSWORD_MAX_LENGTH = 30; // arbitrary
+
+    protected static final int EMAIL_MAX_LENGTH = 64; // wikipedia
+
+
 
 
 
@@ -51,22 +51,15 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
         setContentView(R.layout.registration_main);
 
         usernameView = (EditText) findViewById(R.id.username);
-        hintUsernameView = (TextView) findViewById(R.id.hintMessageUsername);
 
         emailView = (EditText) findViewById(R.id.email);
-        hintEmailView = (TextView) findViewById(R.id.hintMessageEmail);
 
         passwordView = (EditText) findViewById(R.id.password);
         confirmPasswordView = (EditText) findViewById(R.id.confirmPassword);
-        hintPasswordView = (TextView) findViewById(R.id.hintMessagePassword);
 
         signUpView = (Button) findViewById(R.id.button);
 
         communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
-
-
-
-
 
 
     }
@@ -111,22 +104,28 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
     }
 
 
-    protected boolean isUsernameValid(String username){
+    protected boolean isUsernameValid(final String username){
         Pattern pattern = Pattern.compile(usernamePattern);
         Matcher matcher = pattern.matcher(username);
-        return username.length() >= USERNAME_MINIMAL_LENGTH && !matcher.find();
+        return USERNAME_MIN_LENGTH <= username.length() && username.length() <= USERNAME_MAX_LENGTH && !matcher.find();
     }
 
-    protected boolean isEmailValid(String email) {
-        Pattern pattern = Pattern.compile(EmailPattern);
-        Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
+    protected boolean isEmailValid(final String email) {
+        Pattern generalPattern = Pattern.compile(EmailPattern);
+        Matcher generalMatcher = generalPattern.matcher(email);
+
+        String whitespace = "^(.+)\\s(.+)$";
+        Pattern whitespacePattern = Pattern.compile(whitespace);
+        Matcher matcherWhitespace = whitespacePattern.matcher(email);
+
+        return generalMatcher.matches() && !matcherWhitespace.matches() && 0 < generalMatcher.group(1).length()
+                && generalMatcher.group(1).length() <= EMAIL_MAX_LENGTH;
     }
 
-    protected boolean isPasswordValid(String password) {
+    protected boolean isPasswordValid(final String password) {
         Pattern pattern = Pattern.compile(passwordPattern);
         Matcher matcher = pattern.matcher(password);
-        return password.length() > PASSWORD_MINIMAL_LENGTH && matcher.find();
+        return PASSWORD_MIN_LENGTH <= password.length() && password.length() <= PASSWORD_MAX_LENGTH && matcher.find();
     }
 
     /**
@@ -145,52 +144,39 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
 
         if(!isUsernameValid(usernameView.getText().toString())){
             usernameView.setText(empty);
-            hintUsernameView.setText("The username must be at least 6 character long.");
-            hintUsernameView.setVisibility(View.VISIBLE);
             valid = false;
-        }
-        else{
-            hintUsernameView.setVisibility(View.GONE);
         }
 
         if(!isEmailValid(emailView.getText().toString())){
             emailView.setText(empty);
-            hintEmailView.setText("invalid email address");
-            hintEmailView.setVisibility(View.VISIBLE);
             valid = false;
-        }
-        else{
-            hintEmailView.setVisibility(View.GONE);
         }
 
+
         if(!isPasswordValid(passwordView.getText().toString())){
-            hintPasswordView.setText("The password must be at least 8 character long." +
-                    " It must contains at least one digit, one uppercase letter and one" +
-                    " special character");
-            hintPasswordView.setVisibility(View.VISIBLE);
             valid = false;
         }
-        else{
-            hintPasswordView.setVisibility(View.GONE);
-        }
-        if(!passwordView.getText().toString().equals(confirmPasswordView.getText().toString())){
-            // TODO : logic behind un-identical passwords (message to be displayed)
+        else if(!passwordView.getText().toString().equals(confirmPasswordView.getText().toString())){
+            valid = false;
         }
 
         if(!valid)
         {
             passwordView.setText(empty);
             confirmPasswordView.setText(empty);
+            //Toast.makeText(RegistrationActivity.this, "Invalid registration", Toast.LENGTH_LONG).show();
         }
 
+        /*
         if(usernameView.getText().toString().trim().isEmpty() ||
                 emailView.getText().toString().trim().isEmpty() ||
                     passwordView.getText().toString().trim().isEmpty() ||
                         confirmPasswordView.getText().toString().trim().isEmpty()){
 
-            Toast.makeText(RegistrationActivity.this, "Please enter all the fields", Toast.LENGTH_LONG).show();
+            Toast.makeText(RegistrationActivity.this, "Please fill all the fields", Toast.LENGTH_LONG).show();
 
         }
+        */
 
         return valid;
 

@@ -60,8 +60,24 @@ public class RegistrationActivityExternalTest {
     }
 
     @Test
-    public void testCannotRegisterIfUsernameAndEmailExistButDoNotMatch(){
+    public void testCannotRegisterIfEmailInvalid(){
 
+    }
+
+
+    @Test
+    public void testCannotRegisterIfExistingUsernameAndEmailDoNotMatch(){
+
+    }
+
+    @Test
+    public void testCannotRegisterIfResponseTimesOut(){
+
+    }
+
+    @Test
+    public void testCanRegisterWhenAllInformationAreGood() throws CommunicationLayerException {
+        configureResponse(ResponseStatus.OK);
     }
 
 

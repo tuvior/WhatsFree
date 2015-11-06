@@ -1,10 +1,14 @@
 package ch.epfl.sweng.freeapp;
 
+import android.provider.ContactsContract;
+import android.support.test.espresso.ViewAction;
+import android.support.test.espresso.action.ViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.UiThreadTest;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.widget.EditText;
+import android.widget.Toast;
 
 
 import org.junit.Before;
@@ -42,6 +46,8 @@ public class RegistrationActivityLocalTest {
     private EditText passwordView;
     private EditText confirmPasswordView;
 
+    private final int LONG_FIELD = 300;
+
 
 
     @Before
@@ -65,33 +71,250 @@ public class RegistrationActivityLocalTest {
 
     @Test
     public void testShortUsernameNotAccepted(){
-        RegistrationActivity activity = mActivityRule.getActivity();
-        int maxLength = 5;
-        assertFalse(activity.isUsernameValid(getRandomGeneratedString(maxLength)));
+        int max = activity.USERNAME_MIN_LENGTH - 1;
+        int min = 1;
+        assertFalse(activity.isUsernameValid(getRandomGeneratedString(min, max)));
     }
 
     @Test
     public void testShortPasswordNotAccepted(){
-        RegistrationActivity activity = mActivityRule.getActivity();
         int maxLength = 7;
-        assertFalse(activity.isPasswordValid(getRandomGeneratedString(maxLength)));
+        int minLength = 1;
+        assertFalse(activity.isPasswordValid(getRandomGeneratedString(minLength, maxLength)));
     }
+
+    /*
+     * Here "invalid" means that both passwords fields
+     * are not identical.
+     */
+    @Test
+    public void testInvalidPasswordFieldsResetOnSignUpCLicked(){
+        String password = "";
+        String confirmPassword = "";
+        do {
+            // There is a VERY low probability for both generated passwords to be equals
+            password = getRandomGeneratedString(1, 7);
+            confirmPassword = getRandomGeneratedString(1, 7);
+        }while(password.equals(confirmPassword));
+
+        onView(withId(R.id.password)).perform(typeText(password));
+        onView(withId(R.id.confirmPassword)).perform(typeText(confirmPassword));
+        onView(withId(R.id.button)).perform(ViewActions.scrollTo());
+        onView(withId(R.id.button)).perform(click());
+        assertTrue(passwordView.getText().toString().isEmpty());
+        assertTrue(confirmPasswordView.getText().toString().isEmpty());
+    }
+
+    @Test
+    public void testInvalidUsernameFieldResetOnSignUpClicked(){
+        String username = getRandomGeneratedString(1, 5).concat(" .");
+
+        onView(withId(R.id.username)).perform(typeText(username));
+        onView(withId(R.id.button)).perform(ViewActions.scrollTo());
+        onView(withId(R.id.button)).perform(click());
+        assertEquals(usernameView.getText().toString().length(), 0);
+    }
+
+    @Test
+    public void testInvalidEmailFieldResetOnSignUpClicked(){
+        String validEmail = getRandomValidEmailAddress(15, activity.EMAIL_MAX_LENGTH); // valid email
+        String regex = "[@]";
+        String replacement = "xxx";
+        String invalidEmail = validEmail.replaceAll(regex, replacement); // invalid email
+
+        onView(withId(R.id.email)).perform(typeText(invalidEmail));
+        onView(withId(R.id.button)).perform(ViewActions.scrollTo());
+        onView(withId(R.id.button)).perform(click());
+        assertEquals(emailView.getText().toString().length(), 0);
+
+    }
+
+    /*
+    @Test
+    public void testUsernameHintMessageDisplayedWhenInvalidUsernameEnteredOnSignUpCLicked(){
+        String username = getRandomGeneratedString(1, 4); // invalid username
+        String email = getRandomValidEmailAddress();
+        String password = getRandomGeneratedString(8, 10);
+
+        onView(withId(R.id.username)).perform(typeText(username));
+        onView(withId(R.id.email)).perform(typeText(email));
+        onView(withId(R.id.password)).perform(typeText(password));
+        onView(withId(R.id.confirmPassword)).perform(typeText(password));
+        onView(withId(R.id.button)).perform(click());
+
+        assertTrue(activity.findViewById(R.id.hintMessageUsername).isShown());
+    }
+
+    @Test
+    public void testEmailHintMessageDisplayedWhenInvalidEmailEnteredOnSignUpClicked(){
+        String username = getRandomGeneratedString(1, 8);
+        String email = getRandomValidEmailAddress().replaceAll("@", "a");  // invalid email
+        String password = getRandomGeneratedString(1, 8);
+
+        onView(withId(R.id.username)).perform(typeText(username));
+        onView(withId(R.id.email)).perform(typeText(email));
+        onView(withId(R.id.password)).perform(typeText(password));
+        onView(withId(R.id.confirmPassword)).perform(typeText(password));
+        onView(withId(R.id.button)).perform(click());
+
+        assertTrue(activity.findViewById(R.id.hintMessageEmail).isShown());
+    }
+
+    @Test
+    public void testPasswordHintMessageDisplayedWhenDifferentPasswordsEnteredOnSignUpClicked(){
+        String username = getRandomGeneratedString(1, 7);
+        String email = getRandomValidEmailAddress();
+        String password;
+        String confirmPassword;
+
+        do{
+            password = getRandomGeneratedString(1, 8);
+            confirmPassword = getRandomGeneratedString(1, 8);
+        }while(password.equals(confirmPassword));
+
+        onView(withId(R.id.username)).perform(typeText(username));
+        onView(withId(R.id.email)).perform(typeText(email));
+        onView(withId(R.id.password)).perform(typeText(password));
+        onView(withId(R.id.confirmPassword)).perform(typeText(confirmPassword));
+        onView(withId(R.id.button)).perform(click());
+
+        assertTrue(activity.findViewById(R.id.hintMessagePassword).isShown());
+
+    }
+    */
+
+    /*
+     * Even if the entered username is invalid, the username hint message
+     * must not be displayed when there are still empty fields. Instead,
+     * the empty fields hint message must be displayed.
+     */
+
+    /*
+    @Test
+    public void testUsernameHintMessageNotDisplayedWhenEmptyFieldsOnSignUpClicked(){
+        String username = getRandomGeneratedString(1, 4); // invalid username
+        String email;
+        String password;
+        String confirmPassword;
+        int maxLength = 8;
+        int minLength = 1;
+
+        Random random = new Random();
+        int i = random.nextInt(3);
+
+        if(i == 0){
+            email = getRandomValidEmailAddress();
+            onView(withId(R.id.email)).perform(typeText(email));
+        }
+        else if(i == 1)
+        {
+            password = getRandomGeneratedString(minLength, maxLength);
+            onView(withId(R.id.password)).perform(typeText(password));
+        }
+        else if(i == 2){
+            confirmPassword = getRandomGeneratedString(minLength, maxLength);
+            onView(withId(R.id.confirmPassword)).perform(typeText(confirmPassword));
+        }
+
+        onView(withId(R.id.username)).perform(typeText(username));
+        assertFalse(activity.findViewById(R.id.hintMessageUsername).isShown());
+
+    }
+    */
+
+    /*
+     * Even if the entered email address is invalid, the email hint message
+     * must not be displayed when there are still empty fields. Instead,
+     * the empty fields hint message must be displayed.
+    */
+    /*
+    @Test
+    public void testEmailHintMessageNotDisplayedWhenEmptyFieldsOnSignUpClicked(){
+        String email = getRandomValidEmailAddress().replaceAll("@", "a"); // invalid email address
+        String username;
+        String password;
+        String confirmPassword;
+        int maxLength = 8;
+        int minLength = 1;
+
+        Random random = new Random();
+        int i = random.nextInt(3);
+
+        if(i == 0){
+            username = getRandomGeneratedString(minLength, maxLength);
+            onView(withId(R.id.username)).perform(typeText(username));
+        }
+        else if(i == 1)
+        {
+            password = getRandomGeneratedString(minLength, maxLength);
+            onView(withId(R.id.password)).perform(typeText(password));
+        }
+        else if(i == 2){
+            confirmPassword = getRandomGeneratedString(minLength, maxLength);
+            onView(withId(R.id.confirmPassword)).perform(typeText(confirmPassword));
+        }
+
+        onView(withId(R.id.email)).perform(typeText(email));
+        assertFalse(activity.findViewById(R.id.hintMessageEmail).isShown());
+
+    }
+    */
+
+    /*
+     * Even if the entered password is invalid, the password hint message
+     * must not be displayed when there are still empty fields. Instead,
+     * the empty fields hint message must be displayed.
+    */
+
+    /*
+    @Test
+    public void testPasswordHintMessageNotDisplayedWhenEmptyFieldsOnSignUpClicked(){
+        String password = getRandomGeneratedString(1, 6); // invalid password
+        String email;
+        String username;
+        String confirmPassword;
+        int maxLength = 8;
+        int minLength = 1;
+
+        Random random = new Random();
+        int i = random.nextInt(3);
+
+        if(i == 0){
+            username = getRandomGeneratedString(minLength, maxLength);
+            onView(withId(R.id.username)).perform(typeText(username));
+        }
+        else if(i == 1)
+        {
+            email = getRandomValidEmailAddress();
+            onView(withId(R.id.email)).perform(typeText(email));
+        }
+        else if(i == 2){
+            confirmPassword = getRandomGeneratedString(minLength, maxLength);
+            onView(withId(R.id.confirmPassword)).perform(typeText(confirmPassword));
+        }
+
+        onView(withId(R.id.password)).perform(typeText(password));
+        assertFalse(activity.findViewById(R.id.hintMessagePassword).isShown());
+
+    }
+    */
+
+
 
     /*
      * The empty field message is prioritized compared to the others
      */
-    // UI
+    /*
     @Test
     public void testEmptyFieldsHintMessageDisplayedWhenEmptyFieldsOnSignUpCLicked(){
         // TODO: 26.10.15 create empty fields hint message
 
     }
-
+    */
 
     @Test
     public void testPasswordInvalidIfNoSpecialCharacter(){
-        RegistrationActivity activity = mActivityRule.getActivity();
-        String password = UUID.randomUUID().toString();
+        String password = getRandomGeneratedString(activity.PASSWORD_MIN_LENGTH, activity.PASSWORD_MAX_LENGTH);
         String specRegex = "[^(a-z)^(A-Z)^(0-9)]";
         String replacement = "a";
         password = password.replaceAll(specRegex, replacement);
@@ -101,8 +324,7 @@ public class RegistrationActivityLocalTest {
 
     @Test
     public void testPasswordInvalidIfNoNumericalCharacter(){
-        RegistrationActivity activity = mActivityRule.getActivity();
-        String password = getRandomGeneratedString(10);
+        String password = getRandomGeneratedString(activity.PASSWORD_MIN_LENGTH, activity.PASSWORD_MAX_LENGTH);
         String digitRegex = "[0-9]";
         String replacement = "a";
         password = password.replaceAll(digitRegex, replacement);
@@ -112,8 +334,7 @@ public class RegistrationActivityLocalTest {
 
     @Test
     public void testPasswordInvalidIfNoUppercaseLetter(){
-        RegistrationActivity activity = mActivityRule.getActivity();
-        String password = UUID.randomUUID().toString();
+        String password = getRandomGeneratedString(activity.PASSWORD_MIN_LENGTH, activity.PASSWORD_MAX_LENGTH);
         String uppercaseRegex = "[A-Z]";
         String replacement = "a";
         password = password.replaceAll(uppercaseRegex, replacement);
@@ -123,8 +344,7 @@ public class RegistrationActivityLocalTest {
 
     @Test
     public void testPasswordInvalidIfWhiteSpaceCharacter(){
-        RegistrationActivity activity = mActivityRule.getActivity();
-        String password = UUID.randomUUID().toString();
+        String password = getRandomGeneratedString(activity.PASSWORD_MIN_LENGTH, activity.PASSWORD_MAX_LENGTH);
 
         Random random = new Random();
         int replacIndex = random.nextInt(password.length());
@@ -136,18 +356,16 @@ public class RegistrationActivityLocalTest {
 
     @Test
     public void testUsernameInvalidIfWhiteSpaceCharacter(){
-        RegistrationActivity activity = mActivityRule.getActivity();
-        String username = UUID.randomUUID().toString();
+        String username = getRandomGeneratedString(activity.USERNAME_MIN_LENGTH, activity.USERNAME_MAX_LENGTH);
 
-        username = username.concat("  ").concat(" Hej");
+        username = username.concat(" ").concat(" Hej");
 
         assertFalse(activity.isUsernameValid(username));
     }
 
     @Test
     public void testEmailInvalidIfWhiteSpaceCharacter(){
-        RegistrationActivity activity = mActivityRule.getActivity();
-        String email = UUID.randomUUID().toString();
+        String email = getRandomValidEmailAddress(15, activity.EMAIL_MAX_LENGTH);
 
         Random random = new Random();
         int replacIndex = random.nextInt(email.length());
@@ -157,7 +375,47 @@ public class RegistrationActivityLocalTest {
         assertFalse(activity.isEmailValid(email));
     }
 
+    @Test
+    public void testEmailInvalidIfNoAtCharacter(){
+        String email = getRandomValidEmailAddress(15, activity.EMAIL_MAX_LENGTH);
+        String regex = "[@]";
+        String replacement = "a";
 
+        email = email.replaceAll(regex, replacement);
+        assertFalse(activity.isEmailValid(email));
+    }
+
+    @Test
+    public void testEmailInvalidIfNoDotCharacter(){
+        String email = getRandomValidEmailAddress(15, activity.EMAIL_MAX_LENGTH);
+        String regex = "[\\.]";
+        String replacement = "a";
+
+        email = email.replaceAll(regex, replacement);
+        assertFalse(activity.isEmailValid(email));
+    }
+
+    @Test
+    public void testUsernameInvalidIfTooManyCharacter(){
+        String username = getRandomGeneratedString(activity.USERNAME_MAX_LENGTH + 1, LONG_FIELD);
+        assertFalse(activity.isUsernameValid(username));
+    }
+
+    @Test
+    public void testEmailInvalidIfTooManyCharacter(){
+        String email = getRandomValidEmailAddress(activity.EMAIL_MAX_LENGTH + 1, LONG_FIELD);
+        assertFalse(activity.isEmailValid(email));
+    }
+
+    @Test
+    public void testPasswordInvalidIfTooManyCharacter(){
+        String password = getRandomGeneratedString(activity.PASSWORD_MAX_LENGTH + 1, LONG_FIELD);
+        assertFalse(activity.isPasswordValid(password));
+    }
+
+
+
+    /*
     @Test
     public void testEmailHintMessageInvisibleWhenCorrectlyReentered(){
 
@@ -172,45 +430,68 @@ public class RegistrationActivityLocalTest {
     public void testPasswordHintMessageInvisibleWhenCorrectlyReentered(){
 
     }
+    */
 
-    private String getRandomGeneratedString(int maxLength){
-        String gen = null;
+    /*
+     * Generate randomly a string whose length is at most 300(LONG_FIELD) characters
+     */
+    private String getRandomGeneratedString(int minLength, int maxLength){    	String gen = null;
+        Random random = new Random();
         String uuid = UUID.randomUUID().toString();
 
-        if(1 < maxLength && maxLength <= uuid.length()) {
-            Random endRandom = new Random();
-            int eMin = 2;
-            int eMax = maxLength;
+        if(minLength <= 0 || maxLength <= 0 || maxLength < minLength){
+            throw new IllegalArgumentException();
+        }
 
-            //====================================
-            Random startRandom = new Random();
-            int sMin = 0;
-            int sMax = uuid.length() - (maxLength + 1);
-            int start = startRandom.nextInt((sMax - sMin) + 1);
-            //====================================
-            gen = uuid.substring(start, start + endRandom.nextInt(eMax - eMin) + eMin);
 
-            return gen;
+        while (uuid.length() < maxLength) {
+            uuid = uuid.concat(UUID.randomUUID().toString());
         }
-        else if (maxLength == 1){
-            int min = 33; int max = 126;
-            Random random = new Random();
-            return (new StringBuilder((char)(random.nextInt((max - min) + 1) + min))).toString();
+
+        if(LONG_FIELD < maxLength){
+            maxLength = LONG_FIELD;
         }
-        else{
-            return gen;
+        if(LONG_FIELD < minLength){
+            minLength = LONG_FIELD;
         }
+
+        if (1 < maxLength && maxLength <= uuid.length() &&
+                1 <= minLength && minLength <= uuid.length()){
+
+            int sMax = uuid.length() - maxLength;
+
+            int start = random.nextInt(sMax + 1);
+            int window = random.nextInt((maxLength - minLength) + 1);  // 0 <= window < (maxLength-minLength) + 1
+
+            gen = uuid.substring(start, start + minLength + window);
+
+        } else if (maxLength == 1 && minLength == maxLength) {
+            int min = 33;
+            int max = 126;
+            gen = String.valueOf((char) (random.nextInt((max - min) + 1) + min));
+        }
+
+        return gen;
     }
 
-    private String getRandomValidEmailAddress(){
-        Random addressLength = new Random();
-        int min = 4;int max = 10;
+    /*
+     * minLength and maxLength represent the username part of the email address
+     * the username part is at most 300(LONG_FIELD) character
+     */
+    private String getRandomValidEmailAddress(int minLength, int maxLength){
+        Random random = new Random();
+        int max = EmailDomain.domains.size();
 
-        String email = getRandomGeneratedString(addressLength.nextInt((max - min) + 1) + min);
+        if(minLength <= 0 || maxLength <= 0 || maxLength < minLength){
+            throw new IllegalArgumentException();
+        }
+
+        String domain = "@".concat(EmailDomain.domains.get(random.nextInt(max)));
+        String email = getRandomGeneratedString(minLength, maxLength);
 
         String regex = "[^(a-z)^(A-Z)^(0-9)]";
         String replacement = "b";
-        email = email.replaceAll(regex, replacement).concat("@gmail.com");
+        email = email.replaceAll(regex, replacement).concat(domain);
 
         return email;
     }
