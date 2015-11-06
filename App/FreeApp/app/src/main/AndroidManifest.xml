@@ -29,9 +29,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
-            android:label="@string/title_activity_login"
-            android:windowSoftInputMode="adjustResize|stateHidden" >
+            android:name=".mainScreen.MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <meta-data
@@ -39,8 +43,24 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".WelcomeActivity"
-            android:label="@string/title_activity_welcome" >
+            android:name=".mainScreen.WhatsNewTabActivity"
+            android:label="@string/title_activity_whats_new_tab" >
+        </activity>
+        <activity
+            android:name=".mainScreen.AroundYouTabActivity"
+            android:label="@string/title_activity_around_you_tab" >
+        </activity>
+        <activity
+            android:name=".mainScreen.CategoriesTabActivity"
+            android:label="@string/title_activity_categories_tab" >
+        </activity>
+        <activity
+            android:name=".MainScreenActivity"
+            android:label="@string/title_activity_main_screen" >
+        </activity>
+        <activity
+            android:name=".NavigationDrawerActivity"
+            android:label="@string/title_activity_navigation_drawer" >
         </activity>
     </application>
 

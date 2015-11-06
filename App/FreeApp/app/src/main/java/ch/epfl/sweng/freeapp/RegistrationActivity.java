@@ -97,7 +97,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
             String email = emailView.getText().toString();
             String password = passwordView.getText().toString();
 
-            RegistrationInfo registrationInfo = new RegistrationInfo(username, email, password);
+            RegistrationInfo registrationInfo = new RegistrationInfo(username, password, email);
             new RetrieveServerResponse(this).execute(registrationInfo);
         }
 

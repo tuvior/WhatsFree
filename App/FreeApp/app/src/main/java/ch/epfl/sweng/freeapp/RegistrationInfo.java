@@ -1,5 +1,4 @@
 package ch.epfl.sweng.freeapp;
-
 /**
  * Created by francisdamachi on 22/10/15.
  */
@@ -10,7 +9,7 @@ public class RegistrationInfo {
 
     public RegistrationInfo(){}
 
-    public RegistrationInfo(String username, String email, String password){
+    public RegistrationInfo(String username, String password, String email){
         this.username = username;
         this.email = email;
         this.password = password;

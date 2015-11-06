@@ -3,5 +3,22 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    // Lois_part
     <string name="title_activity_welcome">WelcomeActivity</string>
+    <string name="title_activity_whats_new_tab">WhatsNewTabActivity</string>
+    <string name="title_activity_around_you_tab">AroundYouTabActivity</string>
+    <string name="title_activity_categories_tab_activities">CategoriesTabActivities</string>
+    <string name="title_activity_categories_tab">CategoriesTabActivity</string>
+    <string name="title_activity_main_screen">MainScreenActivity</string>
+    <string name="title_activity_navigation_drawer">NavigationDrawerActivity</string>
+
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_example">Example action</string>
 </resources>
