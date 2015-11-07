@@ -8,6 +8,7 @@
     <string name="name_of_event">Whats Free </string>
     <string name="location">Location</string>
     <string name="categories">Category</string>
+    <string name="set_date">Set Date</string>
     <string-array name="categories">
 
         <item>Food</item>
