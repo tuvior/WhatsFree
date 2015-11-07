@@ -1,7 +1,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
@@ -13,11 +14,10 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:layout_gravity="right">
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
 
 
         <EditText
@@ -27,8 +27,7 @@
             android:hint = "@string/name_of_event"
             android:ems="10"
             android:id="@+id/NameOfEvent"
-            android:layout_marginTop="20dp"
-            />
+            android:layout_marginTop="30dp" />
 
         <EditText
             android:layout_width="match_parent"
@@ -36,8 +35,7 @@
             android:id="@+id/Description"
             android:hint = "@string/description"
             android:layout_marginTop="20dp"
-            android:inputType = "textPersonName"
-            />
+            android:inputType = "textPersonName" />
 
 
         <EditText
@@ -46,14 +44,33 @@
             android:id ="@+id/Location"
             android:hint = "@string/location"
             android:layout_marginTop="20dp"
-            android:inputType = "textPersonName"
-            />
+            android:inputType = "textPersonName" />
 
-        <Spinner
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp">
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/categories"
-            android:layout_marginTop="20dp" />
+            android:text = "@string/categories"
+            android:layout_gravity="center_vertical"
+            android:id="@+id/categoriesText"
+            android:layout_marginLeft="2dp" />
+
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/categories"
+                android:gravity="right"
+                android:layout_gravity="left"
+                android:layout_row="0"
+                android:layout_column="7"
+                android:backgroundTint="#ff474d" />
+
+
+        </GridLayout>
 
 
 

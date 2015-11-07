@@ -6,13 +6,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 public class CreateNewSubmissionActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_create_new_submission2);
+
+        TextView categoriesText = (TextView)findViewById(R.id.categoriesText);
+        categoriesText.setTextSize(19);
 
         Spinner spinner = (Spinner)findViewById(R.id.categories);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.categories,android.R.layout.simple_spinner_dropdown_item);
