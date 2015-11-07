@@ -8,4 +8,7 @@
     <string name="title_activity_categories_tab_activities">CategoriesTabActivities</string>
     <string name="title_activity_categories_tab">CategoriesTabActivity</string>
     <string name="title_activity_main_screen">MainScreenActivity</string>
+    <string name="one">Tab1Title</string>
+    <string name="two">Tab2Title</string>
+
 </resources>
