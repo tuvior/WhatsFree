@@ -1,9 +1,11 @@
 package ch.epfl.sweng.freeapp;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 public class CreateNewSubmissionActivity extends AppCompatActivity {
 
@@ -11,6 +13,13 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_submission2);
+
+        Spinner spinner = (Spinner)findViewById(R.id.categories);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.categories,android.R.layout.simple_spinner_dropdown_item);
+        //layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //Apply adapter to the spinner
+        spinner.setAdapter(adapter);
     }
 
     @Override

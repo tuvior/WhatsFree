@@ -1,11 +1,11 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="ch.epfl.sweng.freeapp.CreateNewSubmissionActivity"
-
 
     >
 
@@ -27,14 +27,17 @@
             android:hint = "@string/name_of_event"
             android:ems="10"
             android:id="@+id/NameOfEvent"
-            android:layout_marginTop="20dp" />
+            android:layout_marginTop="20dp"
+            />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/Description"
             android:hint = "@string/description"
-            android:layout_marginTop="20dp" />
+            android:layout_marginTop="20dp"
+            android:inputType = "textPersonName"
+            />
 
 
         <EditText
@@ -42,7 +45,9 @@
             android:layout_height="wrap_content"
             android:id ="@+id/Location"
             android:hint = "@string/location"
-            android:layout_marginTop="20dp" />
+            android:layout_marginTop="20dp"
+            android:inputType = "textPersonName"
+            />
 
         <Spinner
             android:layout_width="wrap_content"
@@ -58,4 +63,4 @@
     </LinearLayout>
 
 
-</RelativeLayout>
+</ScrollView>
