@@ -25,9 +25,6 @@ import android.support.v7.widget.Toolbar;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.epfl.sweng.freeapp.OneFragment;
-import ch.epfl.sweng.freeapp.TwoFragment;
-
 public class MainScreenActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
@@ -35,10 +32,8 @@ public class MainScreenActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private int[] tabIcons = {
             R.drawable.tab_whats_new,
-            R.drawable.tab_whats_new,
-            R.drawable.tab_whats_new
-           // R.drawable.tab_categories,
-           // R.drawable.tab_around_you
+            R.drawable.tab_categories,
+            R.drawable.tab_around_you
     };
 
     @Override
@@ -46,37 +41,47 @@ public class MainScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
 
+        //Set toolbar as the ActionBar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        //Sets up a viewPager that allows the user to flip left and right
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+
         setupTabIcons();
     }
 
+    /**
+     * Adds an icon to each tab
+     */
     private void setupTabIcons() {
         tabLayout.getTabAt(0).setIcon(tabIcons[0]);
         tabLayout.getTabAt(1).setIcon(tabIcons[1]);
-        //tabLayout.getTabAt(2).setIcon(tabIcons[2]);
+        tabLayout.getTabAt(2).setIcon(tabIcons[2]);
     }
 
     /**
      * Defines the number of tabs by setting appropriate fragment and tab name.
+     *
      * @param viewPager
      */
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new OneFragment(), "ONE");
-        adapter.addFragment(new TwoFragment(), "TWO");
+        adapter.addFragment(new OneFragment(), "What's new");
+        adapter.addFragment(new TwoFragment(), "Categories");
+        adapter.addFragment(new ThreeFragment(), "Around You");
         viewPager.setAdapter(adapter);
     }
 
+    /**
+     * A viewPagerAdapter is used for populating a viewPager's tabs
+     */
     class ViewPagerAdapter extends FragmentPagerAdapter {
+
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
 
@@ -103,5 +108,6 @@ public class MainScreenActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             return mFragmentTitleList.get(position);
         }
+
     }
 }

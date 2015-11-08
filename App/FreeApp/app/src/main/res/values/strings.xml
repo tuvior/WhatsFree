@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">FreeApp</string>
-
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_whats_new_tab">WhatsNewTabActivity</string>
@@ -8,7 +7,8 @@
     <string name="title_activity_categories_tab_activities">CategoriesTabActivities</string>
     <string name="title_activity_categories_tab">CategoriesTabActivity</string>
     <string name="title_activity_main_screen">MainScreenActivity</string>
-    <string name="one">Tab1Title</string>
-    <string name="two">Tab2Title</string>
-
+    <string name="one">What\'s new</string>
+    <string name="two">Categories</string>
+    <string name="three">Around you</string>
+    <string name="title_activity_display_submissions">DisplaySubmissionsActivity</string>
 </resources>
