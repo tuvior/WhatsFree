@@ -9,6 +9,13 @@
     <string name="location">Location</string>
     <string name="categories">Category</string>
     <string name="set_date">Set Date</string>
+    <string name="start_time">Starts</string>
+    <string name="end_time">Ends</string>
+    <string name="existImage">OPEN EXISTING IMAGE</string>
+    <string name="takeImage">TAKE PHOTO</string>
+    <string name="keyword">Key Words</string>
+    <string name="create">CREATE</string>
+    <string name="pictureOFLocation">LocationPicture</string>
     <string-array name="categories">
 
         <item>Food</item>
