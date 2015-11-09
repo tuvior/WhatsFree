@@ -1,6 +1,7 @@
 package ch.epfl.sweng.freeapp;
 
 import android.support.test.rule.ActivityTestRule;
+import android.widget.EditText;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -59,6 +60,8 @@ public class LogInActivityTest {
 
     }
 
+    //successfully goes to new Screen
+    @Test
 
     public void testGoToNewScreen(){
 
@@ -69,6 +72,70 @@ public class LogInActivityTest {
 
 
 
+    }
+  //I expect this test to display a message
+    @Test
+    public void testWhenCorrectUserNameFalsePassword(){
+
+
+
+    }
+
+
+    @Test
+    public void testErrorMessageWhenPassWordFieldEmpty(){
+
+    }
+
+    @Test
+    public void testUserLengthPasswordMethod(){
+        LoginActivity loginActivity = mActivityRule.getActivity();
+        EditText username = (EditText)loginActivity.findViewById(R.id.username);
+        EditText password = (EditText)loginActivity.findViewById(R.id.password);
+
+        int minUser = 6;
+        int midLength = 9;
+        int minPassword = 8;
+        int max = 30;
+
+        onView(withId(R.id.username)).perform(typeText(generateStringOfLengthN(minUser - 1)));
+        onView(withId(R.id.password)).perform(typeText(generateStringOfLengthN(minPassword)));
+        assertEquals(false, loginActivity.checkLengthOfUserNameAndPassword(username, password));
+
+        onView(withId(R.id.username)).perform(typeText(generateStringOfLengthN(max + 1)));
+        onView(withId(R.id.password)).perform(typeText(generateStringOfLengthN(minPassword)));
+        assertEquals(false, loginActivity.checkLengthOfUserNameAndPassword(username, password));
+
+        onView(withId(R.id.username)).perform(typeText(generateStringOfLengthN(minUser)));
+        onView(withId(R.id.password)).perform(typeText(generateStringOfLengthN(minPassword - 1)));
+        assertEquals(false, loginActivity.checkLengthOfUserNameAndPassword(username, password));
+
+        onView(withId(R.id.username)).perform(typeText(generateStringOfLengthN(minUser)));
+        onView(withId(R.id.password)).perform(typeText(generateStringOfLengthN(max + 1)));
+        assertEquals(false, loginActivity.checkLengthOfUserNameAndPassword(username, password));
+
+        onView(withId(R.id.username)).perform(typeText(generateStringOfLengthN(minUser)));
+        onView(withId(R.id.password)).perform(typeText(generateStringOfLengthN(max)));
+        assertEquals(true,loginActivity.checkLengthOfUserNameAndPassword(username, password));
+
+
+        onView(withId(R.id.username)).perform(typeText(generateStringOfLengthN(midLength)));
+        onView(withId(R.id.password)).perform(typeText(generateStringOfLengthN(midLength)));
+        assertEquals(true,loginActivity.checkLengthOfUserNameAndPassword(username, password));
+
+
+    }
+
+
+    private String generateStringOfLengthN(int n){
+
+        StringBuilder b = new StringBuilder();
+        char c = 'c';
+
+        for (int i = 0; i< n ;i++){
+            b.append(c);
+        }
+        return  b.toString();
     }
 
     @Test
