@@ -4,7 +4,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
-    // Lois_part
     <string name="title_activity_welcome">WelcomeActivity</string>
     <string name="title_activity_whats_new_tab">WhatsNewTabActivity</string>
     <string name="title_activity_around_you_tab">AroundYouTabActivity</string>
@@ -20,5 +19,39 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <!-- Nav Drawer Menu Items -->
+    <string-array name="nav_drawer_items">
+        <item >Food</item>
+        <item >Sport</item>
+        <item >Nightlife</item>
+        <item >Culture</item>
+        <item >Lifestyle</item>
+        <item >Clothes</item>
+        <item >Miscellaneous</item>
+    </string-array>
+
+
+    <!-- Nav Drawer List Item Icons -->
+    <!-- Keep them in order as the titles are in -->
+    <!--
+    <array name="nav_drawer_icons">
+        <item>@drawable/ic_home</item>
+        <item>@drawable/ic_people</item>
+        <item>@drawable/ic_photos</item>
+        <item>@drawable/ic_communities</item>
+        <item>@drawable/ic_pages</item>
+        <item>@drawable/ic_whats_hot</item>
+    </array>
+    -->
+
+
+
     <string name="action_example">Example action</string>
+    <string name="title_activity_sport">SportActivity</string>
+    <string name="title_activity_food">FoodActivity</string>
+    <string name="title_activity_night_life">NightLifeActivity</string>
+    <string name="title_activity_culture">CultureActivity</string>
+    <string name="title_activity_lifestyle">LifestyleActivity</string>
+    <string name="title_activity_clothes">ClothesActivity</string>
+    <string name="title_activity_miscellaneous">MiscellaneousActivity</string>
 </resources>

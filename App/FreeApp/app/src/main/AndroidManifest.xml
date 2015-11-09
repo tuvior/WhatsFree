@@ -22,20 +22,10 @@
         <activity
             android:name=".RegistrationActivity"
             android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".mainScreen.MainActivity"
             android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <meta-data
@@ -61,6 +51,39 @@
         <activity
             android:name=".NavigationDrawerActivity"
             android:label="@string/title_activity_navigation_drawer" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".SportActivity"
+            android:label="@string/title_activity_sport" >
+        </activity>
+        <activity
+            android:name=".FoodActivity"
+            android:label="@string/title_activity_food" >
+        </activity>
+        <activity
+            android:name=".NightLifeActivity"
+            android:label="@string/title_activity_night_life" >
+        </activity>
+        <activity
+            android:name=".CultureActivity"
+            android:label="@string/title_activity_culture" >
+        </activity>
+        <activity
+            android:name=".LifestyleActivity"
+            android:label="@string/title_activity_lifestyle" >
+        </activity>
+        <activity
+            android:name=".ClothesActivity"
+            android:label="@string/title_activity_clothes" >
+        </activity>
+        <activity
+            android:name=".MiscellaneousActivity"
+            android:label="@string/title_activity_miscellaneous" >
         </activity>
     </application>
 
