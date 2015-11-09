@@ -20,9 +20,14 @@ import static junit.framework.Assert.assertEquals;
 public class LogInActivityTest {
 
 
-    private LogInInfo logInfo = new LogInInfo("username", "password");
+    private LogInInfo logInfo;
     private CommunicationLayer communicationLayer;
     private NetworkProvider networkProvider;
+    private static final int MIN_USER = 6;
+
+    private static final int  MID_LENGTH = 9;
+    private static final int  MIN_PASSWORD= 8;
+    private static final int MAX_LENGTH = 30;
 
     @Rule
     public ActivityTestRule<LoginActivity> mActivityRule = new ActivityTestRule<>(
@@ -32,17 +37,17 @@ public class LogInActivityTest {
     @Before
     public void setUp(){
 
-       networkProvider = Mockito.mock(NetworkProvider.class);
-       communicationLayer = new CommunicationLayer(networkProvider);
+        this.logInfo = new LogInInfo("username","password");
+        networkProvider = Mockito.mock(NetworkProvider.class);
+        communicationLayer = Mockito.mock(CommunicationLayer.class);
 
     }
 
 
-    private void configureResponseFromCommuncationLayer(ResponseStatus status) throws CommunicationLayerException {
+    private void configureResponseFromCommunicationLayer(ResponseStatus status) throws CommunicationLayerException {
 
-        assert(status == ResponseStatus.OK || status ==ResponseStatus.USERNAME|| status== ResponseStatus.PASSWORD);
+        // assert(status == ResponseStatus.OK || status ==ResponseStatus.USERNAME|| status== ResponseStatus.PASSWORD);
         Mockito.doReturn(status).when(communicationLayer).sendLogInInfo(logInfo);
-
 
     }
 
@@ -62,69 +67,133 @@ public class LogInActivityTest {
 
     //successfully goes to new Screen
     @Test
-
     public void testGoToNewScreen(){
 
     }
 
+
+    //I expect this test to display a message
     @Test
-    public void testPasswordAndLogInFieldsClearsFailureUser(){
+    public void testPasswordShouldNotBeLeftBlank(){
 
-
-
-    }
-  //I expect this test to display a message
-    @Test
-    public void testWhenCorrectUserNameFalsePassword(){
-
-
-
-    }
-
-
-    @Test
-    public void testErrorMessageWhenPassWordFieldEmpty(){
-
-    }
-
-    @Test
-    public void testUserLengthPasswordMethod(){
         LoginActivity loginActivity = mActivityRule.getActivity();
+
+        EditText password = (EditText)loginActivity.findViewById(R.id.password);
+        onView(withId(R.id.username)).perform(typeText(generateStringOfLengthN(MIN_USER)));
+        onView(withId(R.id.logInButton)).perform(click());
+        assertEquals(true,password.getError().toString().equals("Fill password"));
+
+    }
+
+
+    @Test
+    public void testUserNameShouldNotBeLeftBlank(){
+        LoginActivity loginActivity = mActivityRule.getActivity();
+        EditText username = (EditText)loginActivity.findViewById(R.id.username);
+        onView(withId(R.id.password)).perform(typeText(generateStringOfLengthN(MAX_LENGTH)));
+        onView(withId(R.id.logInButton)).perform(click());
+        assertEquals(true, username.getError().toString().equals("Fill username"));
+
+    }
+
+    @Test
+    public void testUserLengthPasswordMethodCornerCase0() {
+        LoginActivity loginActivity = mActivityRule.getActivity();
+        EditText username = (EditText) loginActivity.findViewById(R.id.username);
+        EditText password = (EditText) loginActivity.findViewById(R.id.password);
+
+
+        onView(withId(R.id.username)).perform(typeText(generateStringOfLengthN(MIN_USER - 1)));
+        onView(withId(R.id.password)).perform(typeText(generateStringOfLengthN(MIN_PASSWORD)));
+        onView(withId(R.id.logInButton)).perform(click());
+        assertEquals(true, username.getError().toString().length() > 0);
+        assertEquals(true, password.getError() == null);
+
+    }
+
+
+
+    @Test
+    public void  testUserLengthPasswordMethodCornerCase1 (){
+
+        LoginActivity loginActivity = mActivityRule.getActivity();
+        EditText username = (EditText) loginActivity.findViewById(R.id.username);
+        EditText password = (EditText) loginActivity.findViewById(R.id.password);
+
+        onView(withId(R.id.username)).perform(typeText(generateStringOfLengthN(MAX_LENGTH + 1)));
+        onView(withId(R.id.password)).perform(typeText(generateStringOfLengthN(MIN_PASSWORD)));
+        onView(withId(R.id.logInButton)).perform(click());
+        assertEquals(true, username.getError().toString().length() > 0);
+        assertEquals(true, password.getError() == null);
+
+
+    }
+
+    @Test
+    public void  testUserLengthPasswordMethodCornerCase2 (){
+
+        LoginActivity loginActivity = mActivityRule.getActivity();
+        EditText username = (EditText) loginActivity.findViewById(R.id.username);
+        EditText password = (EditText) loginActivity.findViewById(R.id.password);
+
+        onView(withId(R.id.username)).perform(typeText(generateStringOfLengthN(MIN_USER)));
+        onView(withId(R.id.password)).perform(typeText(generateStringOfLengthN(MIN_PASSWORD - 1)));
+        onView(withId(R.id.logInButton)).perform(click());
+        assertEquals(true, username.getError() == null);
+        assertEquals(true, password.getError().toString().length() > 0);
+
+
+
+    }
+
+    @Test
+    public void  testUserLengthPasswordMethodCornerCase3(){
+        LoginActivity loginActivity = mActivityRule.getActivity();
+        EditText username = (EditText) loginActivity.findViewById(R.id.username);
+        EditText password = (EditText) loginActivity.findViewById(R.id.password);
+        onView(withId(R.id.username)).perform(typeText(generateStringOfLengthN(MIN_USER)));
+        onView(withId(R.id.password)).perform(typeText(generateStringOfLengthN(MIN_PASSWORD - 1)));
+        onView(withId(R.id.logInButton)).perform(click());
+        assertEquals(true, username.getError() == null);
+        assertEquals(true, password.getError().toString().length() > 0);
+
+
+    }
+
+    @Test
+    public void  testUserLengthPasswordMethodCornerCase4(){
+        LoginActivity loginActivity = mActivityRule.getActivity();
+        EditText username = (EditText) loginActivity.findViewById(R.id.username);
+        EditText password = (EditText) loginActivity.findViewById(R.id.password);
+
+        onView(withId(R.id.username)).perform(typeText(generateStringOfLengthN(MIN_USER)));
+        onView(withId(R.id.password)).perform(typeText(generateStringOfLengthN(MAX_LENGTH + 1)));
+        onView(withId(R.id.logInButton)).perform(click());
+        assertEquals(true, username.getError() == null);
+        assertEquals(true, password.getError().toString().length() > 0);
+
+    }
+
+
+    @Test
+    public void testCorrectUserPasswordLength() throws CommunicationLayerException {
+
+        LoginActivity loginActivity = mActivityRule.getActivity();
+
+
         EditText username = (EditText)loginActivity.findViewById(R.id.username);
         EditText password = (EditText)loginActivity.findViewById(R.id.password);
 
-        int minUser = 6;
-        int midLength = 9;
-        int minPassword = 8;
-        int max = 30;
 
-        onView(withId(R.id.username)).perform(typeText(generateStringOfLengthN(minUser - 1)));
-        onView(withId(R.id.password)).perform(typeText(generateStringOfLengthN(minPassword)));
-        assertEquals(false, loginActivity.checkLengthOfUserNameAndPassword(username, password));
-
-        onView(withId(R.id.username)).perform(typeText(generateStringOfLengthN(max + 1)));
-        onView(withId(R.id.password)).perform(typeText(generateStringOfLengthN(minPassword)));
-        assertEquals(false, loginActivity.checkLengthOfUserNameAndPassword(username, password));
-
-        onView(withId(R.id.username)).perform(typeText(generateStringOfLengthN(minUser)));
-        onView(withId(R.id.password)).perform(typeText(generateStringOfLengthN(minPassword - 1)));
-        assertEquals(false, loginActivity.checkLengthOfUserNameAndPassword(username, password));
-
-        onView(withId(R.id.username)).perform(typeText(generateStringOfLengthN(minUser)));
-        onView(withId(R.id.password)).perform(typeText(generateStringOfLengthN(max + 1)));
-        assertEquals(false, loginActivity.checkLengthOfUserNameAndPassword(username, password));
-
-        onView(withId(R.id.username)).perform(typeText(generateStringOfLengthN(minUser)));
-        onView(withId(R.id.password)).perform(typeText(generateStringOfLengthN(max)));
-        assertEquals(true,loginActivity.checkLengthOfUserNameAndPassword(username, password));
-
-
-        onView(withId(R.id.username)).perform(typeText(generateStringOfLengthN(midLength)));
-        onView(withId(R.id.password)).perform(typeText(generateStringOfLengthN(midLength)));
-        assertEquals(true,loginActivity.checkLengthOfUserNameAndPassword(username, password));
+        onView(withId(R.id.username)).perform(typeText(generateStringOfLengthN(MIN_USER)));
+        onView(withId(R.id.password)).perform(typeText(generateStringOfLengthN(MAX_LENGTH)));
+        onView(withId(R.id.logInButton)).perform(click());
+        assertEquals(true, username.getError()  == null);
+        assertEquals(true, password.getError()  == null);
 
 
     }
+
 
 
     private String generateStringOfLengthN(int n){
@@ -138,8 +207,39 @@ public class LogInActivityTest {
         return  b.toString();
     }
 
+
+
     @Test
-    public void testPasswordFieldClearsButUserFieldRemainsFailurePassowrd(){
+    public void testPasswordAndUserCantContainSpace(){
+
+        String userWithSpace = "My name is francis";
+        String passwordWithSpace = "Password is good";
+
+        LoginActivity loginActivity = mActivityRule.getActivity();
+
+
+        EditText username = (EditText)loginActivity.findViewById(R.id.username);
+        EditText password = (EditText)loginActivity.findViewById(R.id.password);
+
+        onView(withId(R.id.username)).perform(typeText(userWithSpace));
+        onView(withId(R.id.password)).perform(typeText(passwordWithSpace));
+        onView(withId(R.id.logInButton)).perform(click());
+
+        assertEquals(true, username.getError().toString().equals("No spaces allowed"));
+        assertEquals(true, password.getError().toString().equals("No spaces allowed"));
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -59,6 +59,11 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    public void setCommunicationLayer(CommunicationLayer layer){
+        this.communicationLayer = layer;
+    }
+
+
 
     public void onLoginClick(View View){
 
@@ -69,10 +74,9 @@ public class LoginActivity extends AppCompatActivity {
         String password = passwordField.getText().toString();
 
         if(TextUtils.isEmpty(username)){
-            usernameField.setText("Fill username");
+            usernameField.setError("Fill username");
         }else if(TextUtils.isEmpty(password)) {
-
-            usernameField.setText("Fill password");
+            passwordField.setError("Fill password");
         }else{
 
             if(checkLengthOfUserNameAndPassword(usernameField,passwordField)) {
@@ -89,17 +93,17 @@ public class LoginActivity extends AppCompatActivity {
         String user = username.getText().toString();
         String pass = password.getText().toString();
 
-        boolean userLength = true;
-        boolean passWordLength = true;
+        boolean userGood = true;
+        boolean passWordGood = true;
 
         if(user.length() >= USERNAME_MIN_LENGTH ){
             if(user.length() > USERNAME_MAX_LENGTH){
                 username.setError("Max username  characters is " +USERNAME_MAX_LENGTH);
-                userLength = false;
+                userGood = false;
             }
 
         }else{
-            userLength = false;
+            userGood = false;
             username.setError("Username must be at least " + USERNAME_MIN_LENGTH+ " characters");
         }
 
@@ -107,17 +111,33 @@ public class LoginActivity extends AppCompatActivity {
         if(pass.length() >= PASSWORD_MIN_LENGTH){
             if(pass.length() > PASSWORD_MAX_LENGTH){
                 password.setError("Password Too long  ");
-                passWordLength = false;
+                passWordGood = false;
             }
 
         }else{
 
             password.setError("Password too short it must be at least " +PASSWORD_MIN_LENGTH + "characters");
-            passWordLength = false;
+            passWordGood = false;
+
+
 
         }
 
-        return (userLength && passWordLength);
+         //if their length is good, check if they contain spaces
+        if(userGood && passWordGood){
+            if(user.contains(" ")){
+                username.setError("No spaces allowed");
+                userGood = false;
+            }
+
+            if(pass.contains(" ")){
+                password.setError("No spaces allowed");
+                passWordGood = false;
+            }
+
+        }
+
+        return (userGood && passWordGood);
 
 
     }
@@ -150,9 +170,6 @@ public class LoginActivity extends AppCompatActivity {
                // alertUser(e.getMessage());
                 return null;
             }
-
-
-
 
         }
 
