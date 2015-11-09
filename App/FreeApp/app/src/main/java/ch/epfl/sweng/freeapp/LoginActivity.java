@@ -123,7 +123,7 @@ public class LoginActivity extends AppCompatActivity {
 
         }
 
-         //if their length is good, check if they contain spaces
+        //if their length is good, check if they contain spaces
         if(userGood && passWordGood){
             if(user.contains(" ")){
                 username.setError("No spaces allowed");
@@ -151,7 +151,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private class GetServerResponseTask extends AsyncTask<LogInInfo,Void,ResponseStatus> {
 
-            private Context context;
+        private Context context;
 
         public GetServerResponseTask(Context context){
             this.context = context;
@@ -167,7 +167,7 @@ public class LoginActivity extends AppCompatActivity {
             } catch (CommunicationLayerException e) {
                 //e.printStackTrace();
 
-               // alertUser(e.getMessage());
+                // alertUser(e.getMessage());
                 return null;
             }
 
@@ -189,8 +189,8 @@ public class LoginActivity extends AppCompatActivity {
 
                 if( responseStatus == ResponseStatus.PASSWORD){
 
-                     alertUser("wrong password");
-                     passwordField.setText("");
+                    alertUser("wrong password");
+                    passwordField.setText("");
 
                 }else if(responseStatus == ResponseStatus.USERNAME){
 
@@ -207,13 +207,13 @@ public class LoginActivity extends AppCompatActivity {
 
                 }else{
 
-                assert(responseStatus == ResponseStatus.EMAIL.EMPTY);
+                    assert(responseStatus == ResponseStatus.EMAIL.EMPTY);
 
                     alertUser("Empty Field(s)");
 
-            }
+                }
 
-        }
+            }
 
         }
 

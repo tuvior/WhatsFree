@@ -24,8 +24,6 @@ public class LogInActivityTest {
     private CommunicationLayer communicationLayer;
     private NetworkProvider networkProvider;
     private static final int MIN_USER = 6;
-
-    private static final int  MID_LENGTH = 9;
     private static final int  MIN_PASSWORD= 8;
     private static final int MAX_LENGTH = 30;
 
@@ -227,20 +225,6 @@ public class LogInActivityTest {
 
         assertEquals(true, username.getError().toString().equals("No spaces allowed"));
         assertEquals(true, password.getError().toString().equals("No spaces allowed"));
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     }
