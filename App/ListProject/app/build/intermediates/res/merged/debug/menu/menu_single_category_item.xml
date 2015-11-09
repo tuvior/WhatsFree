@@ -1,8 +1,0 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="ch.epfl.listproject.SingleCategory">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
-</menu>
-<!-- From: file:/home/lois/Desktop/team-wii-not-fit/App/ListProject/app/src/main/res/menu/menu_single_category_item.xml -->
