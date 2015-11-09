@@ -5,7 +5,7 @@ import org.junit.Test;
 /**
  * Created by francisdamachi on 06/11/15.
  */
-public class CreateNewActivityTest {
+public class CreateNewSubmissionTest {
 
 
 
