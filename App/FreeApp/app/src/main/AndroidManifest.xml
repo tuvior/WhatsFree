@@ -23,6 +23,10 @@
             android:name=".DisplaySubmissionsActivity"
             android:label="@string/title_activity_display_submissions" >
         </activity>
+        <activity
+            android:name=".CreateNewSubmissionActivity"
+            android:label="@string/title_activity_create_new_submission" >
+        </activity>
     </application>
 
 </manifest>

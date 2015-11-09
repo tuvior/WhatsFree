@@ -1,14 +1,16 @@
 package ch.epfl.sweng.freeapp.mainScreen;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import ch.epfl.sweng.freeapp.CreateNewSubmissionActivity;
 import ch.epfl.sweng.freeapp.R;
 
 /**
  * Created by Lois Talagrand on 11/5
  *
- * Displays the main screen of the application, where the user is directed
+ * Displays the app's main screen, where the user is directed
  * after the login.
  * 3 tabs are displayed: Categories, What's new, Around you (default: What's new).
  * 2 additional features: search button and map button
@@ -23,6 +25,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +61,7 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     /**
-     * Action bar contains search and map.
+     * Action bar contains search, map as well as the new submission button
      * @param menu
      * @return
      */
@@ -68,6 +71,19 @@ public class MainScreenActivity extends AppCompatActivity {
         inflater.inflate(R.menu.menu_main_screen_activity, menu);
 
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_new_submission:
+                Intent intent = new Intent(this, CreateNewSubmissionActivity.class);
+                this.startActivity(intent);
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        return true;
     }
 
     /**
