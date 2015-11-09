@@ -31,17 +31,42 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
     private int startYear  = currentCalendar.get(Calendar.YEAR);
     private int startMonth = currentCalendar.get(Calendar.MONTH);
     private int startDay   = currentCalendar.get(Calendar.DAY_OF_MONTH);
-    private int DATE_DIALOG_ID = 0;
+   /// private int DATE_DIALOG_ID = 0;
+
+    private final static int PICTURE_REQUEST = 200;
+    //private Uri imageUri;
+    private Bitmap bitmap;
+
+    private EditText nameOfEvent ;
+    private EditText eventDescription ;
+    private EditText location;
     private ImageView imageView;
-    private final static int PICTURE_REQUEST = 0;
+
+    private TextView  date ;
+    private TextView startTime ;
+    private TextView endTime ;
+    private EditText keywords ;
+
+    private int textSize = 19;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_submission2);
 
+        this.imageView = (ImageView)findViewById(R.id.picture);
+        this.nameOfEvent = (EditText)findViewById(R.id.NameOfEvent);
+        this.eventDescription= (EditText)findViewById(R.id.Description);
+        this.location = (EditText)findViewById(R.id.Location);
+        this.keywords = (EditText)findViewById(R.id.keywords);
+        this.date = (TextView)findViewById(R.id.date);
+        this.startTime =   (TextView)findViewById(R.id.startTime);
+        this.endTime =  (TextView)findViewById(R.id.endTime);
+
+
+
         TextView categoriesText = (TextView)findViewById(R.id.categoriesText);
-        categoriesText.setTextSize(19);
+        categoriesText.setTextSize(textSize);
 
 
         Spinner spinner = (Spinner)findViewById(R.id.categories);
@@ -51,14 +76,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
         //Apply adapter to the spinner
         spinner.setAdapter(adapter);
 
-
-
-
-
-
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -84,12 +102,12 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
     public void onSetDateClicked(View view){
 
+
          DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 
-                TextView dateTextView = (TextView)findViewById(R.id.date);
-                dateTextView.setText(dayOfMonth +"-"+monthOfYear + "-"+ year );
+                date.setText(dayOfMonth +"-"+monthOfYear + "-"+ year );
             }
         };
 
@@ -104,7 +122,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
     public void onClickSetTime(View view){
 
-       final  Button startTimeButton = (Button)findViewById(R.id.startButton);
+       final Button startTimeButton = (Button)findViewById(R.id.startButton);
        final Button startOrEnd = (Button)view;
 
         //Process in order to get current time
@@ -118,12 +136,12 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
                 if(startOrEnd.getText().toString().equals(startTimeButton.getText().toString())){
 
-                    TextView startTime = (TextView)findViewById(R.id.startTime);
+
                     startTime.setText(hourOfDay +":"+minute);
 
                 }else{
 
-                    TextView endTime = (TextView)findViewById(R.id.endTime);
+
                     endTime.setText(hourOfDay+":"+minute);
                 }
             }
@@ -134,20 +152,23 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
     }
 
 
+
     public  void onClickTakeImage(View view){
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        //means i want this started activity to return a result for me.
         startActivityForResult(intent, PICTURE_REQUEST);
 
     }
 
 
+    //What the camera will output
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode,resultCode,intent);
 
 
-        new BitmapTask(resultCode,data).execute(requestCode);
+
+        new BitmapTask(resultCode,intent).execute(requestCode);
 
     }
 
@@ -156,6 +177,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
 
     }
+
 
     public void onClickCreateButton(View view ){
 
@@ -184,7 +206,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
         }else if(TextUtils.isEmpty(date.getText().toString())){
 
-            Toast.makeText(this,"Select Date",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Select Date", Toast.LENGTH_SHORT).show();
 
         }else if(TextUtils.isEmpty(startTime.getText().toString()) ){
 
@@ -227,7 +249,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
          public BitmapTask(int resultCode,Intent intent){
 
-             imageView = (ImageView)findViewById(R.id.picture);
+
              this.resultCode = resultCode;
              this.intent = intent;
          }
@@ -236,7 +258,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
              this.requestCode = params[0];
              if(resultCode == RESULT_OK){
                  if(requestCode == PICTURE_REQUEST){
-                     Bitmap bitmap =  (Bitmap)intent.getExtras().get("data");
+                      bitmap =  (Bitmap)intent.getExtras().get("data");
 
 
                      return  bitmap;
@@ -253,6 +275,54 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
         }
      }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("bitmap", bitmap);
+        outState.putString("nameOfEvent", nameOfEvent.getText().toString());
+        outState.putString("eventDescription", eventDescription.getText().toString());
+        outState.putString("location", location.getText().toString());
+        outState.putString("date", date.getText().toString());
+        outState.putString("startTime", startTime.getText().toString());
+        outState.putString("endTime", endTime.getText().toString());
+        outState.putString("keywords",keywords.getText().toString());
+       // outState.putString("dateTextView", dateTextView.getText().toString());
+
+
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstance){
+
+        super.onRestoreInstanceState(savedInstance);
+
+            bitmap = savedInstance.getParcelable("bitmap");
+            nameOfEvent.setText((String)savedInstance.get("nameOfEvent"));
+            eventDescription.setText((String) savedInstance.get("eventDescription"));
+            location.setText((String)savedInstance.get("location"));
+            date.setText((String) savedInstance.get("date"));
+            startTime.setText((String) savedInstance.get("startTime"));
+            endTime.setText((String) savedInstance.get("endTime"));
+            keywords.setText((String) savedInstance.get("keywords"));
+
+
+        if(bitmap != null ){
+            imageView.setImageBitmap(bitmap);
+        }
+
+
+
+
+
+
+
+
+
+    }
+
 
 
 
