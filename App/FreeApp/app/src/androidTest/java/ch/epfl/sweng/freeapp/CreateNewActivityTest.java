@@ -17,7 +17,7 @@ public class CreateNewActivityTest {
     @Test
     public void testUnableToPickPastDate(){
         onView(withId(R.id.setDateButton)).perform(click());
-        onView()
+       // onView()
 
     }
 
