@@ -5,9 +5,16 @@ from google.appengine.ext import ndb
 
 
 def json_response(status):
-    if status == -1:
+    if status == 0:
         res = """{
-    "login": {
+    "submission": {
+        "status": "ok"
+    }
+}"""
+
+    elif status == -1:
+        res = """{
+    "whatIsNew": {
         "status": "invalid"
     }
 }"""
@@ -49,12 +56,14 @@ class whatIsNew(webapp2.RequestHandler):
         if what_is_new_number < submissions.len():
             for i in range(0, what_is_new_number):
                 submission = Submission.query(Submission.submitted <= what_is_new_time_range).fetch(i)
-                # create json response with all submissions
+                # create json response with all submissions, for now just OK response
+                self.response.write(json_response(0))
         
         else:
             for i in range(0, submissions.len()):
                 submission = Submission.query(Submission.submitted <= what_is_new_time_range).fetch(i)
-                # create json response with all submissions
+                # create json response with all submissions, for now just OK response
+                self.response.write(json_response(0))
         
 app = webapp2.WSGIApplication([
     ('/news', whatIsNew),
