@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +16,12 @@ public class LoginActivity extends AppCompatActivity {
 
     private LogInInfo logInInfo;
     private CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
+
+    private  static final int USERNAME_MIN_LENGTH = 6;
+    private  static final int USERNAME_MAX_LENGTH = 30;
+
+    private  static final int PASSWORD_MIN_LENGTH = 8;
+    private  static final int PASSWORD_MAX_LENGTH = 30;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,13 +68,57 @@ public class LoginActivity extends AppCompatActivity {
         String username = usernameField.getText().toString();
         String password = passwordField.getText().toString();
 
-        if(username != null && password != null) {
+        if(TextUtils.isEmpty(username)){
+            usernameField.setText("Fill username");
+        }else if(TextUtils.isEmpty(password)) {
 
-            this.logInInfo = new LogInInfo(username,password);
+            usernameField.setText("Fill password");
+        }else{
 
-            new GetServerResponseTask(this).execute(logInInfo);
+            if(checkLengthOfUserNameAndPassword(usernameField,passwordField)) {
+
+                this.logInInfo = new LogInInfo(username, password);
+                new GetServerResponseTask(this).execute(logInInfo);
+            }
 
         }
+
+    }
+
+    public boolean checkLengthOfUserNameAndPassword(EditText  username, EditText password){
+        String user = username.getText().toString();
+        String pass = password.getText().toString();
+
+        boolean userLength = true;
+        boolean passWordLength = true;
+
+        if(user.length() >= USERNAME_MIN_LENGTH ){
+            if(user.length() > USERNAME_MAX_LENGTH){
+                username.setError("Max username  characters is " +USERNAME_MAX_LENGTH);
+                userLength = false;
+            }
+
+        }else{
+            userLength = false;
+            username.setError("Username must be at least " + USERNAME_MIN_LENGTH+ " characters");
+        }
+
+
+        if(pass.length() >= PASSWORD_MIN_LENGTH){
+            if(pass.length() > PASSWORD_MAX_LENGTH){
+                password.setError("Password Too long  ");
+                passWordLength = false;
+            }
+
+        }else{
+
+            password.setError("Password too short it must be at least " +PASSWORD_MIN_LENGTH + "characters");
+            passWordLength = false;
+
+        }
+
+        return (userLength && passWordLength);
+
 
     }
 
