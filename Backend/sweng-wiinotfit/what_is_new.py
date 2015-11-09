@@ -7,7 +7,7 @@ from google.appengine.ext import ndb
 def json_response(status):
     if status == 0:
         res = """{
-    "submission": {
+    "whatIsNew": {
         "status": "ok"
     }
 }"""
