@@ -230,8 +230,4 @@ public class LogInActivityTest {
     }
 
 
-
-
-
-
 }
