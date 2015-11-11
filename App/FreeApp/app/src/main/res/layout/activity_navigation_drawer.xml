@@ -10,7 +10,11 @@
          space available using match_parent in both dimensions. -->
     <FrameLayout android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <include layout="@layout/home_toolbar" />
+
+        </FrameLayout>
 
     <!-- Listview to display slider menu -->
     <ListView

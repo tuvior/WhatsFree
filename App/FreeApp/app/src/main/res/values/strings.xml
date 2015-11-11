@@ -21,13 +21,14 @@
 
     <!-- Nav Drawer Menu Items -->
     <string-array name="nav_drawer_items">
+        <item >home</item>
         <item >Food</item>
         <item >Sport</item>
         <item >Nightlife</item>
         <item >Culture</item>
         <item >Lifestyle</item>
         <item >Clothes</item>
-        <item >Miscellaneous</item>
+        <item >logout</item>
     </string-array>
 
 
@@ -54,4 +55,5 @@
     <string name="title_activity_lifestyle">LifestyleActivity</string>
     <string name="title_activity_clothes">ClothesActivity</string>
     <string name="title_activity_miscellaneous">MiscellaneousActivity</string>
+
 </resources>
