@@ -111,13 +111,9 @@ class addSubmission(webapp2.RequestHandler):
             session = Session.query(Session.cookie == cookie).get()
             if session:
                 submission = Submission(name = subName, category = subCategory, description = subDescription, location = subLocation, image = subImage, keywords = subKeywords, rating = 0, submitter = session.user)
-                submission.put()
+                submission.put()      
+                self.response.write(json_response(0))
                 
-                # Give back submission under json format in order to display it as soon as it is created
-                response = {'name': subName, 'category': subCategory, 'description': subDescription, 'location': subLocation, 'image': subImage, 'keywords': subKeywords}
-                json_response = json.dumps(response)     
-                self.response.write(json_response)           
-                # self.response.write(json_response(0))
             else:
                 self.response.write(json_response(6))
 
