@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import ch.epfl.sweng.freeapp.mainScreen.MainScreenActivity;
+
 public class LoginActivity extends AppCompatActivity {
 
     private LogInInfo logInInfo;
@@ -179,7 +181,9 @@ public class LoginActivity extends AppCompatActivity {
 
             if(responseStatus == ResponseStatus.OK){
 
-                Intent intent = new Intent(context,MainActivity.class);
+                Intent intent = new Intent(context,MainScreenActivity.class);
+
+
                 startActivity(intent);
 
             }else {
