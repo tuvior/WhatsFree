@@ -25,6 +25,7 @@ public class CommunicationLayer {
     public CommunicationLayer(NetworkProvider networkProvider) {
         this.networkProvider = networkProvider;
     }
+
     /**
      * Used by the app to
      * send user-entered log in information to the user
@@ -33,7 +34,9 @@ public class CommunicationLayer {
      */
     public ResponseStatus sendLogInInfo(LogInInfo logInInfo) throws CommunicationLayerException {
         try {
+
             URL url = new URL(SERVER_URL + "/login?user=" + logInInfo.getUsername() +"&password=" + logInInfo.getPassword());
+
             HttpURLConnection conn = networkProvider.getConnection(url);
             conn.setRequestMethod("GET");
             conn.setDoInput(true);
@@ -51,10 +54,14 @@ public class CommunicationLayer {
                     case "password": return ResponseStatus.PASSWORD;
                     default: throw new CommunicationLayerException();
                 }
+            }else if(logInJson.getString("status").equals("invalid")){
+                     return ResponseStatus.EMPTY;
+            }else {
+
+                assert (logInJson.get("status").equals("ok"));
+                this.cookieSession = logInJson.getString("cookie");
+                return ResponseStatus.OK;
             }
-            assert(logInJson.get("status").equals("ok"));
-            this.cookieSession = logInJson.getString("cookie");
-            return ResponseStatus.OK;
         } catch (IOException | JSONException e) {
             throw new CommunicationLayerException();
         }
@@ -72,6 +79,7 @@ public class CommunicationLayer {
         }
         try {
             URL url = new URL(SERVER_URL + "/register?user="+registrationInfo.getUsername()+"&password="+registrationInfo.getPassword()+"&email="+registrationInfo.getEmail());
+
 
             HttpURLConnection conn = networkProvider.getConnection(url);
             conn.setRequestMethod("GET");
@@ -94,7 +102,9 @@ public class CommunicationLayer {
             }
             assert(serverResponseJson.getString("status").equals("ok"));
             return  ResponseStatus.OK;
-        }catch(IOException | JSONException e ){
+        }catch(IOException e){
+            throw new CommunicationLayerException("Server Unresponsive");
+        }catch (JSONException e){
             throw new CommunicationLayerException();
         }
     }
