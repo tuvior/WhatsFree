@@ -11,11 +11,11 @@ handlers:
 - url: /register
   script: register.app
 
-- url: /new_submission
-	script: add_submission.app
+- url: /submission
+  script: add_submission.app
 
-- url: /what_is_new
-	script: what_is_new.app
+- url: /news
+  script: what_is_new.app
 
 libraries:
 - name: webapp2

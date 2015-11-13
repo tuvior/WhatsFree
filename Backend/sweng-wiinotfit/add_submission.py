@@ -65,38 +65,36 @@ class Session(ndb.Model):
     user = ndb.StringProperty()
 
 class Submission(ndb.Model):
-	name = ndb.StringProperty()
+    name = ndb.StringProperty()
     category = ndb.StringProperty()
-	description = ndb.StringProperty()
-	location = ndb.StringProperty()
-	image = ndb.BlobProperty()
-	keywords = ndb.StringProperty()
+    description = ndb.StringProperty()
+    location = ndb.StringProperty()
+    image = ndb.BlobProperty()
+    keywords = ndb.StringProperty()
     rating = ndb.IntegerProperty()
     submitter = ndb.StringProperty()
     submitted = ndb.DateTimeProperty(auto_now_add=True)
     tfrom = ndb.DateTimeProperty()
     tto = ndb.DateTimeProperty()
-    # should add time + duration field
-
 
 class addSubmission(webapp2.RequestHandler):
-	def post(self):
-		subName = self.request.get('name')
+    def post(self):
+        subName = self.request.get('name')
         subCategory = self.request.get('category')
-		subDescription = self.request.get('description')
-		subLocation = self.request.get('location')
-		subImage = str(self.request.get('image'))
-		subKeywords = self.request.get('keywords')
+        subDescription = self.request.get('description')
+        subLocation = self.request.get('location')
+        subImage = str(self.request.get('image'))
+        subKeywords = self.request.get('keywords')
         cookie = self.request.get('cookie')
 
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
 
-		# Name, Category, Location, Image and Cookie are the required fields. 
+        # Name, Category, Location, Image and Cookie are the required fields. 
         if not cookie:
             self.response.write(json_response(5))
             
-		elif not subName:
-			self.response.write(json_response(1))
+        elif not subName:
+            self.response.write(json_response(1))
             
         elif not subCategory:
             self.response.write(json_response(2))
@@ -119,5 +117,5 @@ class addSubmission(webapp2.RequestHandler):
 
 
 app = webapp2.WSGIApplication([
-    ('/new_submission', addSubmission),
+    ('/submission', addSubmission),
 ], debug=True)
