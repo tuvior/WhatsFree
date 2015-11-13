@@ -11,8 +11,8 @@ handlers:
 - url: /register
   script: register.app
 
-- url: /newsubmission
-	script: add_submission.app
+- url: /new_submission
+  script: add_submission.app
 
 libraries:
 - name: webapp2
