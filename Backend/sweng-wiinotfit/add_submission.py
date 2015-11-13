@@ -1,5 +1,6 @@
 import webapp2
 import string
+import json
 from google.appengine.ext import ndb
 
 
@@ -64,53 +65,53 @@ class Session(ndb.Model):
     user = ndb.StringProperty()
 
 class Submission(ndb.Model):
-	name = ndb.StringProperty()
+    name = ndb.StringProperty()
     category = ndb.StringProperty()
-	description = ndb.StringProperty()
-	location = ndb.StringProperty()
-	image = ndb.BlobProperty()
-	keywords = ndb.StringProperty()
+    description = ndb.StringProperty()
+    location = ndb.StringProperty()
+    image = ndb.BlobProperty()
+    keywords = ndb.StringProperty()
     rating = ndb.IntegerProperty()
     submitter = ndb.StringProperty()
     submitted = ndb.DateTimeProperty(auto_now_add=True)
     tfrom = ndb.DateTimeProperty()
     tto = ndb.DateTimeProperty()
-    # should add time + duration field
 
-
-class AddSubmission(webapp2.RequestHandler):
-	def post(self):
-		subName = self.request.get('name')
+class addSubmission(webapp2.RequestHandler):
+    def post(self):
+        subName = self.request.get('name')
         subCategory = self.request.get('category')
-		subDescription = self.request.get('description')
-		subLocation = self.request.get('location')
-		subImage = str(self.request.get('image'))
-		subKeywords = self.request.get('keywords')
+        subDescription = self.request.get('description')
+        subLocation = self.request.get('location')
+        subImage = str(self.request.get('image'))
+        subKeywords = self.request.get('keywords')
         cookie = self.request.get('cookie')
 
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
 
-		# Name, Category, Location and Image are the required fields. Time will also be a required field once created
+        # Name, Category, Location, Image and Cookie are the required fields. 
         if not cookie:
-            self.response.write(json_response(5))
-		elif not subName:
-			self.response.write(json_response(1))
+            self.response.write(json_response(5)) 
+        elif not subName:
+            self.response.write(json_response(1))
         elif not subCategory:
             self.response.write(json_response(2))
         elif not subLocation:
             self.response.write(json_response(3))
         elif not subImage:
             self.response.write(json_response(4))
+            
         else:
             session = Session.query(Session.cookie == cookie).get()
             if session:
                 submission = Submission(name = subName, category = subCategory, description = subDescription, location = subLocation, image = subImage, keywords = subKeywords, rating = 0, submitter = session.user)
-                submission.put()
+                submission.put()      
                 self.response.write(json_response(0))
+                
             else:
                 self.response.write(json_response(6))
 
 
 app = webapp2.WSGIApplication([
-    ('/new_submission', AddSubmission),
+    ('/submission', addSubmission),
 ], debug=True)
