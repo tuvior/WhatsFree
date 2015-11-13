@@ -184,7 +184,6 @@ public class LoginActivity extends AppCompatActivity {
 
             }else {
                 //Failure
-
                 EditText passwordField = (EditText)findViewById(R.id.password);
 
                 if( responseStatus == ResponseStatus.PASSWORD){
