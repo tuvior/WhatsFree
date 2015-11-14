@@ -49,10 +49,14 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
     private int textSize = 19;
 
+    private int DATE_DIALOG_ID = 0;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_submission2);
+
 
         this.imageView = (ImageView)findViewById(R.id.picture);
         this.nameOfEvent = (EditText)findViewById(R.id.NameOfEvent);
@@ -75,6 +79,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         //Apply adapter to the spinner
         spinner.setAdapter(adapter);
+
 
     }
 
@@ -107,7 +112,9 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 
+
                 date.setText(dayOfMonth +"-"+monthOfYear + "-"+ year );
+
             }
         };
 
@@ -333,4 +340,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
 
 
-}
+
+    }
+
+
