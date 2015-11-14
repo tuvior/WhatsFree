@@ -17,14 +17,6 @@ public class MainScreenActivityTest extends ActivityInstrumentationTestCase2<Mai
     }
 
     /**
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
-    }
-    **/
-
-    /**
      * Makes sure the What's new tab is displayed by default
      */
     @Test

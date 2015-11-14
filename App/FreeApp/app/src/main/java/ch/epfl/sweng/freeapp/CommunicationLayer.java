@@ -1,5 +1,6 @@
 package ch.epfl.sweng.freeapp;
 import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.BufferedReader;
@@ -7,7 +8,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-public class CommunicationLayer {
+
+public class CommunicationLayer{
     private static final String SERVER_URL = "http://sweng-wiinotfit.appspot.com";
     private NetworkProvider networkProvider;
     private final static int HTTP_SUCCESS_START = 200;
@@ -34,6 +36,7 @@ public class CommunicationLayer {
      */
     public ResponseStatus sendLogInInfo(LogInInfo logInInfo) throws CommunicationLayerException {
         try {
+            //FIXME: refactor code realated to connection + create a FakeNetworkProvider
 
             URL url = new URL(SERVER_URL + "/login?user=" + logInInfo.getUsername() +"&password=" + logInInfo.getPassword());
 
@@ -55,7 +58,7 @@ public class CommunicationLayer {
                     default: throw new CommunicationLayerException();
                 }
             }else if(logInJson.getString("status").equals("invalid")){
-                     return ResponseStatus.EMPTY;
+                return ResponseStatus.EMPTY;
             }else {
 
                 assert (logInJson.get("status").equals("ok"));
@@ -108,6 +111,7 @@ public class CommunicationLayer {
             throw new CommunicationLayerException();
         }
     }
+
     private String fetchContent(HttpURLConnection conn) throws IOException {
         StringBuilder out = new StringBuilder();
         BufferedReader reader = null;
@@ -128,4 +132,5 @@ public class CommunicationLayer {
             }
         }
     }
+
 }
