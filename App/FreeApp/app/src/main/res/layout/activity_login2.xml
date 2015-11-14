@@ -1,0 +1,86 @@
+
+
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#eee8aa"
+    >
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        tools:context="ch.epfl.sweng.freeapp.LoginActivity">
+
+
+
+
+
+
+        <EditText
+            android:id="@+id/username"
+            android:hint = "@string/username"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:inputType="textPersonName"
+            />
+
+
+
+        <EditText
+        android:id="@+id/password"
+        android:hint = "@string/password"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="15dp" />
+
+
+        <Button
+        android:id="@+id/logInButton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onLoginClick"
+        android:text="@string/login"
+        android:layout_marginTop="15dp"
+
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp" />
+
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/register_question"
+            android:layout_marginTop= "15dp"
+
+            />
+
+    <Button
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:onClick="onRegisterClick"
+        android:text = "@string/register"
+        android:foregroundGravity="center"
+        android:layout_marginTop="15dp"
+
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp" />
+
+
+    </LinearLayout>
+
+</ScrollView>
