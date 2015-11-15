@@ -41,10 +41,11 @@
     <string name="new_submission">New Submission</string>
     <string name="map_mode">Map mode</string>
     <string name="search">Search</string>
+    <string name="report">Report</string>
     <string-array name="categories">
 
         <item>Food</item>
-        <item>Clothes</item>
+        <item>Clothing</item>
         <item>Sport</item>
         <item>Culture</item>
         <item>NightLife</item>

@@ -77,6 +77,18 @@
         </activity>
 
         </activity>
+
+        <activity
+            android:name=".CategoryDisplaySubmissionsActivity"
+            android:label="CategoryDisplaySubmissions" >
+        </activity>
+
+        <activity
+            android:name=".mainScreen.DisplaySubmissionActivity"
+            android:label="DisplaySubmissionActivity" >
+        </activity>
+
+
     </application>
 
 </manifest>

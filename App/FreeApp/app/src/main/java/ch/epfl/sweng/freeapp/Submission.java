@@ -1,5 +1,6 @@
 package ch.epfl.sweng.freeapp;
 
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -9,7 +10,7 @@ import java.util.Date;
 public  class Submission  {
 
     private String name;
-    private String category;
+    private SubmissionCategory category;
     private String description;
     private String location;
     private String keywords;
@@ -25,7 +26,7 @@ public  class Submission  {
 
 
         private String name;
-        private String category;
+        private SubmissionCategory category;
         private String description;
         private String location;
         private String keywords;
@@ -54,7 +55,7 @@ public  class Submission  {
             this.calendarEndOfEvent = endOfEvent;
             return this;
         }
-        public Builder category(String category){
+        public Builder category(SubmissionCategory category){
             this.category = category;
             return this;
 
@@ -107,7 +108,7 @@ public  class Submission  {
 
 
     public String getCategory() {
-        return category;
+        return category.toString();
     }
 
     public long getSubmitted() {
@@ -145,5 +146,34 @@ public  class Submission  {
 
 
 
+    /*
 
+=======
+
+public class Submission {
+
+    private String name;
+    private String description;
+    private SubmissionCategory category;
+
+    public Submission(String name, String description, SubmissionCategory category){
+        this.name = name;
+        this.description = description;
+        this.category = category;
+    }
+
+    public String getName(){
+        return name;
+    }
+
+    public String getDescription(){
+        return description;
+    }
+
+    public String  getCategory(){
+        return category.toString();
+    }
+
+>>>>>>> 28057dbef16658cd348d354bda3021a228db372b
+*/
 }

@@ -3,13 +3,11 @@ package ch.epfl.sweng.freeapp;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.TextView;
 
-import ch.epfl.sweng.freeapp.mainScreen.TwoFragment;
+import ch.epfl.sweng.freeapp.mainScreen.CategoriesFragment;
 
-public class DisplaySubmissionsActivity extends AppCompatActivity {
+public class CategoryDisplaySubmissionsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,7 +16,7 @@ public class DisplaySubmissionsActivity extends AppCompatActivity {
 
         // Get the message from the intent
         Intent intent = getIntent();
-        String message = intent.getStringExtra(TwoFragment.CATEGORY_MESSAGE);
+        String message = intent.getStringExtra(CategoriesFragment.CATEGORY_MESSAGE);
 
         // Create the text view
         TextView textView = new TextView(this);

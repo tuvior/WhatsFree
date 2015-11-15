@@ -33,7 +33,7 @@ import ch.epfl.sweng.freeapp.mainScreen.MainScreenActivity;
 
 public class CreateNewSubmissionActivity extends AppCompatActivity {
 
-    private static final int MAX_CHARACTERS = 40;
+    private static final int MAX_CHARACTERS = 60;
     private static final int MIN_CHARACTERS = 4;
 
     private Calendar currentCalendar = Calendar.getInstance();
@@ -327,7 +327,10 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
                     submission.location(location.getText().toString());
                     submission.keywords(keywords.getText().toString());
                     submission.image(encodeImage(bitmap));
-                    submission.category(spinnerCategory.getSelectedItem().toString());
+
+                    SubmissionCategory submissionCategory = SubmissionCategory.valueOf(spinnerCategory.getSelectedItem().toString().toUpperCase());
+                    submission.category(submissionCategory);
+
                     submission.submitted(currentCalendar);
 
                     new UploadSubmissionTask(this).execute(submission.build());
