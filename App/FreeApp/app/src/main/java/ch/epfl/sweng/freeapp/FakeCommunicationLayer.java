@@ -1,6 +1,6 @@
 package ch.epfl.sweng.freeapp;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -40,7 +40,27 @@ public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
     private Submission.Builder submissionBuilderFreeClubEntrance = new Submission.Builder();
 
 
-    public FakeCommunicationLayer(Context activity) {
+
+    public FakeCommunicationLayer(){
+
+        submissionBuilderCroissant.name("Free Croissants");
+        submissionBuilderCroissant.description("There's a huge croissant giveaway at Flon!");
+        submissionBuilderCroissant.category(SubmissionCategory.FOOD);
+
+
+        submissionBuilderUnicorn.name("Unicorn Discount");
+        submissionBuilderUnicorn.description("Get one of our wonderful white unicorns!");
+        submissionBuilderUnicorn.category(SubmissionCategory.MISCELLANEOUS);
+
+        submissionBuilderFreeClubEntrance.name("Free Entrance Tonight");
+        submissionBuilderFreeClubEntrance.description("Come get wasted for free tonight!");
+        submissionBuilderFreeClubEntrance.category(SubmissionCategory.NIGHTLIFE);
+
+        freeCroissants = createSubmission(submissionBuilderCroissant);
+        unicornDiscount = createSubmission(submissionBuilderUnicorn);
+        freeClubEntrance = createSubmission(submissionBuilderFreeClubEntrance);
+    }
+    public FakeCommunicationLayer(Activity activity) {
 
         AssetManager assetManager = activity.getAssets();
 
