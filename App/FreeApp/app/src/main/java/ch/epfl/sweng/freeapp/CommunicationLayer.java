@@ -108,6 +108,58 @@ public class CommunicationLayer {
             throw new CommunicationLayerException();
         }
     }
+
+    public ResponseStatus sendAddSubmissionRequest(Submission submission) throws CommunicationLayerException {
+        if(submission == null) {
+            throw new CommunicationLayerException();
+        }
+
+        try{
+            //Must check which fields are missing and if they are allowed to not be specified before creating the URL
+            URL url = new URL(SERVER_URL + "/add_submission?name=" + submission.getName() + "&category=" + submission.getCategory() +
+                    "&location=" + submission.getLocation() + "&description=" + submission.getDescription() + "&keywords=" +
+                    submission.getKeywords() + "&image=" + submission.getImage() + "&submitted=" + submission.getSubmitted() +
+                    "&from=" + submission.getStartOfEvent() + "&to=" + submission.getEndOfEvent());
+
+            HttpURLConnection conn = networkProvider.getConnection(url);
+            conn.setRequestMethod("POST");
+            conn.setDoInput(true);
+            conn.connect();
+            int response = conn.getResponseCode();
+
+            if (response < HTTP_SUCCESS_START || response > HTTP_SUCCESS_END) {
+                throw new CommunicationLayerException("Invalid HTTP response code");
+            }
+
+            String serverResponse = fetchContent(conn);
+            JSONObject jsonObject = new JSONObject(serverResponse);
+            JSONObject serverResponseJson = jsonObject.getJSONObject("submission");
+            if(serverResponseJson.getString("status").equals("failure")){
+                switch(serverResponseJson.getString("reason")){
+                    case "name" : return ResponseStatus.NAME;
+                    case "location"  : return ResponseStatus.LOCATION;
+                    case "image" : return ResponseStatus.IMAGE;
+                    default: throw new CommunicationLayerException();
+                }
+            }else if ( serverResponseJson.getString("status").equals("invalid")){
+                return null;
+            }else {
+                assert (serverResponseJson.getString("status").equals("ok"));
+
+                //Decide if server responds with OK or with Submission in JSON format
+                return ResponseStatus.OK;
+            }
+        } catch(IOException | JSONException e) {
+            throw new CommunicationLayerException();
+        }
+
+    }
+
+
+
+
+
+
     private String fetchContent(HttpURLConnection conn) throws IOException {
         StringBuilder out = new StringBuilder();
         BufferedReader reader = null;

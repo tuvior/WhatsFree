@@ -2,6 +2,7 @@ package ch.epfl.sweng.freeapp;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,15 +24,32 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+
+import ch.epfl.sweng.freeapp.mainScreen.MainScreenActivity;
 
 public class CreateNewSubmissionActivity extends AppCompatActivity {
 
+    private static final int MAX_CHARACTERS = 40;
+    private static final int MIN_CHARACTERS = 4;
 
     private Calendar currentCalendar = Calendar.getInstance();
+    private Calendar startEventCalendar = Calendar.getInstance();
+    private Calendar endEventCalendar = Calendar.getInstance();
+
+    private TimeZone timeZone = TimeZone.getTimeZone("Europe/Zurich");
+    //private Calendar submissionCalendar = Calendar.getInstance();
+
+
+
+
     private int startYear  = currentCalendar.get(Calendar.YEAR);
     private int startMonth = currentCalendar.get(Calendar.MONTH);
     private int startDay   = currentCalendar.get(Calendar.DAY_OF_MONTH);
+    private CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
    /// private int DATE_DIALOG_ID = 0;
 
     private final static int PICTURE_REQUEST = 200;
@@ -47,9 +66,15 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
     private TextView endTime ;
     private EditText keywords ;
 
+
+    private Date dateOfEvent = new Date();
+    private Date endDate = new Date();
+    private Spinner spinnerCategory;
     private int textSize = 19;
 
     private int DATE_DIALOG_ID = 0;
+    private Submission.Builder submission = new Submission.Builder();
+
 
 
     @Override
@@ -57,7 +82,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_submission2);
 
-
+        this.spinnerCategory = (Spinner)findViewById(R.id.categories);
         this.imageView = (ImageView)findViewById(R.id.picture);
         this.nameOfEvent = (EditText)findViewById(R.id.NameOfEvent);
         this.eventDescription= (EditText)findViewById(R.id.Description);
@@ -113,7 +138,29 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 
 
-                date.setText(dayOfMonth +"-"+monthOfYear + "-"+ year );
+
+
+               // dateOfEvent.setYear(year); dateOfEvent.setMonth(monthOfYear);dateOfEvent.setDate(dayOfMonth);
+                startEventCalendar.set(Calendar.YEAR,year);
+                startEventCalendar.set(Calendar.MONTH,monthOfYear);
+                startEventCalendar.set(Calendar.DAY_OF_MONTH,dayOfMonth);
+
+
+
+                //endDate.setYear(year);endDate.setYear(monthOfYear);endDate.setYear(dayOfMonth);
+
+                endEventCalendar.set(Calendar.YEAR, year);
+                endEventCalendar.set(Calendar.MONTH, monthOfYear);
+                endEventCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+
+                submission.startOfEvent(startEventCalendar);
+                submission.endOfEvent(endEventCalendar);
+
+                startEventCalendar.setTimeZone(timeZone);
+                endEventCalendar.setTimeZone(timeZone);
+
+                date.setText(dayOfMonth +"-"+(monthOfYear+1) + "-"+ year );
 
             }
         };
@@ -143,13 +190,23 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
                 if(startOrEnd.getText().toString().equals(startTimeButton.getText().toString())){
 
+                    // dateOfEvent.setHours(hourOfDay);dateOfEvent.setMinutes(minute);
+                    startEventCalendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
+                    startEventCalendar.set(Calendar.MINUTE,minute);
 
-                    startTime.setText(hourOfDay +":"+minute);
+                    startTime.setText(hourOfDay+":"+ minute);
+
+                    submission.startOfEvent(startEventCalendar);
 
                 }else{
 
+                   //endDate.setHours(hourOfDay);endDate.setMinutes(minute);
+                    endEventCalendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
+                    endEventCalendar.set(Calendar.MINUTE,minute);
 
-                    endTime.setText(hourOfDay+":"+minute);
+                    endTime.setText(hourOfDay+":"+ minute);
+
+                    submission.endOfEvent(endEventCalendar);
                 }
             }
         };
@@ -190,6 +247,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
         //we want to check if all field
 
+
         EditText nameOfEvent = (EditText)findViewById(R.id.NameOfEvent);
         EditText eventDescription = (EditText)findViewById(R.id.Description);
         EditText location = (EditText)findViewById(R.id.Location);
@@ -202,14 +260,18 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
         EditText keywords = (EditText)findViewById(R.id.keywords);
 
 
-        if(TextUtils.isEmpty(nameOfEvent.getText().toString())){
+        if(isWhiteSpaces(nameOfEvent.getText().toString())){
             nameOfEvent.setError("Please fill in name");
+            nameOfEvent.setText("");
 
-        }else if(TextUtils.isEmpty(eventDescription.getText().toString())){
+        }else if(isWhiteSpaces(eventDescription.getText().toString())){
             eventDescription.setError("Please fill in description");
-        }else if(TextUtils.isEmpty(location.getText().toString())){
+            eventDescription.setText("");
+
+        }else if(isWhiteSpaces(location.getText().toString())){
 
             location.setError("Please input  location");
+            location.setText("");
 
         }else if(TextUtils.isEmpty(date.getText().toString())){
 
@@ -227,24 +289,118 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
             Toast.makeText(this,"Please insert a picture", Toast.LENGTH_SHORT).show();
 
-        }else if(TextUtils.isEmpty(keywords.getText().toString())){
+        }else if(isWhiteSpaces(keywords.getText().toString())){
             keywords.setError("Put some keywords");
+            keywords.setText("");
         }else{
+            /*
+            if(dateOfEvent.before(currentDate)){
+                date.setText("");
+                Toast.makeText(this,"Past Date not allowed", Toast.LENGTH_SHORT).show();
 
-            //access submit to server,
+            }else if(endDate.getTime() <= dateOfEvent.getTime()){
+                startTime.setText("");
+                endTime.setText("");
+                Toast.makeText(this,"Event has passed",Toast.LENGTH_SHORT).show();
+
+            }*/
+
+
+            currentCalendar.setTimeZone(timeZone);
+
+             this.dateOfEvent = startEventCalendar.getTime();
+             this.endDate = endEventCalendar.getTime();
+
+
+            if(endDate.before(dateOfEvent)){
+                date.setText("");
+                startTime.setText("");
+                endTime.setText("");
+                Toast.makeText(this,"Event has already passed",Toast.LENGTH_SHORT).show();
+            }else {
+
+
+                if(validLength(nameOfEvent) && validLength(eventDescription) && validLength(location)&& validLength(keywords)){
+
+                    submission.name(nameOfEvent.getText().toString());
+                    submission.description(eventDescription.getText().toString());
+                    submission.location(location.getText().toString());
+                    submission.keywords(keywords.getText().toString());
+                    submission.image(encodeImage(bitmap));
+                    submission.category(spinnerCategory.getSelectedItem().toString());
+                    submission.submitted(currentCalendar);
+
+                    new UploadSubmissionTask(this).execute(submission.build());
+
+
+
+                }
+
+
+            }
 
         }
+    }
 
 
+    private String encodeImage( Bitmap bitmapImage){
+        assert(bitmapImage != null);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
 
-
-
+        return  Base64.encodeToString(byteArrayOutputStream.toByteArray(),Base64.DEFAULT);
 
 
     }
 
 
+    private class UploadSubmissionTask extends AsyncTask<Submission,Void ,ResponseStatus >{
 
+        private Context context;
+
+
+        public UploadSubmissionTask(Context context){
+            this.context = context;
+        }
+
+        @Override
+        protected ResponseStatus doInBackground(Submission... params) {
+            try {
+                return communicationLayer.sendAddSubmissionRequest(params[0]);
+            } catch (CommunicationLayerException e) {
+            return null;
+
+            }
+        }
+
+        @Override
+        protected void  onPostExecute(ResponseStatus status){
+
+            if(status == ResponseStatus.OK) {
+                Intent intent = new Intent(context, MainScreenActivity.class);
+                startActivity(intent);
+            }
+            else if(status == ResponseStatus.IMAGE){
+
+                Toast.makeText(context,"ReUpload image",Toast.LENGTH_SHORT).show();
+
+            }else if (status == ResponseStatus.NAME){
+                Toast.makeText(context,"Problem with Name",Toast.LENGTH_SHORT).show();
+
+            }else if (status == ResponseStatus.LOCATION) {
+                Toast.makeText(context, "Unknown Location", Toast.LENGTH_SHORT).show();
+
+            }else {
+               assert(status == null );
+
+                Toast.makeText(context, "Server unable to respond", Toast.LENGTH_SHORT).show();
+            }
+
+
+
+
+        }
+    }
 
     private class BitmapTask extends AsyncTask<Integer,Void,Bitmap>{
 
@@ -266,8 +422,6 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
              if(resultCode == RESULT_OK){
                  if(requestCode == PICTURE_REQUEST){
                       bitmap =  (Bitmap)intent.getExtras().get("data");
-
-
                      return  bitmap;
                  }
              }
@@ -288,6 +442,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
         outState.putParcelable("bitmap", bitmap);
+
         outState.putString("nameOfEvent", nameOfEvent.getText().toString());
         outState.putString("eventDescription", eventDescription.getText().toString());
         outState.putString("location", location.getText().toString());
@@ -295,6 +450,10 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
         outState.putString("startTime", startTime.getText().toString());
         outState.putString("endTime", endTime.getText().toString());
         outState.putString("keywords",keywords.getText().toString());
+       // outState.putSerializable("dateOfEvent", dateOfEvent);
+
+        outState.putSerializable("startEventCalendar", startEventCalendar);
+        outState.putSerializable("endEventCalendar",endEventCalendar);
        // outState.putString("dateTextView", dateTextView.getText().toString());
 
 
@@ -307,40 +466,56 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstance);
 
             bitmap = savedInstance.getParcelable("bitmap");
-            nameOfEvent.setText((String)savedInstance.get("nameOfEvent"));
+
+            nameOfEvent.setText((String) savedInstance.get("nameOfEvent"));
             eventDescription.setText((String) savedInstance.get("eventDescription"));
-            location.setText((String)savedInstance.get("location"));
+            location.setText((String) savedInstance.get("location"));
             date.setText((String) savedInstance.get("date"));
             startTime.setText((String) savedInstance.get("startTime"));
             endTime.setText((String) savedInstance.get("endTime"));
             keywords.setText((String) savedInstance.get("keywords"));
+
+            startEventCalendar = (Calendar)savedInstance.getSerializable("startEventCalendar");
+            endEventCalendar = (Calendar)savedInstance.getSerializable("endEventCalendar");
 
 
         if(bitmap != null ){
             imageView.setImageBitmap(bitmap);
         }
 
-
-
-
-
-
-
-
-
     }
 
 
-
-
-
-
-
-
-
-
-
-
+    private boolean isWhiteSpaces(String s ){
+       return  s!=null && s.matches("\\s+");
     }
+
+    private boolean validLength(EditText field){
+
+        assert (field != null);
+        String string  = field.getText().toString();
+
+        boolean valid = true;
+
+        if(string.length() >= MIN_CHARACTERS){
+
+            if(string.length() > MAX_CHARACTERS){
+                field.setError("Max number of characters " + MAX_CHARACTERS);
+                valid = false;
+
+            }
+
+        }else{
+            field.setError("Input at least "+ MIN_CHARACTERS);
+            valid = false;
+        }
+
+        if(!valid){
+            field.setText("");
+        }
+        return valid;
+    }
+
+}
 
 
