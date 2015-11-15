@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class CommunicationLayer{
+public class CommunicationLayer implements  DefaultCommunicationLayer{
     private static final String SERVER_URL = "http://sweng-wiinotfit.appspot.com";
     private NetworkProvider networkProvider;
     private final static int HTTP_SUCCESS_START = 200;
