@@ -12,26 +12,33 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import ch.epfl.sweng.freeapp.DisplaySubmissionsActivity;
+import ch.epfl.sweng.freeapp.CategoryDisplaySubmissionsActivity;
 import ch.epfl.sweng.freeapp.R;
 
-public class TwoFragment extends ListFragment {
+public class CategoriesFragment extends ListFragment {
 
     public final static String CATEGORY_MESSAGE = "ch.epfl.sweng.freeapp.MESSAGE";
 
-    public TwoFragment() {
+    public CategoriesFragment() {
         // Required empty public constructor
     }
 
+    /**
+     * The categories tab presents all the categories as a list
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_two, container,
+        View rootView = inflater.inflate(R.layout.categories_fragment, container,
                 false);
 
         String[] values = new String[] { "Food", "Clothing", "Events", "Nightlife", "Goods","Miscellaneous" };
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1, values);
         setListAdapter(adapter);
         return rootView;
@@ -50,7 +57,7 @@ public class TwoFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         // TODO implement some logic
         String category = (String) getListAdapter().getItem(position);
-        Intent intent = new Intent(v.getContext(), DisplaySubmissionsActivity.class);
+        Intent intent = new Intent(v.getContext(), CategoryDisplaySubmissionsActivity.class);
         intent.putExtra(CATEGORY_MESSAGE, category);
         startActivity(intent);
     }

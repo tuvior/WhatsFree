@@ -10,9 +10,9 @@ import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import java.lang.CharSequence;import java.lang.Override;import java.util.Calendar;import ch.epfl.sweng.freeapp.R;
-
+import java.lang.CharSequence;
+import java.lang.Override;
+import java.util.Calendar;
 public class CreateNewSubmissionActivity extends AppCompatActivity {
 
     private Calendar currentCalendar = Calendar.getInstance();
