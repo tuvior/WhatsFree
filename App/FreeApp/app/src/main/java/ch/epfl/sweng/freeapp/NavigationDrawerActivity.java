@@ -1,8 +1,9 @@
 package ch.epfl.sweng.freeapp;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -22,13 +23,15 @@ import android.widget.Toast;
 
 public class NavigationDrawerActivity extends Activity implements AdapterView.OnItemClickListener {
 
-    private DrawerLayout mDrawerLayout;
+    protected DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
 
     private Toolbar toolbar;
 
     private android.support.v7.app.ActionBarDrawerToggle mDrawerListener;
     private MyAdapter myAdapter;
+
+    private Fragment mDrawerFragment;
 
 
     private CharSequence mTitle;
@@ -53,13 +56,13 @@ public class NavigationDrawerActivity extends Activity implements AdapterView.On
             public void onDrawerOpened(View drawerView){
                 super.onDrawerOpened(drawerView);
 
-                Toast.makeText(NavigationDrawerActivity.this, "Drawer opened", Toast.LENGTH_LONG ).show();
+                //Toast.makeText(NavigationDrawerActivity.this, "Drawer opened", Toast.LENGTH_LONG ).show();
             }
 
             @Override
             public void onDrawerClosed(View drawerView){
                 super.onDrawerClosed(drawerView);
-                Toast.makeText(NavigationDrawerActivity.this, "Drawer closed", Toast.LENGTH_LONG ).show();
+                //Toast.makeText(NavigationDrawerActivity.this, "Drawer closed", Toast.LENGTH_LONG ).show();
             }
 
         };
@@ -68,11 +71,8 @@ public class NavigationDrawerActivity extends Activity implements AdapterView.On
 
 
 
-        //mDrawerList.setAdapter(new ArrayAdapter<>(this, R.layout.drawer_list_item, sidebarItems));
         mDrawerList.setOnItemClickListener(this);
 
-        //mDrawerListener = new android.support.v7.app.ActionBarDrawerToggle(this, mDrawerLayout,
-          //                      R.drawable.ic_drawer1, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
     }
 
@@ -112,30 +112,41 @@ public class NavigationDrawerActivity extends Activity implements AdapterView.On
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+        // Create a new fragment and specify the plan
+        Fragment fragment = new TestFragment();
+
+        /*
         if(position == 0){
-            Intent intent = new Intent(this, FoodActivity.class);
-            startActivity(intent);
+            fragment = new HomeFragment();
         }
         else if(position == 1){
-            Intent intent = new Intent(this, SportActivity.class);
-            startActivity(intent);
+            fragment = new FoodFragment();
         }
         else if(position == 2){
-            Intent intent = new Intent(this, NightLifeActivity.class);
-            startActivity(intent);
+            fragment = new SportFragment()
         }
         else if(position == 3){
-            Intent intent = new Intent(this, CultureActivity.class);
-            startActivity(intent);
+            fragment = new NightlifeFragment();
         }
         else if(position == 4){
-            Intent intent = new Intent(this, ClothesActivity.class);
-            startActivity(intent);
+            fragment = new CultureFragment();
         }
         else if(position == 5){
-            Intent intent = new Intent(this, MiscellaneousActivity.class);
-            startActivity(intent);
+            fragment = new LifestyleFragment();
         }
+        else if(position == 6){
+            fragment = new ClothesFragment();
+        }
+        else if(position == 7){
+            fragment = new LogoutFragment();
+        }*/
+
+
+        // Insert the fragment by replacing any existing fragment
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, fragment)
+                .commit();
 
         selectItem(position);
     }
@@ -144,7 +155,12 @@ public class NavigationDrawerActivity extends Activity implements AdapterView.On
         mDrawerList.setItemChecked(position, true);
     }
 
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
 
+        mDrawerFragment = fragment;
+    }
 }
 
 

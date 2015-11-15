@@ -57,34 +57,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".SportActivity"
-            android:label="@string/title_activity_sport" >
-        </activity>
-        <activity
+        <!--<activity
             android:name=".FoodActivity"
             android:label="@string/title_activity_food" >
-        </activity>
-        <activity
-            android:name=".NightLifeActivity"
-            android:label="@string/title_activity_night_life" >
-        </activity>
-        <activity
-            android:name=".CultureActivity"
-            android:label="@string/title_activity_culture" >
-        </activity>
-        <activity
-            android:name=".LifestyleActivity"
-            android:label="@string/title_activity_lifestyle" >
-        </activity>
-        <activity
-            android:name=".ClothesActivity"
-            android:label="@string/title_activity_clothes" >
-        </activity>
-        <activity
-            android:name=".MiscellaneousActivity"
-            android:label="@string/title_activity_miscellaneous" >
-        </activity>
+        </activity>-->
     </application>
 
 </manifest>

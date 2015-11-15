@@ -19,14 +19,14 @@ import ch.epfl.sweng.freeapp.mainScreen.WhatsNewTabActivity;
  *
  * Documentation (creating tabs): http://www.learn-android-easily.com/2013/07/android-tabwidget-example.html
  */
-public class MainScreenActivity extends AppCompatActivity {
+public class MainScreenActivity extends AppCompatActivity  {
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_screen);
+        //setContentView(R.layout.activity_main_screen);
 
         // create the TabHost that will contain the Tabs
         TabHost tabHost = (TabHost)findViewById(android.R.id.tabhost);

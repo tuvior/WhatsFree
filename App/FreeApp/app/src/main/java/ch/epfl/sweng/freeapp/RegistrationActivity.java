@@ -213,7 +213,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
         @Override
         protected void onPostExecute(ResponseStatus responseStatus) {
             if(responseStatus == ResponseStatus.OK){
-                Intent intent = new Intent(context, WelcomeActivity.class);
+                Intent intent = new Intent(context, MainScreenActivity.class);
                 startActivity(intent);
             }
             else

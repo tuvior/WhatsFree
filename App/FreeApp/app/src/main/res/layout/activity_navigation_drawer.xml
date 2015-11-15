@@ -14,7 +14,7 @@
 
         <include layout="@layout/home_toolbar" />
 
-        </FrameLayout>
+    </FrameLayout>
 
     <!-- Listview to display slider menu -->
     <ListView
