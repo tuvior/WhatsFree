@@ -143,37 +143,4 @@ public  class Submission  {
         return image;
     }
 
-
-
-
-    /*
-
-=======
-
-public class Submission {
-
-    private String name;
-    private String description;
-    private SubmissionCategory category;
-
-    public Submission(String name, String description, SubmissionCategory category){
-        this.name = name;
-        this.description = description;
-        this.category = category;
-    }
-
-    public String getName(){
-        return name;
-    }
-
-    public String getDescription(){
-        return description;
-    }
-
-    public String  getCategory(){
-        return category.toString();
-    }
-
->>>>>>> 28057dbef16658cd348d354bda3021a228db372b
-*/
 }

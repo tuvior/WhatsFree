@@ -49,7 +49,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
     private int startYear  = currentCalendar.get(Calendar.YEAR);
     private int startMonth = currentCalendar.get(Calendar.MONTH);
     private int startDay   = currentCalendar.get(Calendar.DAY_OF_MONTH);
-    private CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
+    private DefaultCommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
    /// private int DATE_DIALOG_ID = 0;
 
     private final static int PICTURE_REQUEST = 200;
@@ -240,6 +240,11 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
     public void onClickExistingPicture(View view){
 
 
+    }
+
+    //Setter used to Inject Dependencies so that we can test our app offline.
+    public void setCommunicationLayer(DefaultCommunicationLayer layer){
+        this.communicationLayer = layer;
     }
 
 
@@ -518,6 +523,9 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
         }
         return valid;
     }
+
+
+
 
 }
 

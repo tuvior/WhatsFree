@@ -1,6 +1,5 @@
 package ch.epfl.sweng.freeapp;
 
-import android.app.Activity;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -40,7 +39,7 @@ public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
     private Submission.Builder submissionBuilderFreeClubEntrance = new Submission.Builder();
 
 
-
+/*
     public FakeCommunicationLayer(){
 
         submissionBuilderCroissant.name("Free Croissants");
@@ -60,11 +59,13 @@ public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
         unicornDiscount = createSubmission(submissionBuilderUnicorn);
         freeClubEntrance = createSubmission(submissionBuilderFreeClubEntrance);
     }
-    public FakeCommunicationLayer(Activity activity) {
 
-        AssetManager assetManager = activity.getAssets();
+ */
+    public FakeCommunicationLayer() {
 
-        this.image = encodeImage(assetManager);
+      //AssetManager assetManager = activity.getAssets();
+
+        this.image = "RubbishImage";
 
         submissionBuilderCroissant.name("Free Croissants");
         submissionBuilderCroissant.description("There's a huge croissant giveaway at Flon!");
