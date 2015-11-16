@@ -2,13 +2,21 @@ import webapp2
 import string
 import json
 from google.appengine.ext import ndb
-
+from Submission.py import Submission
+from Session.py import Session
 
 def json_response(status):
     if status == 0:
         res = """{
     "submission": {
         "status": "ok"
+    }
+}"""
+    
+    elif status == -1:
+        res = """{
+    "submission": {
+        "status": "invalid"
     }
 }"""
 
@@ -59,23 +67,6 @@ def json_response(status):
 }"""
 
     return res
-
-class Session(ndb.Model):
-    cookie = ndb.StringProperty()
-    user = ndb.StringProperty()
-
-class Submission(ndb.Model):
-    name = ndb.StringProperty()
-    category = ndb.StringProperty()
-    description = ndb.StringProperty()
-    location = ndb.StringProperty()
-    image = ndb.BlobProperty()
-    keywords = ndb.StringProperty()
-    rating = ndb.IntegerProperty()
-    submitter = ndb.StringProperty()
-    submitted = ndb.DateTimeProperty(auto_now_add=True)
-    tfrom = ndb.DateTimeProperty()
-    tto = ndb.DateTimeProperty()
 
 class addSubmission(webapp2.RequestHandler):
     def post(self):

@@ -1,5 +1,6 @@
 import webapp2
 from google.appengine.ext import ndb
+from User.py import User
 
 def json_response( status ):
     if status == 0:
@@ -29,12 +30,7 @@ def json_response( status ):
     }
 }"""
     return res
-
-class User(ndb.Model):
-    username = ndb.StringProperty()
-    pswd = ndb.StringProperty()
-    email = ndb.StringProperty()
-
+    
 class Register(webapp2.RequestHandler):            
     
     def get(self):
