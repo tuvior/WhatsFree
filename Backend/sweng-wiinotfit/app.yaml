@@ -7,9 +7,15 @@ threadsafe: yes
 handlers:
 - url: /login
   script: login.app
-  
+
 - url: /register
   script: register.app
+
+- url: /submission
+  script: add_submission.app
+
+- url: /news
+  script: what_is_new.app
 
 libraries:
 - name: webapp2

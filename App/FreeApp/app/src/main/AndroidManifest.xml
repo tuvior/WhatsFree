@@ -18,14 +18,20 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/FreeApp" >
         <activity
+
             android:name=".RegistrationActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".mainScreen.MainActivity"
-            android:label="@string/app_name" >
+            android:name=".mainScreen.MainScreenActivity"
+            android:label="@string/title_activity_main_screen" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <meta-data
@@ -33,20 +39,42 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".mainScreen.WhatsNewTabActivity"
-            android:label="@string/title_activity_whats_new_tab" >
+            android:name=".LoginActivity"
+            android:label="@string/title_activity_login"
+
+            android:windowSoftInputMode="adjustPan">
+        >
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name=".RegistrationActivity"
+            android:label="@string/title_activity_registration" >
+            android:name=".DisplaySubmissionsActivity"
+            android:label="@string/title_activity_display_submissions" >
         </activity>
         <activity
-            android:name=".mainScreen.AroundYouTabActivity"
-            android:label="@string/title_activity_around_you_tab" >
+            android:name=".CreateNewSubmissionActivity"
+            android:label="@string/title_activity_create_new_submission" >
         </activity>
+
         <activity
-            android:name=".mainScreen.CategoriesTabActivity"
-            android:label="@string/title_activity_categories_tab" >
+            android:name=".CategoryDisplaySubmissionsActivity"
+            android:label="CategoryDisplaySubmissions" >
+
         </activity>
+
         <activity
-            android:name=".MainScreenActivity"
-            android:label="@string/title_activity_main_screen" >
+            android:name=".mainScreen.DisplaySubmissionActivity"
+            android:label="DisplaySubmissionActivity" >
         </activity>
         <activity
             android:name=".NavigationDrawerActivity"

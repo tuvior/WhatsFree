@@ -1,13 +1,14 @@
 package ch.epfl.sweng.freeapp;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+//import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.TabHost;
 
-import ch.epfl.sweng.freeapp.mainScreen.AroundYouTabActivity;
-import ch.epfl.sweng.freeapp.mainScreen.CategoriesTabActivity;
-import ch.epfl.sweng.freeapp.mainScreen.WhatsNewTabActivity;
+//import ch.epfl.sweng.freeapp.mainScreen.AroundYouTabActivity;
+//import ch.epfl.sweng.freeapp.mainScreen.CategoriesTabActivity;
+//import ch.epfl.sweng.freeapp.mainScreen.WhatsNewTabActivity;
 
 /**
  * Created by Lois Talagrand on 11/5
@@ -19,9 +20,10 @@ import ch.epfl.sweng.freeapp.mainScreen.WhatsNewTabActivity;
  *
  * Documentation (creating tabs): http://www.learn-android-easily.com/2013/07/android-tabwidget-example.html
  */
-public class MainScreenActivity extends AppCompatActivity  {
 
-    /** Called when the activity is first created. */
+public class MainScreenActivity extends AppCompatActivity {
+
+    // Called when the activity is first created. /
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -38,13 +40,13 @@ public class MainScreenActivity extends AppCompatActivity  {
         // Set the Tab name and Activity
         // that will be opened when particular Tab will be selected
         tab1.setIndicator("What's new");
-        tab1.setContent(new Intent(this, WhatsNewTabActivity.class));
+        //tab1.setContent(new Intent(this, WhatsNewTabActivity.class));
 
         tab2.setIndicator("Categories");
-        tab2.setContent(new Intent(this, CategoriesTabActivity.class));
+        //tab2.setContent(new Intent(this, CategoriesTabActivity.class));
 
         tab3.setIndicator("Around you");
-        tab3.setContent(new Intent(this, AroundYouTabActivity.class));
+        //tab3.setContent(new Intent(this, AroundYouTabActivity.class));
 
         // Add the tabs  to the TabHost (allows to display)
         tabHost.addTab(tab1);
@@ -54,3 +56,4 @@ public class MainScreenActivity extends AppCompatActivity  {
     }
 
 }
+

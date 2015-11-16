@@ -130,7 +130,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
 
     /**
      * Preliminary check without internet access that user's
-     * entered informations are valid.
+     * entered information are valid.
      *
      *@return true if all the fields are preliminarily correct,
      *        false otherwise
@@ -185,7 +185,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
 
 
     /**
-     * Async task for getting a server reponse
+     * Async task for getting a server response
      *
      */
     private class RetrieveServerResponse extends AsyncTask<RegistrationInfo, RegistrationInfo, ResponseStatus>{
@@ -224,7 +224,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
                 passwordView.setText(empty);
                 confirmPasswordView.setText(empty);
             }
-                return;
+            return;
         }
 
 
