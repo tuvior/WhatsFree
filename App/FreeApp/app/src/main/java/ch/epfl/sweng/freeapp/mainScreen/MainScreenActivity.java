@@ -32,6 +32,8 @@ import java.util.List;
 
 public class MainScreenActivity extends AppCompatActivity {
 
+    public final static String SUBMISSION_MESSAGE = "ch.epfl.sweng.freeapp.SUBMISSION";
+
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;

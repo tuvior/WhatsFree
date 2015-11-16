@@ -22,8 +22,6 @@ import ch.epfl.sweng.freeapp.R;
 
 public class AroundYouFragment extends ListFragment {
 
-    public final static String SUBMISSION_MESSAGE = "ch.epfl.sweng.freeapp.SUBMISSION";
-
     public AroundYouFragment() {
         // Required empty public constructor
     }
@@ -40,10 +38,9 @@ public class AroundYouFragment extends ListFragment {
         View rootView = inflater.inflate(R.layout.around_you_fragment, container, false);
 
         //Get the JSONArray corresponding to the submissions
-        FakeCommunicationLayer fakeCommunicationLayer = new FakeCommunicationLayer();
         try {
-            JSONArray jsonNamesAndPictures = fakeCommunicationLayer.sendWhatIsNewRequest();
-            ArrayList<SubmissionShortcut> submissions = jsonArrayToArrayList(jsonNamesAndPictures);
+            JSONArray jsonNamesAndPictures = FakeCommunicationLayer.sendWhatIsNewRequest();
+            ArrayList<SubmissionShortcut> submissions = FakeCommunicationLayer.jsonArrayToArrayList(jsonNamesAndPictures);
             //Adapter provides a view for each item in the data set
             SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, submissions);
             this.setListAdapter(adapter);
@@ -55,8 +52,6 @@ public class AroundYouFragment extends ListFragment {
     }
 
     /**
-     * When the user clicks on a specific category, launch
-     * the activity (fragment?) responsible for displaying the related submissions
      *
      * @param l
      * @param v
@@ -68,26 +63,8 @@ public class AroundYouFragment extends ListFragment {
         SubmissionShortcut submissionShortcut = (SubmissionShortcut)getListAdapter().getItem(position);
         String submissionName = submissionShortcut.getName();
         Intent intent = new Intent(v.getContext(), DisplaySubmissionActivity.class);
-        intent.putExtra(SUBMISSION_MESSAGE, submissionName);
+        intent.putExtra(MainScreenActivity.SUBMISSION_MESSAGE, submissionName);
         startActivity(intent);
     }
-
-    private ArrayList<SubmissionShortcut> jsonArrayToArrayList(JSONArray jsonSubmissions) throws JSONException {
-
-        ArrayList<SubmissionShortcut> submissionsList = new ArrayList<>();
-
-        for(int i = 0; i < jsonSubmissions.length(); i++){
-            //TODO: also include image
-            JSONObject jsonSubmission = jsonSubmissions.getJSONObject(i);
-            String name = jsonSubmission.getString("name");
-
-            SubmissionShortcut submission = new SubmissionShortcut(name);
-            submissionsList.add(submission);
-        }
-
-        return submissionsList;
-
-    }
-
 
 }
