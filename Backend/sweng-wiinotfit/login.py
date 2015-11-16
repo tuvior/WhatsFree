@@ -3,7 +3,7 @@ import string
 import random
 from google.appengine.ext import ndb
 from user import User
-from session import session
+from session import Session
 
 def json_response( status , cookie = '' ):
     if status == 0:

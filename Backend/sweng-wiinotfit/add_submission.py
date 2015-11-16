@@ -2,8 +2,8 @@ import webapp2
 import string
 import json
 from google.appengine.ext import ndb
-from Submission.py import Submission
-from Session.py import Session
+from submission import Submission
+from session import Session
 
 def json_response(status):
     if status == 0:
