@@ -311,7 +311,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
             }*/
 
 
-            currentCalendar.setTimeZone(timeZone);
+             currentCalendar.setTimeZone(timeZone);
 
              this.dateOfEvent = startEventCalendar.getTime();
              this.endDate = endEventCalendar.getTime();
@@ -335,10 +335,12 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
                     SubmissionCategory submissionCategory = SubmissionCategory.valueOf(spinnerCategory.getSelectedItem().toString().toUpperCase());
                     submission.category(submissionCategory);
-
+                    submission.startOfEvent(startEventCalendar);
+                    submission.endOfEvent(endEventCalendar);
                     submission.submitted(currentCalendar);
 
-                    new UploadSubmissionTask(this).execute(submission.build());
+                    Submission submit = submission.build();
+                    new UploadSubmissionTask(this).execute(submit);
 
 
 
