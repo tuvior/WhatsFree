@@ -114,4 +114,13 @@ public class ServerAddSubmissionTest {
         assertEquals("failure", getStatusFromJson(serverResponse));
         assertEquals("session", getReasonFromJson(serverResponse));
     }
+
+    @Test
+    public void serverRespondsWithOk() throws CommunicationLayerException, JSONException {
+        JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=submissiontest&password=password&email=submissiontest@test.ch", "GET");
+        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=submissiontest&password=password", "GET");
+        String cookie = getCookieFromJson(loginUser);
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/submission?cookie="+cookie+"name=name&category=category&location=location&image=image", "POST");
+        assertEquals("status", getStatusFromJson(serverResponse));
+    }
 }
