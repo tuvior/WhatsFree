@@ -82,17 +82,13 @@ class addSubmission(webapp2.RequestHandler):
 
         # Name, Category, Location, Image and Cookie are the required fields. 
         if not cookie:
-            self.response.write(json_response(5))
-            
+            self.response.write(json_response(5)) 
         elif not subName:
             self.response.write(json_response(1))
-            
         elif not subCategory:
             self.response.write(json_response(2))
-            
         elif not subLocation:
             self.response.write(json_response(3))
-            
         elif not subImage:
             self.response.write(json_response(4))
             
