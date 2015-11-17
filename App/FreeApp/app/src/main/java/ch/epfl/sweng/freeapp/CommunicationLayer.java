@@ -23,7 +23,7 @@ import java.util.List;
 //- See more at: http://ictstars.com/en/how-to-make-http-post-request-with-android-studio/#sthash.UqWoZBGa.dpuf
 
 public class CommunicationLayer implements  DefaultCommunicationLayer {
-    private static final String SERVER_URL = "http://sweng-wiinotfit.appspot.com/";
+    private static final String SERVER_URL = "http://sweng-wiinotfit.appspot.com";
     private NetworkProvider networkProvider;
     private final static int HTTP_SUCCESS_START = 200;
     private final static int HTTP_SUCCESS_END = 299;
@@ -158,7 +158,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
 
             try {
 
-                url = new URL(SERVER_URL);
+                url = new URL(SERVER_URL+"/submission");
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(10000);
                 conn.setConnectTimeout(15000);
@@ -167,7 +167,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
                 conn.setDoOutput(true);
 
                 List<NameValuePair> params = new ArrayList<>();
-                params.add(new BasicNameValuePair("submission", param.getName()));
+                params.add(new BasicNameValuePair("name", param.getName()));
                 params.add(new BasicNameValuePair("category", param.getCategory()));
                 params.add(new BasicNameValuePair("location", param.getLocation()));
                 params.add(new BasicNameValuePair("description", param.getDescription()));
@@ -225,6 +225,25 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
 
 
         }
+
+    private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException {
+        StringBuilder result = new StringBuilder();
+        boolean first = true;
+
+        for (NameValuePair pair : params)
+        {
+            if (first)
+                first = false;
+            else
+                result.append("&");
+
+            result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
+            result.append("=");
+            result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
+        }
+
+        return result.toString();
+    }
 
 
 
@@ -366,25 +385,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
 
 */
 
-    private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException
-    {
-        StringBuilder result = new StringBuilder();
-        boolean first = true;
 
-        for (NameValuePair pair : params)
-        {
-            if (first)
-                first = false;
-            else
-                result.append("&");
-
-            result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
-            result.append("=");
-            result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
-        }
-
-        return result.toString();
-    }
 
 
 
