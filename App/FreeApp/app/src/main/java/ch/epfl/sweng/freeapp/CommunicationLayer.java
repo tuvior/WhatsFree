@@ -23,7 +23,7 @@ import java.util.List;
 //- See more at: http://ictstars.com/en/how-to-make-http-post-request-with-android-studio/#sthash.UqWoZBGa.dpuf
 
 public class CommunicationLayer implements  DefaultCommunicationLayer {
-    private static final String SERVER_URL = "http://sweng-wiinotfit.appspot.com";
+    private static final String SERVER_URL = "http://sweng-wiinotfit.appspot.com/";
     private NetworkProvider networkProvider;
     private final static int HTTP_SUCCESS_START = 200;
     private final static int HTTP_SUCCESS_END = 299;
