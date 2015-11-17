@@ -2,17 +2,23 @@ package ch.epfl.sweng.freeapp;
 
 import android.util.Log;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 //- See more at: http://ictstars.com/en/how-to-make-http-post-request-with-android-studio/#sthash.UqWoZBGa.dpuf
 
@@ -22,6 +28,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
     private final static int HTTP_SUCCESS_START = 200;
     private final static int HTTP_SUCCESS_END = 299;
     private String cookieSession;
+    private final static String COOKIE_TEST = "BEY4L9lVSlA0hHQQ1ClTXYVUn5xwcr0BfYSKc7sw0Y54XYzWObTAsJ6PHQWPQVzO";
 
     /**
      * Creates a new CommunicationLayer instance that communicates with the
@@ -45,7 +52,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
      */
     public ResponseStatus sendLogInInfo(LogInInfo logInInfo) throws CommunicationLayerException {
         try {
-            //FIXME: refactor code realated to connection + create a FakeNetworkProvider
+            //FIXME: refactor code related to connection + create a FakeNetworkProvider
 
             URL url = new URL(SERVER_URL + "/login?user=" + logInInfo.getUsername() + "&password=" + logInInfo.getPassword());
 
@@ -130,10 +137,103 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
         } catch (JSONException e) {
             throw new CommunicationLayerException();
         }
+
     }
 
 
-    public ResponseStatus sendAddSubmissionRequest(Submission submission) throws CommunicationLayerException {
+    /*
+            //Must check which fields are missing and if they are allowed to not be specified before creating the URL
+            URL url = new URL(SERVER_URL + "/add_submission?name=" + submission.getName() + "&category=" + submission.getCategory() +
+                    "&location=" + submission.getLocation() + "&description=" + submission.getDescription() + "&keywords=" +
+                    submission.getKeywords() + "&image=" + submission.getImage() + "&submitted=" + submission.getSubmitted() +
+                    "&from=" + submission.getStartOfEvent() + "&to=" + submission.getEndOfEvent());
+                    */
+
+
+    @Override
+        public ResponseStatus sendAddSubmissionRequest(Submission param) throws CommunicationLayerException {
+            URL url;
+
+            HttpURLConnection conn;
+
+            try {
+
+                url = new URL(SERVER_URL);
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000);
+                conn.setConnectTimeout(15000);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+
+                List<NameValuePair> params = new ArrayList<>();
+                params.add(new BasicNameValuePair("submission", param.getName()));
+                params.add(new BasicNameValuePair("category", param.getCategory()));
+                params.add(new BasicNameValuePair("location", param.getLocation()));
+                params.add(new BasicNameValuePair("description", param.getDescription()));
+                params.add(new BasicNameValuePair("keywords", param.getKeywords()));
+                params.add(new BasicNameValuePair("image", param.getImage()));
+                params.add(new BasicNameValuePair("submitted", Long.toString(param.getSubmitted())));
+                params.add(new BasicNameValuePair("from", Long.toString(param.getStartOfEvent())));
+                params.add(new BasicNameValuePair("to", Long.toString(param.getEndOfEvent())));
+                params.add(new BasicNameValuePair("cookie",COOKIE_TEST));
+
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(os, "UTF-8"));
+                writer.write(getQuery(params));
+                writer.flush();
+                writer.close();
+                os.close();
+
+                conn.connect();
+
+                int response = conn.getResponseCode();
+
+                if (response < HTTP_SUCCESS_START || response > HTTP_SUCCESS_END) {
+                    throw new CommunicationLayerException("Invalid HTTP response code");
+                }
+
+                String serverResponse = fetchContent(conn);
+                JSONObject jsonObject = new JSONObject(serverResponse);
+                JSONObject serverResponseJson = jsonObject.getJSONObject("submission");
+                if(serverResponseJson.getString("status").equals("failure")){
+                    switch(serverResponseJson.getString("reason")){
+                        case "name" : return ResponseStatus.NAME;
+                        case "location"  : return ResponseStatus.LOCATION;
+                        case "image" : return ResponseStatus.IMAGE;
+                        case "category": return ResponseStatus.CATEGORY;
+                        case "cookie": return ResponseStatus.COOKIE;
+                        case "session": return ResponseStatus.SESSION;
+                        default: throw new CommunicationLayerException();
+                    }
+                }else {
+                    assert (serverResponseJson.getString("status").equals("ok"));
+
+                    //Decide if server responds with OK or with Submission in JSON format
+                    return ResponseStatus.OK;
+                }
+
+            }catch(IOException e ){
+                throw new CommunicationLayerException();
+
+            } catch (JSONException e) {
+                throw new CommunicationLayerException();
+
+            }
+
+
+
+        }
+
+
+
+    //================================================================================================
+    //  1
+
+
+
+  /*  public ResponseStatus sendAddSubmissionRequest(Submission submission) throws CommunicationLayerException {
         if (submission == null) {
 
             throw new CommunicationLayerException();
@@ -215,18 +315,23 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
 
     }
 
+*/
 
-
+    //  2
     //===================================================================================================================
 
     /*
         try{
+
+        /*
             //Must check which fields are missing and if they are allowed to not be specified before creating the URL
             URL url = new URL(SERVER_URL + "/add_submission?name=" + submission.getName() + "&category=" + submission.getCategory() +
                     "&location=" + submission.getLocation() + "&description=" + submission.getDescription() + "&keywords=" +
                     submission.getKeywords() + "&image=" + submission.getImage() + "&submitted=" + submission.getSubmitted() +
                     "&from=" + submission.getStartOfEvent() + "&to=" + submission.getEndOfEvent());
 
+*/
+    /*
             HttpURLConnection conn = networkProvider.getConnection(url);
             conn.setRequestMethod("POST");
             conn.setDoInput(true);
@@ -261,6 +366,26 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
 
 */
 
+    private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException
+    {
+        StringBuilder result = new StringBuilder();
+        boolean first = true;
+
+        for (NameValuePair pair : params)
+        {
+            if (first)
+                first = false;
+            else
+                result.append("&");
+
+            result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
+            result.append("=");
+            result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
+        }
+
+        return result.toString();
+    }
+
 
 
 
@@ -284,6 +409,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
             }
         }
     }
+
 
 
 }

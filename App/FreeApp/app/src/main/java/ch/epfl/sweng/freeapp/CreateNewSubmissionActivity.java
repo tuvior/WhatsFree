@@ -54,7 +54,8 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
     private final static int PICTURE_REQUEST = 200;
     //private Uri imageUri;
-    private Bitmap bitmap;
+     private Bitmap bitmap;
+   // = BitmapFactory.decodeResource(InstrumentationRegistry.getTargetContext().getResources(), R.mipmap.ic_launcher);
 
     private EditText nameOfEvent ;
     private EditText eventDescription ;
@@ -385,18 +386,21 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
             }
             else if(status == ResponseStatus.IMAGE){
 
-                Toast.makeText(context,"ReUpload image",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"Re-upload image",Toast.LENGTH_SHORT).show();
 
             }else if (status == ResponseStatus.NAME){
-                Toast.makeText(context,"Problem with Name",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"Problem with name of event",Toast.LENGTH_SHORT).show();
 
             }else if (status == ResponseStatus.LOCATION) {
-                Toast.makeText(context, "Unknown Location", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Unknown location", Toast.LENGTH_SHORT).show();
+
+            }else if (status == ResponseStatus.COOKIE || status == ResponseStatus.SESSION || status==null){
+                Toast.makeText(context,"Server unable to respond to request", Toast.LENGTH_SHORT).show();
 
             }else {
-               assert(status == null );
+                assert(status == ResponseStatus.CATEGORY );
 
-                Toast.makeText(context, "Server unable to respond", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Unknown Category", Toast.LENGTH_SHORT).show();
             }
 
 
@@ -503,13 +507,13 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
         if(string.length() >= MIN_CHARACTERS){
 
             if(string.length() > MAX_CHARACTERS){
-                field.setError("Max number of characters " + MAX_CHARACTERS);
+                field.setError("Max number of characters" + MAX_CHARACTERS);
                 valid = false;
 
             }
 
         }else{
-            field.setError("Input at least "+ MIN_CHARACTERS);
+            field.setError("Input at least"+ MIN_CHARACTERS);
             valid = false;
         }
 

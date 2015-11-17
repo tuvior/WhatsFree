@@ -1,11 +1,14 @@
 package ch.epfl.sweng.freeapp;
 
 import android.annotation.TargetApi;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.UiController;
 import android.support.test.espresso.ViewAction;
-import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.espresso.matcher.ViewMatchers;
+import android.test.ActivityInstrumentationTestCase2;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
@@ -13,9 +16,6 @@ import android.widget.TimePicker;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Before;
-import org.junit.Rule;
-
-import java.util.Calendar;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -28,18 +28,32 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 /**
  * Created by francisdamachi on 06/11/15.
  */
-public class CreateNewSubmissionActivityTest {
+public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTestCase2<CreateNewSubmissionActivity> {
 
+    // In order to insert an image in the beginning
+    Bitmap icon = BitmapFactory.decodeResource(InstrumentationRegistry.getTargetContext().getResources(), R.mipmap.ic_launcher);
 
-    Calendar calendar = Calendar.getInstance();
+    //Calendar calendar = Calendar.getInstance();
 
 
     DefaultCommunicationLayer communicationLayer = new FakeCommunicationLayer();
 
+    public CreateNewSubmissionActivityTest(Class<CreateNewSubmissionActivity> activityClass) {
+        super(activityClass);
+    }
 
-    @Rule
-    public IntentsTestRule<CreateNewSubmissionActivity> mIntentsRule = new IntentsTestRule<>(
-            CreateNewSubmissionActivity.class);
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
+    }
+
+    public void test
+
+
+    //  @Rule
+    //public IntentsTestRule<CreateNewSubmissionActivity> mIntentsRule = new IntentsTestRule<>(
+           // CreateNewSubmissionActivity.class);
 
 
 
@@ -110,13 +124,41 @@ public class CreateNewSubmissionActivityTest {
    // @Test
     public void successfullyCreateSubmissionToServer(){
 
-   //     mActivityRule.getActivity();
-        onView(withId(R.id.setDateButton)).perform(click());
-        onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(setDate(2015, 4, 5));
-        onView(withText("OK")).perform(click());
+        int year = 2015;
+        int month = 4;
+        int day = 5;
 
+        int startHoursOfDay = 16;
+        int startMinute = 10;
+
+        int endHoursOfDay = 17;
+        int endMinute = 10;
+   //   mActivityRule.getActivity();
+
+
+        getActivity();
         onView(withId(R.id.NameOfEvent)).perform(typeText("Food fun and amazing"));
         onView(withText("CREATE")).perform(scrollTo());
+
+        onView(withId(R.id.Description)).perform(typeText("Some good croissant food"));
+        onView(withId(R.id.Location)).perform(typeText("EPFl eculblens"));;
+
+        onView(withId(R.id.setDateButton)).perform(click());
+        onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(setDate(year, month, day));
+        onView(withText("OK")).perform(click());
+
+        onView(withId(R.id.startTime)).perform(click());
+        onView(withClassName(Matchers.equalTo(TimePicker.class.getName()))). perform(setTime(startHoursOfDay, startMinute));
+        onView(withText(("Ok"))).perform(click());
+
+
+        onView(withId(R.id.endButton)).perform(click());
+        onView(withClassName(Matchers.equalTo(TimePicker.class.getName()))). perform(setTime(endHoursOfDay, endMinute));
+        onView(withText(("Ok"))).perform(click());
+
+        //How to stub out a camera ?
+
+
         onView(withId(R.id.keywords)).perform(typeText("yummy food"));
 
 
