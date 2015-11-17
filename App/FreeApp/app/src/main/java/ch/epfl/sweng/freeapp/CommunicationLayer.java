@@ -20,7 +20,9 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-//- See more at: http://ictstars.com/en/how-to-make-http-post-request-with-android-studio/#sthash.UqWoZBGa.dpuf
+/*
+ REMEMBER TO CHANGE TO COOKIE SESSION STRING !!!!!!!
+ */
 
 public class CommunicationLayer implements  DefaultCommunicationLayer {
     private static final String SERVER_URL = "http://sweng-wiinotfit.appspot.com";
@@ -29,6 +31,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
     private final static int HTTP_SUCCESS_END = 299;
     private String cookieSession;
     private final static String COOKIE_TEST = "BEY4L9lVSlA0hHQQ1ClTXYVUn5xwcr0BfYSKc7sw0Y54XYzWObTAsJ6PHQWPQVzO";
+
 
     /**
      * Creates a new CommunicationLayer instance that communicates with the
@@ -51,6 +54,11 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
      * @return "ok" if the operation was successful, or "failed" otherwise
      */
     public ResponseStatus sendLogInInfo(LogInInfo logInInfo) throws CommunicationLayerException {
+
+        if(logInInfo == null ){
+            throw new CommunicationLayerException("LogInfo null");
+        }
+
         try {
             //FIXME: refactor code related to connection + create a FakeNetworkProvider
 
@@ -141,15 +149,6 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
     }
 
 
-    /*
-            //Must check which fields are missing and if they are allowed to not be specified before creating the URL
-            URL url = new URL(SERVER_URL + "/add_submission?name=" + submission.getName() + "&category=" + submission.getCategory() +
-                    "&location=" + submission.getLocation() + "&description=" + submission.getDescription() + "&keywords=" +
-                    submission.getKeywords() + "&image=" + submission.getImage() + "&submitted=" + submission.getSubmitted() +
-                    "&from=" + submission.getStartOfEvent() + "&to=" + submission.getEndOfEvent());
-                    */
-
-
     @Override
         public ResponseStatus sendAddSubmissionRequest(Submission param) throws CommunicationLayerException {
             URL url;
@@ -222,16 +221,13 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
 
             }
 
-
-
         }
 
     private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException {
         StringBuilder result = new StringBuilder();
         boolean first = true;
 
-        for (NameValuePair pair : params)
-        {
+        for (NameValuePair pair : params) {
             if (first)
                 first = false;
             else
@@ -244,150 +240,6 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
 
         return result.toString();
     }
-
-
-
-    //================================================================================================
-    //  1
-
-
-
-  /*  public ResponseStatus sendAddSubmissionRequest(Submission submission) throws CommunicationLayerException {
-        if (submission == null) {
-
-            throw new CommunicationLayerException();
-        }
-
-
-        String urlParameters = null;
-        try {
-            urlParameters = "submission?name=" + URLEncoder.encode(submission.getName(), "UTF-8") +
-                    "&category=" + URLEncoder.encode(submission.getCategory(), "UTF-8") +
-                    "&location=" + URLEncoder.encode(submission.getLocation(), "UTF-8") +
-                    "&description=" + URLEncoder.encode(submission.getDescription(), "UTF-8") +
-                    "&keywords=" + URLEncoder.encode(submission.getKeywords(), "UTF-8") +
-                    "&from=" + URLEncoder.encode(Long.toString(submission.getStartOfEvent()), "UTF-8") +
-                    "&image=" + URLEncoder.encode(submission.getImage(), "UTF-8") +
-                    "&submitted=" + URLEncoder.encode(Long.toString(submission.getSubmitted()), "UTF-8") +
-                    "&to=" + URLEncoder.encode(Long.toString(submission.getEndOfEvent()), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            throw new CommunicationLayerException();
-        }
-
-        URL url;
-        HttpURLConnection connection = null;
-        try {
-            //Create connection
-            url = new URL(SERVER_URL);
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type",
-                    "application/x-www-form-urlencoded");
-
-            connection.setRequestProperty("Content-Length", "" +
-                    Integer.toString(urlParameters.getBytes().length));
-            //connection.setRequestProperty("Content-Language", "en-US");
-
-            connection.setUseCaches(false);
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-
-            //Send request
-            DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-            wr.writeBytes(urlParameters);
-            wr.flush();
-            wr.close();
-
-
-            int response = connection.getResponseCode();
-
-            if (response < HTTP_SUCCESS_START || response > HTTP_SUCCESS_END) {
-                throw new CommunicationLayerException("Invalid HTTP response code");
-            }
-
-            String serverResponse = fetchContent(connection);
-            JSONObject jsonObject = new JSONObject(serverResponse);
-            JSONObject serverResponseJson = jsonObject.getJSONObject("submission");
-            if (serverResponseJson.getString("status").equals("failure")) {
-                switch (serverResponseJson.getString("reason")) {
-                    case "name":
-                        return ResponseStatus.NAME;
-                    case "location":
-                        return ResponseStatus.LOCATION;
-                    case "image":
-                        return ResponseStatus.IMAGE;
-                    default:
-                        throw new CommunicationLayerException();
-                }
-            } else if (serverResponseJson.getString("status").equals("invalid")) {
-                return null;
-            } else {
-                assert (serverResponseJson.getString("status").equals("ok"));
-
-                //Decide if server responds with OK or with Submission in JSON format
-                return ResponseStatus.OK;
-            }
-        } catch (IOException | JSONException e) {
-            throw new CommunicationLayerException();
-        }
-
-    }
-
-*/
-
-    //  2
-    //===================================================================================================================
-
-    /*
-        try{
-
-        /*
-            //Must check which fields are missing and if they are allowed to not be specified before creating the URL
-            URL url = new URL(SERVER_URL + "/add_submission?name=" + submission.getName() + "&category=" + submission.getCategory() +
-                    "&location=" + submission.getLocation() + "&description=" + submission.getDescription() + "&keywords=" +
-                    submission.getKeywords() + "&image=" + submission.getImage() + "&submitted=" + submission.getSubmitted() +
-                    "&from=" + submission.getStartOfEvent() + "&to=" + submission.getEndOfEvent());
-
-*/
-    /*
-            HttpURLConnection conn = networkProvider.getConnection(url);
-            conn.setRequestMethod("POST");
-            conn.setDoInput(true);
-            conn.connect();
-            int response = conn.getResponseCode();
-
-            if (response < HTTP_SUCCESS_START || response > HTTP_SUCCESS_END) {
-                throw new CommunicationLayerException("Invalid HTTP response code");
-            }
-
-            String serverResponse = fetchContent(conn);
-            JSONObject jsonObject = new JSONObject(serverResponse);
-            JSONObject serverResponseJson = jsonObject.getJSONObject("submission");
-            if(serverResponseJson.getString("status").equals("failure")){
-                switch(serverResponseJson.getString("reason")){
-                    case "name" : return ResponseStatus.NAME;
-                    case "location"  : return ResponseStatus.LOCATION;
-                    case "image" : return ResponseStatus.IMAGE;
-                    default: throw new CommunicationLayerException();
-                }
-            }else if ( serverResponseJson.getString("status").equals("invalid")){
-                return null;
-            }else {
-                assert (serverResponseJson.getString("status").equals("ok"));
-
-                //Decide if server responds with OK or with Submission in JSON format
-                return ResponseStatus.OK;
-            }
-        } catch(IOException | JSONException e) {
-            throw new CommunicationLayerException();
-        }
-
-*/
-
-
-
-
 
 
     private String fetchContent(HttpURLConnection conn) throws IOException {
