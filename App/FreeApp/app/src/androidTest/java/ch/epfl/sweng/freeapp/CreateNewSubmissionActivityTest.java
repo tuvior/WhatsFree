@@ -1,11 +1,14 @@
 package ch.epfl.sweng.freeapp;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.support.test.espresso.UiController;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.view.View;
 import android.widget.DatePicker;
+import android.widget.TimePicker;
 
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
@@ -142,6 +145,37 @@ public class CreateNewSubmissionActivityTest {
 
             }
         };
+    }
+
+
+    public static ViewAction setTime(final int hours, final int minutes ){
+
+        return new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return ViewMatchers.isAssignableFrom(TimePicker.class);
+            }
+
+            @Override
+            public String getDescription() {
+                return "Set the TimePicker";
+            }
+
+            //Because setHours and setMinute requires API level 23 if a machine
+            //if a machine is running a less recent API, this code will never be called
+            @TargetApi(Build.VERSION_CODES.M)
+            @Override
+            public void perform(UiController uiController, View view) {
+
+
+                TimePicker picker = (TimePicker)view;
+                picker.setHour(hours);
+                picker.setMinute(minutes);
+
+
+            }
+        };
+
     }
 
 

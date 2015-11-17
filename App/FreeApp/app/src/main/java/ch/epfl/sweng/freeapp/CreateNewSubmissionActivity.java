@@ -215,6 +215,10 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
         timePickerDialog.show();
     }
 
+    //used in order to insert Dependencies
+    public void testSetImage(Bitmap bitmap){
+        imageView.setImageBitmap(bitmap);
+    }
 
 
     public  void onClickTakeImage(View view){
@@ -298,17 +302,6 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
             keywords.setError("Put some keywords");
             keywords.setText("");
         }else{
-            /*
-            if(dateOfEvent.before(currentDate)){
-                date.setText("");
-                Toast.makeText(this,"Past Date not allowed", Toast.LENGTH_SHORT).show();
-
-            }else if(endDate.getTime() <= dateOfEvent.getTime()){
-                startTime.setText("");
-                endTime.setText("");
-                Toast.makeText(this,"Event has passed",Toast.LENGTH_SHORT).show();
-
-            }*/
 
 
              currentCalendar.setTimeZone(timeZone);
