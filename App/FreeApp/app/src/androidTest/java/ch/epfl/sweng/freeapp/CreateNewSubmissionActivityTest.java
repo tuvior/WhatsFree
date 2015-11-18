@@ -48,7 +48,7 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
     }
 
-    public void test
+   // public void test
 
 
     //  @Rule

@@ -76,6 +76,8 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
     private int DATE_DIALOG_ID = 0;
     private Submission.Builder submission = new Submission.Builder();
 
+    private ProvideImage image = new ProvideImage();
+
 
 
     @Override
@@ -311,7 +313,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
              this.endDate = endEventCalendar.getTime();
 
 
-            if(endDate.before(dateOfEvent)){
+            if(endDate.before(dateOfEvent)|| endDate.getTime() == dateOfEvent.getTime()){
                 date.setText("");
                 startTime.setText("");
                 endTime.setText("");
@@ -429,6 +431,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
              if(resultCode == RESULT_OK){
                  if(requestCode == PICTURE_REQUEST){
                       bitmap =  (Bitmap)intent.getExtras().get("data");
+
                      return  bitmap;
                  }
              }
