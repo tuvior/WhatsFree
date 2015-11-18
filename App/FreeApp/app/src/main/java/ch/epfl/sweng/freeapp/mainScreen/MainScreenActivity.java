@@ -89,6 +89,14 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     /**
+     * Used by tests to get the tabs
+     * @return the viewPAger
+     */
+    public ViewPager getViewPager(){
+        return viewPager;
+    }
+
+    /**
      * Adds an icon to each tab
      */
     private void setupTabIcons() {

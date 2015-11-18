@@ -18,6 +18,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import ch.epfl.sweng.freeapp.FakeCommunicationLayer;
 import ch.epfl.sweng.freeapp.R;
+import ch.epfl.sweng.freeapp.Submission;
 
 
 public class AroundYouFragment extends ListFragment {
@@ -67,4 +68,11 @@ public class AroundYouFragment extends ListFragment {
         startActivity(intent);
     }
 
+    /**
+     * Sort submissions according to how close they are to you
+     */
+    public ArrayList<SubmissionShortcut> sortSubmissions(ArrayList<SubmissionShortcut> submissionShortcuts){
+        //TODO
+        return null;
+    }
 }

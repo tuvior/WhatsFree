@@ -66,4 +66,13 @@ public class WhatsNewFragment extends ListFragment {
         startActivity(intent);
     }
 
+    /**
+     * Sorts submissions according to their submission time
+     * @return the sorted list of submissions
+     */
+    public ArrayList<SubmissionShortcut> sortSubmissions(ArrayList<SubmissionShortcut> submissionShortcuts){
+        //TODO
+        return null;
+    }
+
 }

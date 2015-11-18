@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import ch.epfl.sweng.freeapp.mainScreen.SubmissionShortcut;
@@ -17,6 +18,7 @@ import ch.epfl.sweng.freeapp.mainScreen.SubmissionShortcut;
 public class FakeCommunicationLayer{
 
     private static Submission freeCroissants = new Submission("Free Croissants", "There's a huge croissant giveaway at Flon!", SubmissionCategory.FOOD);
+    private static Submission freeDonuts = new Submission("Free Donuts", "Migros gives a free dozen to the first 5 customers", SubmissionCategory.FOOD);
     private static Submission unicornDiscount = new Submission("Unicorn Discount", "Get one of our wonderful white unicorns!", SubmissionCategory.MISCELLANOUS);
     private static Submission freeClubEntrance = new Submission("Free Entrance Tonight", "Come get wasted for free tonight!", SubmissionCategory.NIGHTLIFE);
 
@@ -56,14 +58,28 @@ public class FakeCommunicationLayer{
         return submission;
     }
 
-    private static JSONObject createNameJson(Submission submission) throws JSONException {
+    public static ArrayList<SubmissionShortcut> sendCategoryRequest(SubmissionCategory category){
 
-        String title = submission.getName();
-        JSONObject submissionJson = new JSONObject();
+        ArrayList<SubmissionShortcut> submissionShortcuts = new ArrayList<>();
 
-        submissionJson.put("name", title);
+        switch (category){
+            case FOOD: {
+                submissionShortcuts.add(toShortcut(freeCroissants));
+                submissionShortcuts.add(toShortcut(freeDonuts));
+            }
+                break;
+            case MISCELLANOUS: {
+                submissionShortcuts.add(toShortcut(unicornDiscount));
+            }
+                break;
+            case NIGHTLIFE: {
+                submissionShortcuts.add(toShortcut(freeClubEntrance));
+            }
+                break;
+            default:
+        }
 
-        return submissionJson;
+        return submissionShortcuts;
     }
 
     /**
@@ -88,6 +104,27 @@ public class FakeCommunicationLayer{
 
         return submissionsList;
 
+    }
+
+
+    private static JSONObject createNameJson(Submission submission) throws JSONException {
+
+        String title = submission.getName();
+        JSONObject submissionJson = new JSONObject();
+
+        submissionJson.put("name", title);
+
+        return submissionJson;
+    }
+
+    /**
+     * Transforms the submission into its shortcut equivalent
+     *
+     * @param submission
+     * @return the shortcut version of the submission
+     */
+    private static SubmissionShortcut toShortcut(Submission submission){
+        return new SubmissionShortcut(submission.getName());
     }
 
 }
