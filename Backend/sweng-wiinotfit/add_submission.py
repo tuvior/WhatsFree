@@ -12,13 +12,6 @@ def json_response(status):
         "status": "ok"
     }
 }"""
-    
-    elif status == -1:
-        res = """{
-    "submission": {
-        "status": "invalid"
-    }
-}"""
 
     elif status == 1:
         res = """{

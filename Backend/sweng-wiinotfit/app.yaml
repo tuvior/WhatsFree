@@ -14,8 +14,8 @@ handlers:
 - url: /submission
   script: add_submission.app
 
-- url: /news
-  script: what_is_new.app
+- url: /retrieve
+  script: retrieve_submission.app
 
 libraries:
 - name: webapp2
