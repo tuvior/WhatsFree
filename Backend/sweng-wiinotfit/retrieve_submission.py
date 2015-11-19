@@ -1,10 +1,11 @@
 import webapp2
 import string
 import json
+import datetime
 from google.appengine.ext import ndb
+from google.appengine.api import images
 from submission import Submission
 from session import Session
-import datetime
 
 def json_response(status):
     if status == -1:
@@ -123,6 +124,14 @@ class retrieveSubmission(webapp2.RequestHandler):
                             submission = submissions[i]
                             json_submission = json_string(submission.name, '', '', '', submission.image, '', '', '', '')
                             submissions_array.append(json_submission)
+
+                            # Once BadImageError fixed do
+
+                            #image_to_resize = images.Image(submission.image)
+                            #image_to_resize.resize(width=90, height=90)
+                            #image_to_resize.im_feeling_lucky()
+
+                            #thumbnail = image_to_resize.execute_transforms(output_encoding=images.JPEG)
 
                     else:
                         for i in range(0, len(submissions)):
