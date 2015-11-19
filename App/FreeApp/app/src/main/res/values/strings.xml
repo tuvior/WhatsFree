@@ -39,4 +39,5 @@
         <item>Lifestyle</item>
         <item>Miscellaneous</item>
     </string-array>
+    <string name="title_activity_map">MapActivity</string>
 </resources>
