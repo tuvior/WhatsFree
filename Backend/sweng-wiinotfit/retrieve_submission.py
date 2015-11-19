@@ -31,8 +31,8 @@ def json_string(name, category , description , location , image , keywords, subm
     return json_string
 
 
-def json_error(status, reason):
-    json_string = {'status': status, 'reason': reason}
+def json_error(option, status, reason):
+    json_string = {option: {'status': status, 'reason': reason}}
     return json_string
 
 # add cookie
@@ -50,14 +50,14 @@ class retrieveSubmission(webapp2.RequestHandler):
             name = self.request.get('name');
 
             if not name:
-                self.response.write(json_error('error', 'name'))
+                self.response.write(json.dumps(json_error('single request', 'failure', 'name')))
 
             else:
                 submission = Submission.query(Submission.name == name).get()
                 
                 if not submission:
-                    error = json_error('failure', 'no corresponding submission')
-                    self.response.write(error)
+                    error = json_error('single request', 'failure', 'no corresponding submission')
+                    self.response.write(json.dumps(error))
 
                 else:
                     string_submission = json_string(submission.name, submission.category, submission.description, submission.location,
@@ -75,8 +75,8 @@ class retrieveSubmission(webapp2.RequestHandler):
             submissions = Submission.query(Submission.submitted >= date).fetch(submissions_number)
 
             if not submissions:
-                error = json_error('failure', 'nothing in range')
-                self.response.write(error)
+                error = json_error('what is new', 'failure', 'nothing in range')
+                self.response.write(json.dumps(error))
 
             else:
                 submissions_array = []
@@ -100,13 +100,62 @@ class retrieveSubmission(webapp2.RequestHandler):
         
         # flag = 3 means that we are requesting submissions for around you
 
-        #flag = 4 means that we are requesting submissions for a specific category
+        # flag = 4 means that we are requesting submissions for a specific category
+        elif flag == '4':
+            category = self.request.get('category')
+            submissions_number = 5
 
+            if not category:
+                error = json_error('retrieve category', 'failure', 'no category')
+                self.response.write(json.dumps(error))
+
+            else:
+                submissions = Submission.query(Submission.category == category).fetch(submissions_number)
+
+                if not submissions:
+                    error = json_error('retrieve category', 'failure', 'empty category')
+                    self.response.write(json.dumps(error))
+
+                else:
+                    submissions_array = []
+                    if(submissions_number <= len(submissions_array)):
+                        for i in range(0, submissions_number):
+                            submission = submissions[i]
+                            json_submission = json_string(submission.name, '', '', '', submission.image, '', '', '', '')
+                            submissions_array.append(json_submission)
+
+                    else:
+                        for i in range(0, len(submissions)):
+                            submission = submissions[i]
+                            json_submission = json_string(submission.name, '', '', '', submission.image, '', '', '', '')
+                            submissions_array.append(json_submission)
+
+                    response = json.dumps(submissions_array)
+                    self.response.write(response)
+
+        # flag = 5 means that we are using the search option
+        elif flag == '5':
+            name = self.request.get('name')
+
+            if not name:
+                error = json_error('search', 'failure', 'name')
+                self.response.write(json.dumps(error))
+
+            else:
+                submission = Submission.query(Submission.name == name).get()
+
+                if not submission:
+                    error = json_error('search', 'failure', 'submission')
+                    self.response.write(json.dumps(error))
+
+                else:
+                    json_submission = json_string(submission.name, '', '', '', submission.image, '', '', '', '')
+                    self.response.write(json.dumps(json_submission))
 
         # every other flag generate an error
         else:
-            error = json_error('failure', 'flag')
-            self.response.write(error)
+            error = json_error('no option' ,'failure', 'flag')
+            self.response.write(json.dumps(error))
 
 
 app = webapp2.WSGIApplication([
