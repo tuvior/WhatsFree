@@ -17,6 +17,14 @@ public class MainScreenActivityTest extends ActivityInstrumentationTestCase2<Mai
     }
 
     /**
+     * Tests that submissions are indeed displayed in the list of submissions
+     */
+    @Test
+    public void testSubmissionsDisplayedInList(){
+
+    }
+
+    /**
      * Makes sure the What's new tab is displayed by default
      */
     @Test

@@ -1,6 +1,7 @@
 package ch.epfl.sweng.freeapp;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.BufferedReader;
@@ -8,6 +9,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+
+import ch.epfl.sweng.freeapp.mainScreen.SubmissionShortcut;
 
 public class CommunicationLayer{
     private static final String SERVER_URL = "http://sweng-wiinotfit.appspot.com";
@@ -83,7 +87,6 @@ public class CommunicationLayer{
         try {
             URL url = new URL(SERVER_URL + "/register?user="+registrationInfo.getUsername()+"&password="+registrationInfo.getPassword()+"&email="+registrationInfo.getEmail());
 
-
             HttpURLConnection conn = networkProvider.getConnection(url);
             conn.setRequestMethod("GET");
             conn.setDoInput(true);
@@ -131,6 +134,30 @@ public class CommunicationLayer{
                 reader.close();
             }
         }
+    }
+
+    /**
+     * The server sends the submissions as a JSONArray, and the communication layer
+     * conveys those to the tabs as an ArrayList
+     * @param jsonSubmissions
+     * @return
+     * @throws JSONException
+     */
+    private static ArrayList<SubmissionShortcut> jsonArrayToArrayList(JSONArray jsonSubmissions) throws JSONException {
+
+        ArrayList<SubmissionShortcut> submissionsList = new ArrayList<>();
+
+        for(int i = 0; i < jsonSubmissions.length(); i++){
+            //TODO: also include image
+            JSONObject jsonSubmission = jsonSubmissions.getJSONObject(i);
+            String name = jsonSubmission.getString("name");
+
+            SubmissionShortcut submission = new SubmissionShortcut(name);
+            submissionsList.add(submission);
+        }
+
+        return submissionsList;
+
     }
 
 }
