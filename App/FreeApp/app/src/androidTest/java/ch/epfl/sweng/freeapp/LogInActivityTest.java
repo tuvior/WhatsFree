@@ -229,5 +229,14 @@ public class LogInActivityTest {
 
     }
 
+    @Test
+    public void testGoesToRegisterActivityWhenSignUpClicked(){
+
+        onView(withId(R.id.sign_up)).perform(click());
+       // onView(withId(R.id.sign_up)).check(matches(not(isDisplayed())));
+
+
+    }
+
 
 }
