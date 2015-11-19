@@ -9,17 +9,17 @@ import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import ch.epfl.sweng.freeapp.FakeCommunicationLayer;
-import ch.epfl.sweng.freeapp.R;
-import ch.epfl.sweng.freeapp.Submission;
 
+import ch.epfl.sweng.freeapp.FakeCommunicationLayer;
+import ch.epfl.sweng.freeapp.MapActivity;
+import ch.epfl.sweng.freeapp.R;
 
 public class AroundYouFragment extends ListFragment {
 
@@ -48,6 +48,16 @@ public class AroundYouFragment extends ListFragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        //Set listener for mapButton
+        ImageButton mapButton = (ImageButton) rootView.findViewById(R.id.mapButton);
+        mapButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), MapActivity.class);
+                //intent.putExtra(MAP_MESSAGE, mapMessage);
+                startActivity(intent);
+            }
+        });
 
         return rootView;
     }
