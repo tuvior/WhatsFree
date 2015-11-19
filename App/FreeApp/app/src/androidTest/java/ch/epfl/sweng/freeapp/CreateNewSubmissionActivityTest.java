@@ -149,7 +149,7 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
 
         onView(withId(R.id.startTime)).perform(click());
         onView(withClassName(Matchers.equalTo(TimePicker.class.getName()))). perform(setTime(startHoursOfDay, startMinute));
-        onView(withText(("Ok"))).perform(click());
+        onView(withText(("OK"))).perform(click());
 
 
         onView(withId(R.id.endButton)).perform(click());
