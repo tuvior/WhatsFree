@@ -9,10 +9,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
+
+import java.util.ArrayList;
+
+import ch.epfl.sweng.freeapp.mainScreen.SubmissionShortcut;
 
 /**
  * This communication layer is independent of the server and allows sending the app
@@ -22,11 +27,10 @@ import java.util.Calendar;
  */
 public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
 
+
     private int startTime = 17;
     private int endTime = 18;
-    private Submission freeCroissants;
-    private Submission unicornDiscount;
-    private Submission freeClubEntrance;
+
     private Bitmap bitmapImage;
     private String image;
     private String keywords = "Beautiful Fun nice ";
@@ -35,32 +39,16 @@ public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
     private Calendar endOfEvent = Calendar.getInstance();
 
     private Submission.Builder submissionBuilderCroissant = new Submission.Builder();
-    private Submission.Builder submissionBuilderUnicorn = new Submission.Builder();
+    private Submission.Builder submissionBuilderUnicornDiscount = new Submission.Builder();
     private Submission.Builder submissionBuilderFreeClubEntrance = new Submission.Builder();
+    private Submission.Builder submissionBuilderFreeDonuts =  new Submission.Builder();
+
+    private static Submission freeCroissants; //= new Submission("Free Croissants", "There's a huge croissant giveaway at Flon!", SubmissionCategory.FOOD);
+    private static Submission freeDonuts; //new Submission("Free Donuts", "Migros gives a free dozen to the first 5 customers", );
+    private static Submission unicornDiscount;// = new Submission("Unicorn Discount", "Get one of our wonderful white unicorns!", SubmissionCategory.MISCELLANOUS);
+    private static Submission freeClubEntrance;// = new Submission("Free Entrance Tonight", "Come get wasted for free tonight!", SubmissionCategory.NIGHTLIFE);
 
 
-/*
-    public FakeCommunicationLayer(){
-
-        submissionBuilderCroissant.name("Free Croissants");
-        submissionBuilderCroissant.description("There's a huge croissant giveaway at Flon!");
-        submissionBuilderCroissant.category(SubmissionCategory.FOOD);
-
-
-        submissionBuilderUnicorn.name("Unicorn Discount");
-        submissionBuilderUnicorn.description("Get one of our wonderful white unicorns!");
-        submissionBuilderUnicorn.category(SubmissionCategory.MISCELLANEOUS);
-
-        submissionBuilderFreeClubEntrance.name("Free Entrance Tonight");
-        submissionBuilderFreeClubEntrance.description("Come get wasted for free tonight!");
-        submissionBuilderFreeClubEntrance.category(SubmissionCategory.NIGHTLIFE);
-
-        freeCroissants = createSubmission(submissionBuilderCroissant);
-        unicornDiscount = createSubmission(submissionBuilderUnicorn);
-        freeClubEntrance = createSubmission(submissionBuilderFreeClubEntrance);
-    }
-
- */
     public FakeCommunicationLayer() {
 
       //AssetManager assetManager = activity.getAssets();
@@ -71,18 +59,26 @@ public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
         submissionBuilderCroissant.description("There's a huge croissant giveaway at Flon!");
         submissionBuilderCroissant.category(SubmissionCategory.FOOD);
 
+        submissionBuilderFreeDonuts.name("Free Donuts");
+        submissionBuilderFreeDonuts.description("Migros gives a free dozen to the first 5 customers");
+        submissionBuilderFreeDonuts.category(SubmissionCategory.FOOD);
 
-        submissionBuilderUnicorn.name("Unicorn Discount");
-        submissionBuilderUnicorn.description("Get one of our wonderful white unicorns!");
-        submissionBuilderUnicorn.category(SubmissionCategory.MISCELLANEOUS);
+
+
+
+        submissionBuilderUnicornDiscount.name("Unicorn Discount");
+        submissionBuilderUnicornDiscount.description("Get one of our wonderful white unicorns!");
+        submissionBuilderUnicornDiscount.category(SubmissionCategory.MISCELLANEOUS);
 
         submissionBuilderFreeClubEntrance.name("Free Entrance Tonight");
         submissionBuilderFreeClubEntrance.description("Come get wasted for free tonight!");
         submissionBuilderFreeClubEntrance.category(SubmissionCategory.NIGHTLIFE);
 
         freeCroissants = createSubmission(submissionBuilderCroissant);
-        unicornDiscount = createSubmission(submissionBuilderUnicorn);
+        unicornDiscount = createSubmission(submissionBuilderUnicornDiscount);
         freeClubEntrance = createSubmission(submissionBuilderFreeClubEntrance);
+        freeDonuts = createSubmission(submissionBuilderFreeDonuts);
+
 
     }
 
@@ -91,7 +87,7 @@ public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
         return ResponseStatus.OK;
     }
 
-    public JSONArray sendWhatIsNewRequest() throws JSONException {
+    public static JSONArray sendWhatIsNewRequest() throws JSONException {
 
         JSONArray jsonSubmissions = new JSONArray();
 
@@ -122,7 +118,56 @@ public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
         return submission;
     }
 
-    private JSONObject createNameJson(Submission submission) throws JSONException {
+    public static ArrayList<SubmissionShortcut> sendCategoryRequest(SubmissionCategory category){
+
+        ArrayList<SubmissionShortcut> submissionShortcuts = new ArrayList<>();
+
+        switch (category){
+            case FOOD: {
+                submissionShortcuts.add(toShortcut(freeCroissants));
+                submissionShortcuts.add(toShortcut(freeDonuts));
+            }
+                break;
+            case MISCELLANEOUS: {
+                submissionShortcuts.add(toShortcut(unicornDiscount));
+            }
+                break;
+            case NIGHTLIFE: {
+                submissionShortcuts.add(toShortcut(freeClubEntrance));
+            }
+                break;
+            default:
+        }
+
+        return submissionShortcuts;
+    }
+
+    /**
+     * The server sends the submissions as a JSONArray, and the communication layer
+     * conveys those to the tabs as an ArrayList
+     * @param jsonSubmissions
+     * @return
+     * @throws JSONException
+     */
+    public static ArrayList<SubmissionShortcut> jsonArrayToArrayList(JSONArray jsonSubmissions) throws JSONException {
+
+        ArrayList<SubmissionShortcut> submissionsList = new ArrayList<>();
+
+        for(int i = 0; i < jsonSubmissions.length(); i++){
+            //TODO: also include image
+            JSONObject jsonSubmission = jsonSubmissions.getJSONObject(i);
+            String name = jsonSubmission.getString("name");
+
+            SubmissionShortcut submission = new SubmissionShortcut(name);
+            submissionsList.add(submission);
+        }
+
+        return submissionsList;
+
+    }
+
+
+    private static JSONObject createNameJson(Submission submission) throws JSONException {
 
         String title = submission.getName();
         JSONObject submissionJson = new JSONObject();
@@ -131,6 +176,7 @@ public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
 
         return submissionJson;
     }
+
 
     private String encodeImage(AssetManager assetManager) {
         if (assetManager != null) {
@@ -176,4 +222,16 @@ public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
         return builder.build();
 
     }
+
+    /**
+     * Transforms the submission into its shortcut equivalent
+     *
+     * @param submission
+     * @return the shortcut version of the submission
+     */
+    private static SubmissionShortcut toShortcut(Submission submission){
+        return new SubmissionShortcut(submission.getName());
+    }
+
+
 }
