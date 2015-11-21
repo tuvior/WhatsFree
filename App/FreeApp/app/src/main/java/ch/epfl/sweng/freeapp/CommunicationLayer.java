@@ -2,12 +2,9 @@ package ch.epfl.sweng.freeapp;
 
 import android.util.Log;
 
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-
 import org.json.JSONArray;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,18 +17,13 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
- REMEMBER TO CHANGE TO COOKIE SESSION STRING !!!!!!!
- */
-
-import java.util.ArrayList;
-
 import ch.epfl.sweng.freeapp.mainScreen.SubmissionShortcut;
+
+
 
 
 public class CommunicationLayer implements  DefaultCommunicationLayer {
@@ -40,6 +32,11 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
     private final static int HTTP_SUCCESS_START = 200;
     private final static int HTTP_SUCCESS_END = 299;
     private String cookieSession;
+
+
+    //FixMe:  REMEMBER TO CHANGE TO COOKIE SESSION STRING !!!!!!!
+
+
     private final static String COOKIE_TEST = "BEY4L9lVSlA0hHQQ1ClTXYVUn5xwcr0BfYSKc7sw0Y54XYzWObTAsJ6PHQWPQVzO";
 
 
