@@ -43,10 +43,12 @@ public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
     private Submission.Builder submissionBuilderFreeClubEntrance = new Submission.Builder();
     private Submission.Builder submissionBuilderFreeDonuts =  new Submission.Builder();
 
-    private static Submission freeCroissants; //= new Submission("Free Croissants", "There's a huge croissant giveaway at Flon!", SubmissionCategory.FOOD);
-    private static Submission freeDonuts; //new Submission("Free Donuts", "Migros gives a free dozen to the first 5 customers", );
-    private static Submission unicornDiscount;// = new Submission("Unicorn Discount", "Get one of our wonderful white unicorns!", SubmissionCategory.MISCELLANOUS);
-    private static Submission freeClubEntrance;// = new Submission("Free Entrance Tonight", "Come get wasted for free tonight!", SubmissionCategory.NIGHTLIFE);
+
+
+    private static Submission freeCroissants = new Submission("Free Croissants", "There's a huge croissant giveaway at Flon!", SubmissionCategory.FOOD);
+    private static Submission freeDonuts =  new Submission("Free Donuts", "Migros gives a free dozen to the first 5 customers",SubmissionCategory.FOOD);
+    private static Submission unicornDiscount = new Submission("Unicorn Discount", "Get one of our wonderful white unicorns!", SubmissionCategory.MISCELLANEOUS);
+    private static Submission freeClubEntrance  = new Submission("Free Entrance Tonight", "Come get wasted for free tonight!", SubmissionCategory.NIGHTLIFE);
 
 
     public FakeCommunicationLayer() {
@@ -55,24 +57,7 @@ public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
 
         this.image = "RubbishImage";
 
-        submissionBuilderCroissant.name("Free Croissants");
-        submissionBuilderCroissant.description("There's a huge croissant giveaway at Flon!");
-        submissionBuilderCroissant.category(SubmissionCategory.FOOD);
 
-        submissionBuilderFreeDonuts.name("Free Donuts");
-        submissionBuilderFreeDonuts.description("Migros gives a free dozen to the first 5 customers");
-        submissionBuilderFreeDonuts.category(SubmissionCategory.FOOD);
-
-
-
-
-        submissionBuilderUnicornDiscount.name("Unicorn Discount");
-        submissionBuilderUnicornDiscount.description("Get one of our wonderful white unicorns!");
-        submissionBuilderUnicornDiscount.category(SubmissionCategory.MISCELLANEOUS);
-
-        submissionBuilderFreeClubEntrance.name("Free Entrance Tonight");
-        submissionBuilderFreeClubEntrance.description("Come get wasted for free tonight!");
-        submissionBuilderFreeClubEntrance.category(SubmissionCategory.NIGHTLIFE);
 
         freeCroissants = createSubmission(submissionBuilderCroissant);
         unicornDiscount = createSubmission(submissionBuilderUnicornDiscount);
@@ -97,6 +82,9 @@ public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
 
         return jsonSubmissions;
     }
+
+
+
 
     public Submission fetchSubmission(String name) {
 
@@ -176,6 +164,7 @@ public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
 
         return submissionJson;
     }
+
 
 
     private String encodeImage(AssetManager assetManager) {

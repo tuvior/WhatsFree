@@ -20,6 +20,12 @@ public  class Submission  {
     private Date endOfEvent;
 
 
+    public Submission(String name , String description, SubmissionCategory category){
+        this.name = name;
+        this.description = description;
+        this.category = category;
+    }
+
 
 
     public static class Builder {
