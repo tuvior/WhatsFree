@@ -1,11 +1,7 @@
 package ch.epfl.sweng.freeapp;
 
-import android.content.Context;
-import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -18,7 +14,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -87,9 +82,7 @@ public class MapActivity extends AppCompatActivity {
      */
     private void centerCameraUser() {
         //TODO: figure out how to get the user's location
-        Location location = getBestLocation();
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-       // LatLng latLng = new LatLng(-17.536407, -149.566035);
+        LatLng latLng = new LatLng(-17.536407, -149.566035);
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 10);
         googleMap.animateCamera(cameraUpdate);
 
@@ -129,43 +122,5 @@ public class MapActivity extends AppCompatActivity {
                 googleMap.addMarker(marker);
             }
         }
-    }
-
-    /**
-     * try to get the 'best' location selected from all providers
-     */
-    private Location getBestLocation() {
-        Location gpslocation = getLocationByProvider(LocationManager.GPS_PROVIDER);
-        Location networkLocation =
-                getLocationByProvider(LocationManager.NETWORK_PROVIDER);
-        // if we have only one location available, the choice is easy
-        if (gpslocation == null) {
-            return networkLocation;
-        }
-        if (networkLocation == null) {
-            return gpslocation;
-        }
-        return null;
-    }
-
-    /**
-     * get the last known location from a specific provider (network/gps)
-     */
-    private Location getLocationByProvider(String provider) {
-        Location location = null;
-
-        LocationManager locationManager = (LocationManager) getApplicationContext()
-                .getSystemService(Context.LOCATION_SERVICE);
-        try {
-            if (locationManager.isProviderEnabled(provider)) {
-                if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    return null;
-                }
-                location = locationManager.getLastKnownLocation(provider);
-            }
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        }
-        return location;
     }
 }
