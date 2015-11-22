@@ -9,13 +9,19 @@ public class SubmissionShortcut {
 
     //TODO: define image
     private String name;
+    private String location;
 
-    public SubmissionShortcut(String name){
+    public SubmissionShortcut(String name, String location){
         this.name = name;
+        this.location = location;
     }
 
     public String getName(){
         return name;
+    }
+
+    public String getLocation() {
+        return location;
     }
 
 }

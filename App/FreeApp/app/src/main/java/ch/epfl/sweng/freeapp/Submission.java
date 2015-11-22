@@ -20,10 +20,11 @@ public  class Submission  {
     private Date endOfEvent;
 
 
-    public Submission(String name , String description, SubmissionCategory category){
+    public Submission(String name , String description, SubmissionCategory category, String location){
         this.name = name;
         this.description = description;
         this.category = category;
+        this.location = location;
     }
 
 

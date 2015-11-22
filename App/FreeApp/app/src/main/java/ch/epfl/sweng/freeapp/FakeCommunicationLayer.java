@@ -45,25 +45,25 @@ public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
 
 
 
-    private static Submission freeCroissants = new Submission("Free Croissants", "There's a huge croissant giveaway at Flon!", SubmissionCategory.FOOD);
-    private static Submission freeDonuts =  new Submission("Free Donuts", "Migros gives a free dozen to the first 5 customers",SubmissionCategory.FOOD);
-    private static Submission unicornDiscount = new Submission("Unicorn Discount", "Get one of our wonderful white unicorns!", SubmissionCategory.MISCELLANEOUS);
-    private static Submission freeClubEntrance  = new Submission("Free Entrance Tonight", "Come get wasted for free tonight!", SubmissionCategory.NIGHTLIFE);
+    private static Submission freeCroissants = new Submission("Free Croissants", "There's a huge croissant giveaway at Flon!", SubmissionCategory.FOOD, "Presidence de la polynesie francaise");
+    private static Submission freeDonuts =  new Submission("Free Donuts", "Migros gives a free dozen to the first 5 customers",SubmissionCategory.FOOD, "Motu Uta");
+    private static Submission unicornDiscount = new Submission("Unicorn Discount", "Get one of our wonderful white unicorns!", SubmissionCategory.MISCELLANEOUS, "Papeete Tahiti Temple");
+    private static Submission freeClubEntrance  = new Submission("Free Entrance Tonight", "Come get wasted for free tonight!", SubmissionCategory.NIGHTLIFE, "Port de Papeete");
 
 
     public FakeCommunicationLayer() {
 
-      //AssetManager assetManager = activity.getAssets();
+        //AssetManager assetManager = activity.getAssets();
 
         this.image = "RubbishImage";
 
 
-
-        freeCroissants = createSubmission(submissionBuilderCroissant);
-        unicornDiscount = createSubmission(submissionBuilderUnicornDiscount);
-        freeClubEntrance = createSubmission(submissionBuilderFreeClubEntrance);
-        freeDonuts = createSubmission(submissionBuilderFreeDonuts);
-
+        /**
+         freeCroissants = createSubmission(submissionBuilderCroissant);
+         unicornDiscount = createSubmission(submissionBuilderUnicornDiscount);
+         freeClubEntrance = createSubmission(submissionBuilderFreeClubEntrance);
+         freeDonuts = createSubmission(submissionBuilderFreeDonuts);
+         **/
 
     }
 
@@ -76,9 +76,9 @@ public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
 
         JSONArray jsonSubmissions = new JSONArray();
 
-        jsonSubmissions.put(0, createNameJson(freeCroissants));
-        jsonSubmissions.put(1, createNameJson(unicornDiscount));
-        jsonSubmissions.put(2, createNameJson(freeClubEntrance));
+        jsonSubmissions.put(0, createShortcutJson(freeCroissants));
+        jsonSubmissions.put(1, createShortcutJson(unicornDiscount));
+        jsonSubmissions.put(2, createShortcutJson(freeClubEntrance));
 
         return jsonSubmissions;
     }
@@ -115,15 +115,15 @@ public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
                 submissionShortcuts.add(toShortcut(freeCroissants));
                 submissionShortcuts.add(toShortcut(freeDonuts));
             }
-                break;
+            break;
             case MISCELLANEOUS: {
                 submissionShortcuts.add(toShortcut(unicornDiscount));
             }
-                break;
+            break;
             case NIGHTLIFE: {
                 submissionShortcuts.add(toShortcut(freeClubEntrance));
             }
-                break;
+            break;
             default:
         }
 
@@ -145,8 +145,9 @@ public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
             //TODO: also include image
             JSONObject jsonSubmission = jsonSubmissions.getJSONObject(i);
             String name = jsonSubmission.getString("name");
+            String location = jsonSubmission.getString("location");
 
-            SubmissionShortcut submission = new SubmissionShortcut(name);
+            SubmissionShortcut submission = new SubmissionShortcut(name, location);
             submissionsList.add(submission);
         }
 
@@ -155,12 +156,14 @@ public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
     }
 
 
-    private static JSONObject createNameJson(Submission submission) throws JSONException {
+    private static JSONObject createShortcutJson(Submission submission) throws JSONException {
 
         String title = submission.getName();
+        String location = submission.getLocation();
         JSONObject submissionJson = new JSONObject();
 
         submissionJson.put("name", title);
+        submissionJson.put("location", location);
 
         return submissionJson;
     }
@@ -219,7 +222,7 @@ public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
      * @return the shortcut version of the submission
      */
     private static SubmissionShortcut toShortcut(Submission submission){
-        return new SubmissionShortcut(submission.getName());
+        return new SubmissionShortcut(submission.getName(), submission.getLocation());
     }
 
 
