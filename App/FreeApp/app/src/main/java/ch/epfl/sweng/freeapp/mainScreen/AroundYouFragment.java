@@ -3,7 +3,9 @@ package ch.epfl.sweng.freeapp.mainScreen;
 /**
  * Created by lois on 11/6/15.
  */
+
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
@@ -12,16 +14,24 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import ch.epfl.sweng.freeapp.FakeCommunicationLayer;
 import ch.epfl.sweng.freeapp.MapActivity;
 import ch.epfl.sweng.freeapp.R;
 
 public class AroundYouFragment extends ListFragment {
+
+    private GoogleMap googleMap;
+    private Location location;
 
     public AroundYouFragment() {
         // Required empty public constructor
@@ -38,10 +48,25 @@ public class AroundYouFragment extends ListFragment {
 
         View rootView = inflater.inflate(R.layout.around_you_fragment, container, false);
 
+        try{
+
+            if(googleMap == null ){
+                googleMap = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+            }
+
+           this.location =  googleMap.getMyLocation();
+
+
+
+        }catch(Exception  e){
+            e.printStackTrace();
+        }
+
+
         //Get the JSONArray corresponding to the submissions
         try {
             JSONArray jsonNamesAndPictures = FakeCommunicationLayer.sendWhatIsNewRequest();
-            ArrayList<SubmissionShortcut> submissions = FakeCommunicationLayer.jsonArrayToArrayList(jsonNamesAndPictures);
+            ArrayList<SubmissionShortcut> submissions = sortSubmissions(FakeCommunicationLayer.jsonArrayToArrayList(jsonNamesAndPictures));
             //Adapter provides a view for each item in the data set
             SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, submissions);
             this.setListAdapter(adapter);
@@ -82,7 +107,12 @@ public class AroundYouFragment extends ListFragment {
      * Sort submissions according to how close they are to you
      */
     public ArrayList<SubmissionShortcut> sortSubmissions(ArrayList<SubmissionShortcut> submissionShortcuts){
-        //TODO
-        return null;
+        Collections.sort(submissionShortcuts, new Comparator<SubmissionShortcut>() {
+            @Override
+            public int compare(SubmissionShortcut lhs, SubmissionShortcut rhs) {
+                return lhs.getName().compareTo(rhs.getName());
+            }
+        });
+        return submissionShortcuts;
     }
 }
