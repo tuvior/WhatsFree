@@ -5,6 +5,52 @@ package ch.epfl.sweng.freeapp;
  */
 public enum SubmissionCategory {
 
-    FOOD, CLOTHING, NIGHTLIFE, EVENTS, GOODS, MISCELLANOUS
+    FOOD{
+        @Override
+        public String toString() {
+            return "FOOD";
+        }
+    },
+    CLOTHING{
+        @Override
+        public String toString() {
+            return "CLOTHING";
+        }
+    },
+    NIGHTLIFE{
+        @Override
+        public String toString() {
+            return "NIGHTLIFE";
+        }
+    },
+
+    SPORT{
+        @Override
+        public String toString() {
+            return "SPORT";
+        }
+    },
+    MISCELLANEOUS{
+        @Override
+        public String toString() {
+            return "MISCELLANEOUS";
+        }
+    },
+    CULTURE{
+        @Override
+        public String toString() {
+            return "CULTURE";
+        }
+
+    },
+
+    LIFESTYLE{
+        @Override
+        public String toString() {
+            return "CULTURE";
+        }
+
+    }
+
 
 }
