@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import ch.epfl.sweng.freeapp.FakeCommunicationLayer;
 import ch.epfl.sweng.freeapp.MapActivity;
 import ch.epfl.sweng.freeapp.R;
+import ch.epfl.sweng.freeapp.SubmissionShortcut;
 
 public class AroundYouFragment extends ListFragment {
 
@@ -40,8 +41,8 @@ public class AroundYouFragment extends ListFragment {
 
         //Get the JSONArray corresponding to the submissions
         try {
-            JSONArray jsonNamesAndPictures = FakeCommunicationLayer.sendWhatIsNewRequest();
-            ArrayList<SubmissionShortcut> submissions = FakeCommunicationLayer.jsonArrayToArrayList(jsonNamesAndPictures);
+            FakeCommunicationLayer fakeCommunicationLayer = new FakeCommunicationLayer();
+            ArrayList<SubmissionShortcut> submissions = fakeCommunicationLayer.sendSubmissionsRequest();
             //Adapter provides a view for each item in the data set
             SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, submissions);
             this.setListAdapter(adapter);

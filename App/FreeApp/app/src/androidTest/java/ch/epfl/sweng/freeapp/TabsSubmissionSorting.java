@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 import ch.epfl.sweng.freeapp.mainScreen.AroundYouFragment;
 import ch.epfl.sweng.freeapp.mainScreen.CategoriesFragment;
-import ch.epfl.sweng.freeapp.mainScreen.SubmissionShortcut;
 import ch.epfl.sweng.freeapp.mainScreen.WhatsNewFragment;
 
 /**
@@ -25,7 +24,7 @@ public class TabsSubmissionSorting {
 
     @Test
     public void testWhatsNewOrdering() throws JSONException {
-        JSONArray submissionShortcutsJson = FakeCommunicationLayer.sendWhatIsNewRequest();
+        JSONArray submissionShortcutsJson = FakeCommunicationLayer.sendSubmissionsRequest();
         ArrayList<SubmissionShortcut> submissionShortcuts = FakeCommunicationLayer.jsonArrayToArrayList(submissionShortcutsJson);
 
         WhatsNewFragment whatsNewFragment = new WhatsNewFragment();
@@ -36,7 +35,7 @@ public class TabsSubmissionSorting {
 
     @Test
     public void testAroundYouOrdering() throws JSONException {
-        JSONArray submissionShortcutsJson = FakeCommunicationLayer.sendWhatIsNewRequest();
+        JSONArray submissionShortcutsJson = FakeCommunicationLayer.sendSubmissionsRequest();
         ArrayList<SubmissionShortcut> submissionShortcuts = FakeCommunicationLayer.jsonArrayToArrayList(submissionShortcutsJson);
 
         AroundYouFragment aroundYouFragment = new AroundYouFragment();

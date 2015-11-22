@@ -1,7 +1,11 @@
 package ch.epfl.sweng.freeapp;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -21,8 +25,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import ch.epfl.sweng.freeapp.mainScreen.SubmissionShortcut;
 
 /**
  *
@@ -83,9 +85,11 @@ public class MapActivity extends AppCompatActivity {
     /**
      * Center the camera and places a marker on the user's location
      */
-    private void centerCameraUser(){
+    private void centerCameraUser() {
         //TODO: figure out how to get the user's location
-        LatLng latLng = new LatLng(-17.536407, -149.566035);
+        Location location = getBestLocation();
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+       // LatLng latLng = new LatLng(-17.536407, -149.566035);
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 10);
         googleMap.animateCamera(cameraUpdate);
 
@@ -103,10 +107,9 @@ public class MapActivity extends AppCompatActivity {
     private void displaySubmissionMarkers() throws JSONException {
         //TODO: use real communication layer when available
         FakeCommunicationLayer fakeCommunicationLayer = new FakeCommunicationLayer();
-        JSONArray jsonShortcuts = fakeCommunicationLayer.sendWhatIsNewRequest();
-        ArrayList<SubmissionShortcut> shortcuts = fakeCommunicationLayer.jsonArrayToArrayList(jsonShortcuts);
+        ArrayList<SubmissionShortcut> shortcuts = fakeCommunicationLayer.sendSubmissionsRequest();
 
-        for(SubmissionShortcut shortcut: shortcuts){
+        for (SubmissionShortcut shortcut : shortcuts) {
             Geocoder geocoder = new Geocoder(this, Locale.getDefault());
             List<Address> addresses = new ArrayList<>();
 
@@ -118,13 +121,51 @@ public class MapActivity extends AppCompatActivity {
             }
 
             //If an address has been found
-            if(addresses.size() > 0) {
-                double latitude= addresses.get(0).getLatitude();
-                double longitude= addresses.get(0).getLongitude();
+            if (addresses.size() > 0) {
+                double latitude = addresses.get(0).getLatitude();
+                double longitude = addresses.get(0).getLongitude();
                 LatLng latLng = new LatLng(latitude, longitude);
                 MarkerOptions marker = new MarkerOptions().position(latLng).title(shortcut.getName());
                 googleMap.addMarker(marker);
             }
         }
+    }
+
+    /**
+     * try to get the 'best' location selected from all providers
+     */
+    private Location getBestLocation() {
+        Location gpslocation = getLocationByProvider(LocationManager.GPS_PROVIDER);
+        Location networkLocation =
+                getLocationByProvider(LocationManager.NETWORK_PROVIDER);
+        // if we have only one location available, the choice is easy
+        if (gpslocation == null) {
+            return networkLocation;
+        }
+        if (networkLocation == null) {
+            return gpslocation;
+        }
+        return null;
+    }
+
+    /**
+     * get the last known location from a specific provider (network/gps)
+     */
+    private Location getLocationByProvider(String provider) {
+        Location location = null;
+
+        LocationManager locationManager = (LocationManager) getApplicationContext()
+                .getSystemService(Context.LOCATION_SERVICE);
+        try {
+            if (locationManager.isProviderEnabled(provider)) {
+                if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return null;
+                }
+                location = locationManager.getLastKnownLocation(provider);
+            }
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+        return location;
     }
 }

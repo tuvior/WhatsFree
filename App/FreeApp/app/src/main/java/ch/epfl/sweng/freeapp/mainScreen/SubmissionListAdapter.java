@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import java.util.List;
 import ch.epfl.sweng.freeapp.R;
+import ch.epfl.sweng.freeapp.SubmissionShortcut;
 
 /**
  * Created by lois on 11/10/15.

@@ -1,11 +1,43 @@
 package ch.epfl.sweng.freeapp;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.ArrayList;
+
 /**
- * Created by francisdamachi on 15/11/15.
+ * Created by lois on 11/22/15.
  */
 public interface DefaultCommunicationLayer {
 
+    /**
+     * Tells the server to add a submission and gets back the response
+     * @param param the submission to be added
+     * @return the result of the request
+     * @throws CommunicationLayerException
+     */
+    ResponseStatus sendAddSubmissionRequest(Submission param) throws CommunicationLayerException;
 
-    ResponseStatus sendAddSubmissionRequest(Submission param)throws CommunicationLayerException;
+    /**
+     * Asks the server for all the submissions it has.
+     * @return  All the submission shortcuts available (see SubmissionShortcut class)
+     * @throws JSONException
+     */
+    ArrayList<SubmissionShortcut> sendSubmissionsRequest() throws JSONException;
+
+    /**
+     * Asks the server to send a specific submission.
+     * @param name The submission's name
+     * @return The submission
+     */
+    Submission fetchSubmission(String name);
+
+    /**
+     * Asks the server for all submissions shortcuts related to the given category (see
+     * SubmissionShortcut class)
+     * @param category The category for which submissions shortcuts should be retrieved
+     * @return The submission shortcuts corresponding to the given category
+     */
+    ArrayList<SubmissionShortcut> sendCategoryRequest(SubmissionCategory category);
 
 }

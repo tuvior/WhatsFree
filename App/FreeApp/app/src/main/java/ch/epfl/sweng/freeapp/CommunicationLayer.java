@@ -21,10 +21,6 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.epfl.sweng.freeapp.mainScreen.SubmissionShortcut;
-
-
-
 
 public class CommunicationLayer implements  DefaultCommunicationLayer {
     private static final String SERVER_URL = "http://sweng-wiinotfit.appspot.com";
@@ -33,12 +29,9 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
     private final static int HTTP_SUCCESS_END = 299;
     private String cookieSession;
 
-
     //FixMe:  REMEMBER TO CHANGE TO COOKIE SESSION STRING !!!!!!!
 
-
     private final static String COOKIE_TEST = "BEY4L9lVSlA0hHQQ1ClTXYVUn5xwcr0BfYSKc7sw0Y54XYzWObTAsJ6PHQWPQVzO";
-
 
     /**
      * Creates a new CommunicationLayer instance that communicates with the
@@ -154,7 +147,6 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
 
     }
 
-
     @Override
     public ResponseStatus sendAddSubmissionRequest(Submission param) throws CommunicationLayerException {
         URL url;
@@ -229,6 +221,25 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
 
     }
 
+    @Override
+    public ArrayList<SubmissionShortcut> sendSubmissionsRequest() throws JSONException {
+        //TODO
+        return null;
+    }
+
+    @Override
+    public Submission fetchSubmission(String name) {
+        //TODO
+        return null;
+    }
+
+    @Override
+    public ArrayList<SubmissionShortcut> sendCategoryRequest(SubmissionCategory category) {
+        //TODO
+        return null;
+    }
+
+    //TODO: documentation
     private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException {
         StringBuilder result = new StringBuilder();
         boolean first = true;
@@ -247,7 +258,12 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
         return result.toString();
     }
 
-
+    /**
+     * Fetches the information given by the provided connection
+     * @param conn A connection to a provided URL
+     * @return The String given by connecting to the given URL
+     * @throws IOException
+     */
     private String fetchContent(HttpURLConnection conn) throws IOException {
         StringBuilder out = new StringBuilder();
         BufferedReader reader = null;
@@ -268,32 +284,5 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
             }
         }
     }
-
-
-    /**
-     * The server sends the submissions as a JSONArray, and the communication layer
-     * conveys those to the tabs as an ArrayList
-     * @param jsonSubmissions
-     * @return
-     * @throws JSONException
-     */
-    private static ArrayList<SubmissionShortcut> jsonArrayToArrayList(JSONArray jsonSubmissions) throws JSONException {
-
-        ArrayList<SubmissionShortcut> submissionsList = new ArrayList<>();
-
-        for(int i = 0; i < jsonSubmissions.length(); i++){
-            //TODO: also include image
-            JSONObject jsonSubmission = jsonSubmissions.getJSONObject(i);
-            String name = jsonSubmission.getString("name");
-            String location = jsonSubmission.getString("location");
-
-            SubmissionShortcut submission = new SubmissionShortcut(name, location);
-            submissionsList.add(submission);
-        }
-
-        return submissionsList;
-
-    }
-
 
 }

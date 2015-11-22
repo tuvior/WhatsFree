@@ -1,7 +1,8 @@
-package ch.epfl.sweng.freeapp.mainScreen;
+package ch.epfl.sweng.freeapp;
 
 /**
- * Represents a submission's name and picture
+ * Represents a submission's lighter version.
+ * SubmissionShortcuts are used when retrieving lots of submissions.
  *
  * Created by lois on 11/14/15.
  */

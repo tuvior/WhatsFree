@@ -17,16 +17,13 @@ import java.util.Calendar;
 
 import java.util.ArrayList;
 
-import ch.epfl.sweng.freeapp.mainScreen.SubmissionShortcut;
-
 /**
  * This communication layer is independent of the server and allows sending the app
  * some predefined responses.
  *
  * Created by lois on 11/13/15.
  */
-public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
-
+public class FakeCommunicationLayer implements DefaultCommunicationLayer {
 
     private int startTime = 17;
     private int endTime = 18;
@@ -43,8 +40,6 @@ public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
     private Submission.Builder submissionBuilderFreeClubEntrance = new Submission.Builder();
     private Submission.Builder submissionBuilderFreeDonuts =  new Submission.Builder();
 
-
-
     private static Submission freeCroissants = new Submission("Free Croissants", "There's a huge croissant giveaway at Flon!", SubmissionCategory.FOOD, "Presidence de la polynesie francaise");
     private static Submission freeDonuts =  new Submission("Free Donuts", "Migros gives a free dozen to the first 5 customers",SubmissionCategory.FOOD, "Motu Uta");
     private static Submission unicornDiscount = new Submission("Unicorn Discount", "Get one of our wonderful white unicorns!", SubmissionCategory.MISCELLANEOUS, "Papeete Tahiti Temple");
@@ -53,18 +48,6 @@ public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
 
     public FakeCommunicationLayer() {
 
-        //AssetManager assetManager = activity.getAssets();
-
-        this.image = "RubbishImage";
-
-
-        /**
-         freeCroissants = createSubmission(submissionBuilderCroissant);
-         unicornDiscount = createSubmission(submissionBuilderUnicornDiscount);
-         freeClubEntrance = createSubmission(submissionBuilderFreeClubEntrance);
-         freeDonuts = createSubmission(submissionBuilderFreeDonuts);
-         **/
-
     }
 
     public ResponseStatus sendAddSubmissionRequest(Submission submission) {
@@ -72,20 +55,19 @@ public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
         return ResponseStatus.OK;
     }
 
-    public static JSONArray sendWhatIsNewRequest() throws JSONException {
+    @Override
+    public ArrayList<SubmissionShortcut> sendSubmissionsRequest() throws JSONException {
 
-        JSONArray jsonSubmissions = new JSONArray();
+        ArrayList<SubmissionShortcut> submissionShortcuts = new ArrayList<>();
 
-        jsonSubmissions.put(0, createShortcutJson(freeCroissants));
-        jsonSubmissions.put(1, createShortcutJson(unicornDiscount));
-        jsonSubmissions.put(2, createShortcutJson(freeClubEntrance));
+        submissionShortcuts.add(toShortcut(freeCroissants));
+        submissionShortcuts.add(toShortcut(unicornDiscount));
+        submissionShortcuts.add(toShortcut(freeClubEntrance));
 
-        return jsonSubmissions;
+        return submissionShortcuts;
     }
 
-
-
-
+    @Override
     public Submission fetchSubmission(String name) {
 
         Submission submission;
@@ -106,7 +88,8 @@ public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
         return submission;
     }
 
-    public static ArrayList<SubmissionShortcut> sendCategoryRequest(SubmissionCategory category){
+    @Override
+    public ArrayList<SubmissionShortcut> sendCategoryRequest(SubmissionCategory category){
 
         ArrayList<SubmissionShortcut> submissionShortcuts = new ArrayList<>();
 
@@ -137,7 +120,7 @@ public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
      * @return
      * @throws JSONException
      */
-    public static ArrayList<SubmissionShortcut> jsonArrayToArrayList(JSONArray jsonSubmissions) throws JSONException {
+    public ArrayList<SubmissionShortcut> jsonArrayToArrayList(JSONArray jsonSubmissions) throws JSONException {
 
         ArrayList<SubmissionShortcut> submissionsList = new ArrayList<>();
 
@@ -154,21 +137,6 @@ public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
         return submissionsList;
 
     }
-
-
-    private static JSONObject createShortcutJson(Submission submission) throws JSONException {
-
-        String title = submission.getName();
-        String location = submission.getLocation();
-        JSONObject submissionJson = new JSONObject();
-
-        submissionJson.put("name", title);
-        submissionJson.put("location", location);
-
-        return submissionJson;
-    }
-
-
 
     private String encodeImage(AssetManager assetManager) {
         if (assetManager != null) {
@@ -198,7 +166,6 @@ public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
 
     private Submission createSubmission(Submission.Builder builder){
 
-
         builder.location(location);
         builder.category(SubmissionCategory.FOOD);
 
@@ -221,7 +188,7 @@ public class FakeCommunicationLayer implements  DefaultCommunicationLayer {
      * @param submission
      * @return the shortcut version of the submission
      */
-    private static SubmissionShortcut toShortcut(Submission submission){
+    private SubmissionShortcut toShortcut(Submission submission){
         return new SubmissionShortcut(submission.getName(), submission.getLocation());
     }
 

@@ -2,7 +2,6 @@ package ch.epfl.sweng.freeapp.mainScreen;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +15,8 @@ import java.util.ArrayList;
 
 import ch.epfl.sweng.freeapp.FakeCommunicationLayer;
 import ch.epfl.sweng.freeapp.R;
+import ch.epfl.sweng.freeapp.SubmissionShortcut;
+
 /**
  * Created by lois on 11/6/15.
  */
@@ -38,8 +39,8 @@ public class WhatsNewFragment extends ListFragment {
 
         //Get the JSONArray corresponding to the submissions
         try {
-            JSONArray jsonNamesAndPictures = FakeCommunicationLayer.sendWhatIsNewRequest();
-            ArrayList<SubmissionShortcut> submissions = FakeCommunicationLayer.jsonArrayToArrayList(jsonNamesAndPictures);
+            FakeCommunicationLayer fakeCommunicationLayer = new FakeCommunicationLayer();
+            ArrayList<SubmissionShortcut> submissions = fakeCommunicationLayer.sendSubmissionsRequest();
             //Adapter provides a view for each item in the data set
             SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, submissions);
             this.setListAdapter(adapter);
