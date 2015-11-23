@@ -1,5 +1,6 @@
 package ch.epfl.sweng.freeapp;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import org.apache.http.NameValuePair;
@@ -224,9 +225,32 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
     }
 
     @Override
-    public ArrayList<SubmissionShortcut> sendSubmissionsRequest() throws JSONException {
-        //TODO
-        return null;
+    public ArrayList<SubmissionShortcut> sendSubmissionsRequest() throws CommunicationLayerException {
+        URL url ;
+
+        HttpURLConnection conn;
+
+        try{
+            url = new URL(SERVER_URL+"/retrieve?flag=2");
+            conn = networkProvider.getConnection(url);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
+            conn.connect();
+            int response = conn.getResponseCode();
+
+            if (response < HTTP_SUCCESS_START || response > HTTP_SUCCESS_END) {
+                throw new CommunicationLayerException("Invalid HTTP response code");
+            }
+
+            String content = fetchContent(conn);
+            JSONArray contentArray = new JSONArray(content);
+
+            return   jsonArrayToArrayList(contentArray);
+
+        }catch(IOException | JSONException e){
+            throw new CommunicationLayerException();
+        }
+
     }
 
     @Override
@@ -254,11 +278,17 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
             //Retrieve specific submission fields
             assert(name.equals(jsonSubmission.getString("name")));
             String description = jsonSubmission.getString("description");
-            SubmissionCategory category = SubmissionCategory.valueOf(jsonSubmission.getString("category"));
+
+            SubmissionCategory submissionCategory = null;
+            if(SubmissionCategory.contains(jsonSubmission.getString("category"))) {
+                 submissionCategory = SubmissionCategory.valueOf(jsonSubmission.getString("category"));
+            } else {
+                submissionCategory = SubmissionCategory.MISCELLANEOUS;
+            }
             String image = jsonSubmission.getString("image");
             String location = jsonSubmission.getString("location");
 
-            submission = new Submission(name, description, category, location, image);
+            submission = new Submission(name, description, submissionCategory, location, image);
 
         }catch(IOException | JSONException e){
             throw new CommunicationLayerException();
@@ -319,12 +349,31 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
         }
     }
 
-    private String readIt(InputStream stream) throws IOException, UnsupportedEncodingException {
-        Reader reader = null;
-        reader = new InputStreamReader(stream, "UTF-8");
-        char[] buffer = new char[100000];
-        reader.read(buffer);
-        return new String(buffer);
+    /**
+     * The server sends the submissions as a JSONArray, and the communication layer
+     * conveys those to the tabs as an ArrayList
+     * @param jsonSubmissions
+     * @return
+     * @throws JSONException
+     */
+    private  ArrayList<SubmissionShortcut> jsonArrayToArrayList(JSONArray jsonSubmissions) throws JSONException {
+
+        ArrayList<SubmissionShortcut> submissionsList = new ArrayList<>();
+
+        for(int i = 0; i < jsonSubmissions.length(); i++){
+            //TODO: also include image
+            JSONObject jsonSubmission = jsonSubmissions.getJSONObject(i);
+            String name = jsonSubmission.getString("name");
+            //String location = jsonSubmission.getString("location");
+            //SubmissionCategory category  = getCorrespondingCategory(jsonSubmission.getString("category"));
+            String image  = jsonSubmission.getString("image");
+
+            SubmissionShortcut submission = new SubmissionShortcut(name, image);
+            submissionsList.add(submission);
+        }
+
+        return submissionsList;
+
     }
 
 }

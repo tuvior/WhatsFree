@@ -37,9 +37,8 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_display_submission);
 
         // Get the message from the intent
-        //Intent intent = getIntent();
-        //String submissionName = intent.getStringExtra(MainScreenActivity.SUBMISSION_MESSAGE);
-        //String submissionName = "Free Lois";
+        Intent intent = getIntent();
+        String submissionName = intent.getStringExtra(MainScreenActivity.SUBMISSION_MESSAGE);
 
         //CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
         //Submission submission = null;
@@ -48,7 +47,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
-            new DownloadWebpageTask().execute(); //Caution: submission MUST be retrieved from an async task (performance). Otherwise the app will crash.
+            new DownloadWebpageTask().execute(submissionName); //Caution: submission MUST be retrieved from an async task (performance). Otherwise the app will crash.
         } else {
             //Connection problem
             displayToast();
@@ -101,13 +100,15 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
     private class DownloadWebpageTask extends AsyncTask<String, Void, Submission> {
 
         @Override
-        protected Submission doInBackground(String... urls) {
+        protected Submission doInBackground(String... submissionName) {
 
+            assert(submissionName.length == 1);
+            String name = submissionName[0];
             Submission submission = null;
             CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
 
             try {
-                submission = communicationLayer.fetchSubmission("Socks");
+                submission = communicationLayer.fetchSubmission(name);
             } catch (CommunicationLayerException e) {
                 e.printStackTrace();
             }

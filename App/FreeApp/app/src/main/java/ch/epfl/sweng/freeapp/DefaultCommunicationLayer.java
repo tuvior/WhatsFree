@@ -23,7 +23,7 @@ public interface DefaultCommunicationLayer {
      * @return  All the submission shortcuts available (see SubmissionShortcut class)
      * @throws JSONException
      */
-    ArrayList<SubmissionShortcut> sendSubmissionsRequest() throws JSONException;
+    ArrayList<SubmissionShortcut> sendSubmissionsRequest() throws JSONException, CommunicationLayerException;
 
     /**
      * Asks the server to send a specific submission.
