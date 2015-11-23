@@ -89,9 +89,15 @@ public class ServerSingleRequestTest {
         assertEquals("no corresponding submission", getReasonFromJson(serverResponse, "single request"));
     }
 
-    //Change some parts in server in order to complete this
+
     @Test
     public void serverResponsWithCorrespondingSubmission() throws CommunicationLayerException, JSONException {
+        //Submission created directly in the datastore in order to test
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?flag=1&name=testname", "GET");
+        assertEquals("testname", serverResponse.getString("name"));
+        assertEquals("testcategory", serverResponse.getString("category"));
+        assertEquals("testdescription", serverResponse.getString("description"));
+        assertEquals("testlocation", serverResponse.getString("location"));
     }
 
 
