@@ -44,7 +44,8 @@ class retrieveSubmission(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
         
         if not flag:
-            self.response.write(json_response(-1))
+            error = json_error('retrieve', 'invalid', '')
+            self.response.write(json.dumps(error))
 
         # flag = 1 means a single request
         elif flag == '1':
