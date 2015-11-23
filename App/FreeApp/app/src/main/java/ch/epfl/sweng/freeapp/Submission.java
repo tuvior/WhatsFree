@@ -19,15 +19,13 @@ public  class Submission  {
     private Date startOfEvent;
     private Date endOfEvent;
 
-
-    public Submission(String name , String description, SubmissionCategory category, String location){
+    public Submission(String name , String description, SubmissionCategory category, String location, String image){
         this.name = name;
         this.description = description;
         this.category = category;
         this.location = location;
+        this.image = image;
     }
-
-
 
     public static class Builder {
 
