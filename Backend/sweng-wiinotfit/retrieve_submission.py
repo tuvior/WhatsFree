@@ -62,13 +62,8 @@ class retrieveSubmission(webapp2.RequestHandler):
                     self.response.write(json.dumps(error))
 
                 else:
-                    image_to_resize = images.Image(submission.image)
-                    image_to_resize.resize(width=90, height=90)
-                    image_to_resize.im_feeling_lucky()
-
-                    thumbnail = image_to_resize.execute_transforms(output_encoding=images.JPEG)
                     string_submission = json_string(submission.name, submission.category, submission.description, submission.location,
-                                       image_to_resize, submission.keywords, submission.submitter, submission.tfrom, submission.tto)
+                                       submission.image, submission.keywords, submission.submitter, submission.tfrom, submission.tto)
                     response = json.dumps(string_submission)
                     self.response.write(response)
 
