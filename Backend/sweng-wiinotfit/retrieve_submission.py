@@ -25,7 +25,6 @@ def json_response(status):
 
     return res
 
-# check which arguments are there 
 def json_string(name, category , description , location , image , keywords, submitter, tfrom, tto):
     json_string = {'name': name,'category': category, 'description': description, 'location': location, 'image': image,
                    'keywords': keywords, 'submitter': submitter, 'from': tfrom, 'to': tto}
@@ -36,7 +35,6 @@ def json_error(option, status, reason):
     json_string = {option: {'status': status, 'reason': reason}}
     return json_string
 
-# add cookie
 class retrieveSubmission(webapp2.RequestHandler):
     def get(self):
         cookie = self.request.get('cookie')
@@ -140,7 +138,7 @@ class retrieveSubmission(webapp2.RequestHandler):
                                         json_submission = json_string(submission.name, '', '', '', submission.image, '', '', '', '')
                                         submissions_array.append(json_submission)
 
-                                        # Once BadImageError fixed do
+                                        # Once error fixed do
 
                                         #image_to_resize = images.Image(submission.image)
                                         #image_to_resize.resize(width=90, height=90)
