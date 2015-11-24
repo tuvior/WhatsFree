@@ -3,6 +3,8 @@ package ch.epfl.sweng.freeapp.mainScreen;
 import android.content.Context;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,10 +47,22 @@ public class SubmissionListAdapter extends ArrayAdapter<SubmissionShortcut> {
 
             if(imageView != null){
                 //TODO: setImage
+                String image = p.getImage();
+                if(image.length() >= 1000){
+                    imageView.setImageBitmap(decodeImage(image));
+                }
             }
         }
 
         return v;
+    }
+
+    //FIXME: also present in DisplaySubmissionActivity: refactor
+    private Bitmap decodeImage(String input){
+
+        byte[] decodedByte = Base64.decode(input, 0);
+        return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
+
     }
 
 }

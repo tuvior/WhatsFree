@@ -13,10 +13,9 @@ public class SubmissionShortcut {
     private String location;
     private String image;
 
-    public SubmissionShortcut(String name, String location){
+    public SubmissionShortcut(String name, String image){
         //TODO: complete constructor with image
         this.name = name;
-        this.location = location;
         this.image = image;
     }
 
