@@ -76,6 +76,7 @@
         android:text = "@string/register"
         android:foregroundGravity="center"
         android:layout_marginTop="15dp"
+        android:id = "@+id/sign_up"
 
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp" />
