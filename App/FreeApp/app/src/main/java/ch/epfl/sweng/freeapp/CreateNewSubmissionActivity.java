@@ -5,8 +5,11 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -25,6 +28,9 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -53,6 +59,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
    /// private int DATE_DIALOG_ID = 0;
 
     private final static int PICTURE_REQUEST = 200;
+    private final static int IMAGE_GALLERY_REQUEST = 201;
     //private Uri imageUri;
      private Bitmap bitmap;
    // = BitmapFactory.decodeResource(InstrumentationRegistry.getTargetContext().getResources(), R.mipmap.ic_launcher);
@@ -245,6 +252,21 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
 
     public void onClickExistingPicture(View view){
+        //invoking image gallery using implicit intent
+        Intent photoGalleryIntent = new Intent(Intent.ACTION_PICK);
+
+        //just basically says where we want to find the data
+        File pictureDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        String pictureDirectoryPath = pictureDirectory.getPath();
+
+        //Get URI representation
+        Uri data = Uri.parse(pictureDirectoryPath);
+
+        //set the data image and type. Get all images
+
+        photoGalleryIntent.setDataAndType(data, "image/*");
+
+        startActivityForResult(photoGalleryIntent,IMAGE_GALLERY_REQUEST);
 
 
     }
@@ -417,6 +439,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
          private int requestCode;
          private int resultCode;
          private Intent intent;
+         private int SCALE_FACTOR = 400;
 
 
          public BitmapTask(int resultCode,Intent intent){
@@ -433,14 +456,37 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
                       bitmap =  (Bitmap)intent.getExtras().get("data");
 
                      return  bitmap;
+                 }else if(requestCode == IMAGE_GALLERY_REQUEST ){
+                     Uri imageUri = intent.getData();
+
+                     //Declare an inputStream in order to read the image from the SD card
+                     InputStream inputStream;
+
+                     try {
+
+                         //input stream based on Uri of the  image.
+                         inputStream = getContentResolver().openInputStream(imageUri);
+                         bitmap = BitmapFactory.decodeStream(inputStream); // Bitmap.createScaledBitmap(BitmapFactory.decodeStream(inputStream), SCALE_FACTOR, SCALE_FACTOR,false);
+
+
+                         return bitmap;
+
+
+                     }catch(FileNotFoundException e ){
+                         e.printStackTrace();
+                     }
+                 }else{
+                     return null;
                  }
              }
              return null;
          }
 
         @Override
-        protected  void onPostExecute(Bitmap bitmap){
-            if(bitmap != null ){
+        protected  void onPostExecute(Bitmap b){
+            if(b != null ){
+
+                bitmap = Bitmap.createScaledBitmap(b, SCALE_FACTOR, SCALE_FACTOR,false);
                 imageView.setImageBitmap(bitmap);
             }
 
