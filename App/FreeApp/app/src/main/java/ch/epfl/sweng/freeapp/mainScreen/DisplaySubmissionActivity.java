@@ -20,7 +20,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
 
         // Get the message from the intent
         Intent intent = getIntent();
-        String submissionName = intent.getStringExtra(AroundYouFragment.SUBMISSION_MESSAGE);
+        String submissionName = intent.getStringExtra(MainScreenActivity.SUBMISSION_MESSAGE);
 
         FakeCommunicationLayer fakeCommunicationLayer = new FakeCommunicationLayer();
         Submission submission = fakeCommunicationLayer.fetchSubmission(submissionName);

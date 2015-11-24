@@ -9,12 +9,6 @@
         app:showAsAction="always|collapseActionView"
         app:actionViewClass="android.support.v7.widget.SearchView" />
 
-    <!-- Display map -->
-    <item android:id="@+id/action_map_mode"
-        android:icon="@drawable/ic_action_map"
-        android:title="@string/map_mode"
-        app:showAsAction="ifRoom|collapseActionView" />
-
     <!-- Display new submission icon -->
     <item android:id="@+id/action_new_submission"
         android:icon="@drawable/ic_action_new"

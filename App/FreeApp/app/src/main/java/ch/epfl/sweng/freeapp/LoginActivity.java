@@ -210,7 +210,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 }else{
 
-                    assert(responseStatus == ResponseStatus.EMAIL.EMPTY);
+                    assert(responseStatus == ResponseStatus.EMPTY);
 
                     alertUser("Empty Field(s)");
 

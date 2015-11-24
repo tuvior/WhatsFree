@@ -4,11 +4,14 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Calendar;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
 public class CommunicationLayerTest {
@@ -23,8 +26,36 @@ public class CommunicationLayerTest {
     private static String JSON_LOG_IN_GOOD = buildSuccessfulLogInJSON().toString();
     private static String JSON_LOG_IN_USERNAME = buildJson("login", "user").toString();
     private static String JSON_LOG_IN_PASSWORD = buildJson("login", "password").toString();
+
+    private Calendar startTime = Calendar.getInstance();
+    private Calendar endTime = Calendar.getInstance();
+    private Calendar current = Calendar.getInstance();
+
+    private Submission.Builder builder = new Submission.Builder();
+
+
+
+    private static String JSON_CREATE_SUBMISSION_OK = buildOKSubmission().toString();
+
+
     @Before
     public void setUp() throws Exception {
+
+
+        startTime.set(Calendar.HOUR_OF_DAY,17);
+        endTime.set(Calendar.HOUR_OF_DAY,18);
+
+        builder.name("Croissant ");
+        builder.description("Good Food");
+        builder.category(SubmissionCategory.FOOD);
+        builder.location("EPFL ecublens 1203");
+        builder.image("RUBBISH IMAGE");
+        builder.keywords("FOOD BREAD FREE");
+
+        builder.startOfEvent(startTime);
+        builder.endOfEvent(endTime);
+        builder.submitted(current);
+
         this.connection = Mockito.mock(HttpURLConnection.class);
         this.networkProvider = Mockito.mock(NetworkProvider.class);
         Mockito.doReturn(connection).when(networkProvider).getConnection(Mockito.any(URL.class));
@@ -42,6 +73,13 @@ public class CommunicationLayerTest {
         InputStream dataStream = new ByteArrayInputStream(content.getBytes());
         Mockito.doReturn(dataStream).when(connection).getInputStream();
         Mockito.doReturn(status).when(connection).getResponseCode();
+    }
+
+    @Test
+    public void testCreateSubmission() throws CommunicationLayerException, IOException{
+        configureResponse(JSON_CREATE_SUBMISSION_OK,HttpURLConnection.HTTP_OK);
+        assertEquals(ResponseStatus.OK,communicationLayer.sendAddSubmissionRequest(builder.build()));
+
     }
     @Test
     public void testLogInSuccessful() throws CommunicationLayerException, IOException {
@@ -123,6 +161,19 @@ public class CommunicationLayerTest {
         return  outerObject;
     }
 
+
+    private static JSONObject buildOKSubmission(){
+
+        JSONObject outerObject = new JSONObject();
+        JSONObject inner = new JSONObject();
+        try{
+            inner.put("status", "ok");
+            outerObject.put("submission",inner);
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        return  outerObject;
+    }
     private static JSONObject buildSuccessfulLogInJSON(){
         JSONObject outerObject = new JSONObject();
         JSONObject inner = new JSONObject();
