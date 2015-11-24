@@ -1,5 +1,6 @@
 package ch.epfl.sweng.freeapp;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import org.apache.http.NameValuePair;
@@ -11,19 +12,18 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-
-import ch.epfl.sweng.freeapp.mainScreen.SubmissionShortcut;
-
-
 
 
 public class CommunicationLayer implements  DefaultCommunicationLayer {
@@ -33,12 +33,8 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
     private final static int HTTP_SUCCESS_END = 299;
     private String cookieSession;
 
-
     //FixMe:  REMEMBER TO CHANGE TO COOKIE SESSION STRING !!!!!!!
-
-
     private final static String COOKIE_TEST = "BEY4L9lVSlA0hHQQ1ClTXYVUn5xwcr0BfYSKc7sw0Y54XYzWObTAsJ6PHQWPQVzO";
-
 
     /**
      * Creates a new CommunicationLayer instance that communicates with the
@@ -154,81 +150,160 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
 
     }
 
-
     @Override
-        public ResponseStatus sendAddSubmissionRequest(Submission param) throws CommunicationLayerException {
-            URL url;
+    public ResponseStatus sendAddSubmissionRequest(Submission param) throws CommunicationLayerException {
+        URL url;
 
-            HttpURLConnection conn;
+        HttpURLConnection conn;
 
-            try {
+        try {
 
-                url = new URL(SERVER_URL+"/submission");
-                conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(10000);
-                conn.setConnectTimeout(15000);
-                conn.setRequestMethod("POST");
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
+            url = new URL(SERVER_URL+"/submission");
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(10000);
+            conn.setConnectTimeout(15000);
+            conn.setRequestMethod("POST");
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
 
-                List<NameValuePair> params = new ArrayList<>();
-                params.add(new BasicNameValuePair("name", param.getName()));
-                params.add(new BasicNameValuePair("category", param.getCategory()));
-                params.add(new BasicNameValuePair("location", param.getLocation()));
-                params.add(new BasicNameValuePair("description", param.getDescription()));
-                params.add(new BasicNameValuePair("keywords", param.getKeywords()));
-                params.add(new BasicNameValuePair("image", param.getImage()));
-                params.add(new BasicNameValuePair("submitted", Long.toString(param.getSubmitted())));
-                params.add(new BasicNameValuePair("from", Long.toString(param.getStartOfEvent())));
-                params.add(new BasicNameValuePair("to", Long.toString(param.getEndOfEvent())));
-                params.add(new BasicNameValuePair("cookie",COOKIE_TEST));
+            List<NameValuePair> params = new ArrayList<>();
+            params.add(new BasicNameValuePair("name", param.getName()));
+            params.add(new BasicNameValuePair("category", param.getCategory()));
+            params.add(new BasicNameValuePair("location", param.getLocation()));
+            params.add(new BasicNameValuePair("description", param.getDescription()));
+            params.add(new BasicNameValuePair("keywords", param.getKeywords()));
+            params.add(new BasicNameValuePair("image", param.getImage()));
+            params.add(new BasicNameValuePair("submitted", Long.toString(param.getSubmitted())));
+            params.add(new BasicNameValuePair("from", Long.toString(param.getStartOfEvent())));
+            params.add(new BasicNameValuePair("to", Long.toString(param.getEndOfEvent())));
+            params.add(new BasicNameValuePair("cookie",COOKIE_TEST));
 
-                OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(
-                        new OutputStreamWriter(os, "UTF-8"));
-                writer.write(getQuery(params));
-                writer.flush();
-                writer.close();
-                os.close();
+            OutputStream os = conn.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            writer.write(getQuery(params));
+            writer.flush();
+            writer.close();
+            os.close();
 
-                conn.connect();
+            conn.connect();
 
-                int response = conn.getResponseCode();
+            int response = conn.getResponseCode();
 
-                if (response < HTTP_SUCCESS_START || response > HTTP_SUCCESS_END) {
-                    throw new CommunicationLayerException("Invalid HTTP response code");
-                }
-
-                String serverResponse = fetchContent(conn);
-                JSONObject jsonObject = new JSONObject(serverResponse);
-                JSONObject serverResponseJson = jsonObject.getJSONObject("submission");
-                if(serverResponseJson.getString("status").equals("failure")){
-                    switch(serverResponseJson.getString("reason")){
-                        case "name" : return ResponseStatus.NAME;
-                        case "location"  : return ResponseStatus.LOCATION;
-                        case "image" : return ResponseStatus.IMAGE;
-                        case "category": return ResponseStatus.CATEGORY;
-                        case "cookie": return ResponseStatus.COOKIE;
-                        case "session": return ResponseStatus.SESSION;
-                        default: throw new CommunicationLayerException();
-                    }
-                }else {
-                    assert (serverResponseJson.getString("status").equals("ok"));
-
-                    //Decide if server responds with OK or with Submission in JSON format
-                    return ResponseStatus.OK;
-                }
-
-            }catch(IOException e ){
-                throw new CommunicationLayerException();
-
-            } catch (JSONException e) {
-                throw new CommunicationLayerException();
-
+            if (response < HTTP_SUCCESS_START || response > HTTP_SUCCESS_END) {
+                throw new CommunicationLayerException("Invalid HTTP response code");
             }
+
+            String serverResponse = fetchContent(conn);
+            JSONObject jsonObject = new JSONObject(serverResponse);
+            JSONObject serverResponseJson = jsonObject.getJSONObject("submission");
+            if(serverResponseJson.getString("status").equals("failure")){
+                switch(serverResponseJson.getString("reason")){
+                    case "name" : return ResponseStatus.NAME;
+                    case "location"  : return ResponseStatus.LOCATION;
+                    case "image" : return ResponseStatus.IMAGE;
+                    case "category": return ResponseStatus.CATEGORY;
+                    case "cookie": return ResponseStatus.COOKIE;
+                    case "session": return ResponseStatus.SESSION;
+                    default: throw new CommunicationLayerException();
+                }
+            }else {
+                assert (serverResponseJson.getString("status").equals("ok"));
+
+                //Decide if server responds with OK or with Submission in JSON format
+                return ResponseStatus.OK;
+            }
+
+        }catch(IOException e ){
+            throw new CommunicationLayerException();
+
+        } catch (JSONException e) {
+            throw new CommunicationLayerException();
 
         }
 
+    }
+
+    @Override
+    public ArrayList<SubmissionShortcut> sendSubmissionsRequest() throws CommunicationLayerException {
+        URL url ;
+
+        HttpURLConnection conn;
+
+        try{
+            url = new URL(SERVER_URL+"/retrieve?cookie=" + COOKIE_TEST + "&flag=2");
+            conn = networkProvider.getConnection(url);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
+            conn.connect();
+            int response = conn.getResponseCode();
+
+            if (response < HTTP_SUCCESS_START || response > HTTP_SUCCESS_END) {
+                throw new CommunicationLayerException("Invalid HTTP response code");
+            }
+
+            String content = fetchContent(conn);
+            JSONArray contentArray = new JSONArray(content);
+
+            return   jsonArrayToArrayList(contentArray);
+
+        }catch(IOException | JSONException e){
+            throw new CommunicationLayerException();
+        }
+
+    }
+
+    @Override
+    public Submission fetchSubmission(String name) throws CommunicationLayerException {
+        URL url ;
+        HttpURLConnection conn;
+        Submission submission;
+
+        try{
+            url = new URL(SERVER_URL+"/retrieve?cookie=" + COOKIE_TEST + "&flag=1&name=" + name);
+            conn = networkProvider.getConnection(url);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
+            conn.connect();
+
+            int response = conn.getResponseCode();
+            if (response < HTTP_SUCCESS_START || response > HTTP_SUCCESS_END) {
+                throw new CommunicationLayerException("Invalid HTTP response code");
+            }
+
+            String content = fetchContent(conn);
+            System.out.println(content);
+            JSONObject jsonSubmission = new JSONObject(content);
+
+            //Retrieve specific submission fields
+            assert(name.equals(jsonSubmission.getString("name")));
+            String description = jsonSubmission.getString("description");
+
+            SubmissionCategory submissionCategory = null;
+            if(SubmissionCategory.contains(jsonSubmission.getString("category"))) {
+                 submissionCategory = SubmissionCategory.valueOf(jsonSubmission.getString("category"));
+            } else {
+                submissionCategory = SubmissionCategory.MISCELLANEOUS;
+            }
+            String image = jsonSubmission.getString("image");
+            String location = jsonSubmission.getString("location");
+
+            submission = new Submission(name, description, submissionCategory, location, image);
+
+        }catch(IOException | JSONException e){
+            throw new CommunicationLayerException();
+        }
+
+        return submission;
+    }
+
+    @Override
+    public ArrayList<SubmissionShortcut> sendCategoryRequest(SubmissionCategory category) {
+        //TODO
+        return null;
+    }
+
+    //TODO: documentation
     private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException {
         StringBuilder result = new StringBuilder();
         boolean first = true;
@@ -247,7 +322,12 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
         return result.toString();
     }
 
-
+    /**
+     * Fetches the information given by the provided connection
+     * @param conn A connection to a provided URL
+     * @return The String given by connecting to the given URL
+     * @throws IOException
+     */
     private String fetchContent(HttpURLConnection conn) throws IOException {
         StringBuilder out = new StringBuilder();
         BufferedReader reader = null;
@@ -269,7 +349,6 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
         }
     }
 
-
     /**
      * The server sends the submissions as a JSONArray, and the communication layer
      * conveys those to the tabs as an ArrayList
@@ -277,7 +356,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
      * @return
      * @throws JSONException
      */
-    private static ArrayList<SubmissionShortcut> jsonArrayToArrayList(JSONArray jsonSubmissions) throws JSONException {
+    private  ArrayList<SubmissionShortcut> jsonArrayToArrayList(JSONArray jsonSubmissions) throws JSONException {
 
         ArrayList<SubmissionShortcut> submissionsList = new ArrayList<>();
 
@@ -285,14 +364,16 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
             //TODO: also include image
             JSONObject jsonSubmission = jsonSubmissions.getJSONObject(i);
             String name = jsonSubmission.getString("name");
+            //String location = jsonSubmission.getString("location");
+            //SubmissionCategory category  = getCorrespondingCategory(jsonSubmission.getString("category"));
+            String image  = jsonSubmission.getString("image");
 
-            SubmissionShortcut submission = new SubmissionShortcut(name);
+            SubmissionShortcut submission = new SubmissionShortcut(name, image);
             submissionsList.add(submission);
         }
 
         return submissionsList;
 
     }
-
 
 }

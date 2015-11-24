@@ -5,52 +5,24 @@ package ch.epfl.sweng.freeapp;
  */
 public enum SubmissionCategory {
 
-    FOOD{
-        @Override
-        public String toString() {
-            return "FOOD";
-        }
-    },
-    CLOTHING{
-        @Override
-        public String toString() {
-            return "CLOTHING";
-        }
-    },
-    NIGHTLIFE{
-        @Override
-        public String toString() {
-            return "NIGHTLIFE";
-        }
-    },
+    FOOD,
+    CLOTHING,
+    NIGHTLIFE,
+    SPORT,
+    MISCELLANEOUS,
+    CULTURE,
+    LIFESTYLE;
 
-    SPORT{
-        @Override
-        public String toString() {
-            return "SPORT";
-        }
-    },
-    MISCELLANEOUS{
-        @Override
-        public String toString() {
-            return "MISCELLANEOUS";
-        }
-    },
-    CULTURE{
-        @Override
-        public String toString() {
-            return "CULTURE";
+    public static boolean contains(String test) {
+
+        for (SubmissionCategory c : SubmissionCategory.values()) {
+            if (c.name().equals(test)) {
+                return true;
+            }
         }
 
-    },
-
-    LIFESTYLE{
-        @Override
-        public String toString() {
-            return "CULTURE";
-        }
+        return false;
 
     }
-
 
 }

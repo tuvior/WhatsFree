@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import ch.epfl.sweng.freeapp.CategoryDisplaySubmissionsActivity;
 import ch.epfl.sweng.freeapp.R;
+import ch.epfl.sweng.freeapp.SubmissionShortcut;
 
 public class CategoriesFragment extends ListFragment {
 
