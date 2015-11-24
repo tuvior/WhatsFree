@@ -114,7 +114,8 @@ public class NavigationDrawerActivity extends Activity implements AdapterView.On
 
         // Create a new fragment and specify the plan
         Fragment fragment = new TestFragment();
-
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         /*
         if(position == 0){
             fragment = new HomeFragment();

@@ -32,6 +32,8 @@ import java.util.List;
 
 public class MainScreenActivity extends AppCompatActivity {
 
+    public final static String SUBMISSION_MESSAGE = "ch.epfl.sweng.freeapp.SUBMISSION";
+
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -84,6 +86,14 @@ public class MainScreenActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
         return true;
+    }
+
+    /**
+     * Used by tests to get the tabs
+     * @return the viewPAger
+     */
+    public ViewPager getViewPager(){
+        return viewPager;
     }
 
     /**

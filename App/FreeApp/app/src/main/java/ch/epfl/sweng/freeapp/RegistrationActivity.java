@@ -14,6 +14,8 @@ import android.widget.EditText;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ch.epfl.sweng.freeapp.mainScreen.MainScreenActivity;
+
 
 public class RegistrationActivity extends AppCompatActivity implements View.OnClickListener {
 
