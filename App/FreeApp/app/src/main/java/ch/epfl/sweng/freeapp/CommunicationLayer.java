@@ -20,6 +20,7 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,6 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
     private String cookieSession;
 
     //FixMe:  REMEMBER TO CHANGE TO COOKIE SESSION STRING !!!!!!!
-
     private final static String COOKIE_TEST = "BEY4L9lVSlA0hHQQ1ClTXYVUn5xwcr0BfYSKc7sw0Y54XYzWObTAsJ6PHQWPQVzO";
 
     /**
@@ -231,7 +231,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
         HttpURLConnection conn;
 
         try{
-            url = new URL(SERVER_URL+"/retrieve?flag=2");
+            url = new URL(SERVER_URL+"/retrieve?cookie=" + COOKIE_TEST + "&flag=2");
             conn = networkProvider.getConnection(url);
             conn.setRequestMethod("GET");
             conn.setDoInput(true);
@@ -260,7 +260,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
         Submission submission;
 
         try{
-            url = new URL(SERVER_URL+"/retrieve?flag=1&name=" + name);
+            url = new URL(SERVER_URL+"/retrieve?cookie=" + COOKIE_TEST + "&flag=1&name=" + name);
             conn = networkProvider.getConnection(url);
             conn.setRequestMethod("GET");
             conn.setDoInput(true);
