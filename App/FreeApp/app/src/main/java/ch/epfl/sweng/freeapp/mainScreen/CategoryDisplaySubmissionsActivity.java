@@ -1,10 +1,11 @@
-package ch.epfl.sweng.freeapp;
+package ch.epfl.sweng.freeapp.mainScreen;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import ch.epfl.sweng.freeapp.R;
 import ch.epfl.sweng.freeapp.mainScreen.CategoriesFragment;
 
 public class CategoryDisplaySubmissionsActivity extends AppCompatActivity {

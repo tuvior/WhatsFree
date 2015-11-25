@@ -1,21 +1,16 @@
-package ch.epfl.sweng.freeapp;
+package ch.epfl.sweng.freeapp.communication;
 
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Base64;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Calendar;
 
 import java.util.ArrayList;
+
+import ch.epfl.sweng.freeapp.Submission;
+import ch.epfl.sweng.freeapp.SubmissionCategory;
 
 /**
  * This communication layer is independent of the server and allows sending the app
@@ -56,15 +51,15 @@ public class FakeCommunicationLayer implements DefaultCommunicationLayer {
     }
 
     @Override
-    public ArrayList<SubmissionShortcut> sendSubmissionsRequest() throws JSONException {
+    public ArrayList<Submission> sendSubmissionsRequest() throws JSONException {
 
-        ArrayList<SubmissionShortcut> submissionShortcuts = new ArrayList<>();
+        ArrayList<Submission> submissions = new ArrayList<>();
 
-        submissionShortcuts.add(toShortcut(freeCroissants));
-        submissionShortcuts.add(toShortcut(unicornDiscount));
-        submissionShortcuts.add(toShortcut(freeClubEntrance));
+        submissions.add(freeCroissants);
+        submissions.add(unicornDiscount);
+        submissions.add(freeClubEntrance);
 
-        return submissionShortcuts;
+        return submissions;
     }
 
     @Override
@@ -89,108 +84,28 @@ public class FakeCommunicationLayer implements DefaultCommunicationLayer {
     }
 
     @Override
-    public ArrayList<SubmissionShortcut> sendCategoryRequest(SubmissionCategory category){
+    public ArrayList<Submission> sendCategoryRequest(SubmissionCategory category){
 
-        ArrayList<SubmissionShortcut> submissionShortcuts = new ArrayList<>();
+        ArrayList<Submission> submissions = new ArrayList<>();
 
         switch (category){
             case FOOD: {
-                submissionShortcuts.add(toShortcut(freeCroissants));
-                submissionShortcuts.add(toShortcut(freeDonuts));
+                submissions.add(freeCroissants);
+                submissions.add(freeDonuts);
             }
             break;
             case MISCELLANEOUS: {
-                submissionShortcuts.add(toShortcut(unicornDiscount));
+                submissions.add(unicornDiscount);
             }
             break;
             case NIGHTLIFE: {
-                submissionShortcuts.add(toShortcut(freeClubEntrance));
+                submissions.add(freeClubEntrance);
             }
             break;
             default:
         }
 
-        return submissionShortcuts;
+        return submissions;
     }
-
-    /**
-     * The server sends the submissions as a JSONArray, and the communication layer
-     * conveys those to the tabs as an ArrayList
-     * @param jsonSubmissions
-     * @return
-     * @throws JSONException
-     */
-    public ArrayList<SubmissionShortcut> jsonArrayToArrayList(JSONArray jsonSubmissions) throws JSONException {
-
-        ArrayList<SubmissionShortcut> submissionsList = new ArrayList<>();
-
-        for(int i = 0; i < jsonSubmissions.length(); i++){
-            //TODO: also include image
-            JSONObject jsonSubmission = jsonSubmissions.getJSONObject(i);
-            String name = jsonSubmission.getString("name");
-            String location = jsonSubmission.getString("location");
-
-            SubmissionShortcut submission = new SubmissionShortcut(name, location);
-            submissionsList.add(submission);
-        }
-
-        return submissionsList;
-
-    }
-
-    private String encodeImage(AssetManager assetManager) {
-        if (assetManager != null) {
-
-            InputStream inputStream = null;
-            try {
-                inputStream = assetManager.open("a.png");
-                inputStream.close();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            bitmapImage = BitmapFactory.decodeStream(inputStream);
-
-
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-
-            return Base64.encodeToString(byteArrayOutputStream.toByteArray(), Base64.DEFAULT);
-
-
-        } else {
-            return null;
-        }
-
-    }
-
-    private Submission createSubmission(Submission.Builder builder){
-
-        builder.location(location);
-        builder.category(SubmissionCategory.FOOD);
-
-        startOfEvent.set(Calendar.HOUR_OF_DAY, startTime);
-        endOfEvent.set(Calendar.HOUR_OF_DAY, endTime);
-
-        builder.startOfEvent(startOfEvent);
-        builder.endOfEvent(endOfEvent);
-        builder.image(image);
-        builder.keywords(keywords);
-        builder.submitted(startOfEvent);
-
-        return builder.build();
-
-    }
-
-    /**
-     * Transforms the submission into its shortcut equivalent
-     *
-     * @param submission
-     * @return the shortcut version of the submission
-     */
-    private SubmissionShortcut toShortcut(Submission submission){
-        return new SubmissionShortcut(submission.getName(), submission.getLocation());
-    }
-
 
 }

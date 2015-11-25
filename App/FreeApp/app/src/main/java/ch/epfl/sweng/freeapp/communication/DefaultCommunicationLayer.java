@@ -1,9 +1,11 @@
-package ch.epfl.sweng.freeapp;
+package ch.epfl.sweng.freeapp.communication;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+
+import ch.epfl.sweng.freeapp.Submission;
+import ch.epfl.sweng.freeapp.SubmissionCategory;
 
 /**
  * Created by lois on 11/22/15.
@@ -16,21 +18,21 @@ public interface DefaultCommunicationLayer {
      * @return the result of the request
      * @throws CommunicationLayerException
      */
-    ResponseStatus sendAddSubmissionRequest(Submission param) throws CommunicationLayerException;
+    abstract ResponseStatus sendAddSubmissionRequest(Submission param) throws CommunicationLayerException;
 
     /**
      * Asks the server for all the submissions it has.
      * @return  All the submission shortcuts available (see SubmissionShortcut class)
      * @throws JSONException
      */
-    ArrayList<SubmissionShortcut> sendSubmissionsRequest() throws JSONException, CommunicationLayerException;
+    abstract ArrayList<Submission> sendSubmissionsRequest() throws JSONException, CommunicationLayerException;
 
     /**
      * Asks the server to send a specific submission.
      * @param name The submission's name
      * @return The submission
      */
-    Submission fetchSubmission(String name) throws CommunicationLayerException;
+    abstract Submission fetchSubmission(String name) throws CommunicationLayerException;
 
     /**
      * Asks the server for all submissions shortcuts related to the given category (see
@@ -38,6 +40,6 @@ public interface DefaultCommunicationLayer {
      * @param category The category for which submissions shortcuts should be retrieved
      * @return The submission shortcuts corresponding to the given category
      */
-    ArrayList<SubmissionShortcut> sendCategoryRequest(SubmissionCategory category);
+    abstract ArrayList<Submission> sendCategoryRequest(SubmissionCategory category);
 
 }

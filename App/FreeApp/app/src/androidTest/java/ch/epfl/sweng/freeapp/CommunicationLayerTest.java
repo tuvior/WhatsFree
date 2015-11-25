@@ -12,6 +12,13 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Calendar;
 
+import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
+import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
+import ch.epfl.sweng.freeapp.communication.NetworkProvider;
+import ch.epfl.sweng.freeapp.communication.ResponseStatus;
+import ch.epfl.sweng.freeapp.loginAndRegistration.LogInInfo;
+import ch.epfl.sweng.freeapp.loginAndRegistration.RegistrationInfo;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
 public class CommunicationLayerTest {
