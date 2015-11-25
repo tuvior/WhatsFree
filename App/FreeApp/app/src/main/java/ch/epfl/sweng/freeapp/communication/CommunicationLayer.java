@@ -298,8 +298,29 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
 
     @Override
     public ArrayList<Submission> sendCategoryRequest(SubmissionCategory category) throws CommunicationLayerException {
-        //TODO
-        return null;
+        URL url ;
+        HttpURLConnection conn;
+
+        try{
+            url = new URL(SERVER_URL+"/retrieve?cookie=" + COOKIE_TEST + "&flag=4&category=" + category.toString().toUpperCase());
+            conn = networkProvider.getConnection(url);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
+            conn.connect();
+            int response = conn.getResponseCode();
+
+            if (response < HTTP_SUCCESS_START || response > HTTP_SUCCESS_END) {
+                throw new CommunicationLayerException("Invalid HTTP response code");
+            }
+
+            String content = fetchContent(conn);
+            JSONArray contentArray = new JSONArray(content);
+
+            return jsonArrayToArrayList(contentArray);
+
+        }catch(IOException | JSONException e){
+            throw new CommunicationLayerException();
+        }
     }
 
     //TODO: documentation
