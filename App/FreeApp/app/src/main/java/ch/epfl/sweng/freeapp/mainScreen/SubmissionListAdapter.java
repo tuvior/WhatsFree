@@ -13,14 +13,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.List;
 import ch.epfl.sweng.freeapp.R;
-import ch.epfl.sweng.freeapp.SubmissionShortcut;
+import ch.epfl.sweng.freeapp.Submission;
 
 /**
  * Created by lois on 11/10/15.
  */
-public class SubmissionListAdapter extends ArrayAdapter<SubmissionShortcut> {
+public class SubmissionListAdapter extends ArrayAdapter<Submission> {
 
-    public SubmissionListAdapter(Context context, int resource, List<SubmissionShortcut> submissions) {
+    public SubmissionListAdapter(Context context, int resource, List<Submission> submissions) {
         super(context, resource, submissions);
     }
 
@@ -35,7 +35,7 @@ public class SubmissionListAdapter extends ArrayAdapter<SubmissionShortcut> {
             v = vi.inflate(R.layout.item_list_row, null);
         }
 
-        SubmissionShortcut p = getItem(position);
+        Submission p = getItem(position);
 
         if (p != null) {
             TextView tt1 = (TextView) v.findViewById(R.id.name);
@@ -48,8 +48,10 @@ public class SubmissionListAdapter extends ArrayAdapter<SubmissionShortcut> {
             if(imageView != null){
                 //TODO: setImage
                 String image = p.getImage();
-                if(image.length() >= 1000){
-                    imageView.setImageBitmap(decodeImage(image));
+                if(image != null) {
+                    if (image.length() >= 1000) {
+                        imageView.setImageBitmap(decodeImage(image));
+                    }
                 }
             }
         }

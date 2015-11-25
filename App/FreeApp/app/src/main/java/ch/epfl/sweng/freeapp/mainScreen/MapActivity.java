@@ -1,4 +1,4 @@
-package ch.epfl.sweng.freeapp;
+package ch.epfl.sweng.freeapp.mainScreen;
 
 import android.location.Address;
 import android.location.Geocoder;
@@ -20,6 +20,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import ch.epfl.sweng.freeapp.R;
+import ch.epfl.sweng.freeapp.Submission;
+import ch.epfl.sweng.freeapp.communication.FakeCommunicationLayer;
 
 /**
  *
@@ -100,9 +104,9 @@ public class MapActivity extends AppCompatActivity {
     private void displaySubmissionMarkers() throws JSONException {
         //TODO: use real communication layer when available
         FakeCommunicationLayer fakeCommunicationLayer = new FakeCommunicationLayer();
-        ArrayList<SubmissionShortcut> shortcuts = fakeCommunicationLayer.sendSubmissionsRequest();
+        ArrayList<Submission> shortcuts = fakeCommunicationLayer.sendSubmissionsRequest();
 
-        for (SubmissionShortcut shortcut : shortcuts) {
+        for (Submission shortcut : shortcuts) {
             Geocoder geocoder = new Geocoder(this, Locale.getDefault());
             List<Address> addresses = new ArrayList<>();
 

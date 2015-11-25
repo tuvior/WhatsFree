@@ -1,6 +1,5 @@
-package ch.epfl.sweng.freeapp;
+package ch.epfl.sweng.freeapp.communication;
 
-import android.graphics.Bitmap;
 import android.util.Log;
 
 import org.apache.http.NameValuePair;
@@ -12,18 +11,21 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+
+import ch.epfl.sweng.freeapp.BuildConfig;
+import ch.epfl.sweng.freeapp.loginAndRegistration.LogInInfo;
+import ch.epfl.sweng.freeapp.loginAndRegistration.RegistrationInfo;
+import ch.epfl.sweng.freeapp.Submission;
+import ch.epfl.sweng.freeapp.SubmissionCategory;
 
 
 public class CommunicationLayer implements  DefaultCommunicationLayer {
@@ -208,24 +210,21 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
                     default: throw new CommunicationLayerException();
                 }
             }else {
-                assert (serverResponseJson.getString("status").equals("ok"));
+                if(BuildConfig.DEBUG && !(serverResponseJson.getString("status").equals("ok"))){
+                    throw new AssertionError();
+                }
 
                 //Decide if server responds with OK or with Submission in JSON format
                 return ResponseStatus.OK;
             }
 
-        }catch(IOException e ){
+        }catch(IOException | JSONException e ){
             throw new CommunicationLayerException();
-
-        } catch (JSONException e) {
-            throw new CommunicationLayerException();
-
         }
-
     }
 
     @Override
-    public ArrayList<SubmissionShortcut> sendSubmissionsRequest() throws CommunicationLayerException {
+    public ArrayList<Submission> sendSubmissionsRequest() throws CommunicationLayerException {
         URL url ;
 
         HttpURLConnection conn;
@@ -245,7 +244,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
             String content = fetchContent(conn);
             JSONArray contentArray = new JSONArray(content);
 
-            return   jsonArrayToArrayList(contentArray);
+            return jsonArrayToArrayList(contentArray);
 
         }catch(IOException | JSONException e){
             throw new CommunicationLayerException();
@@ -298,7 +297,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
     }
 
     @Override
-    public ArrayList<SubmissionShortcut> sendCategoryRequest(SubmissionCategory category) {
+    public ArrayList<Submission> sendCategoryRequest(SubmissionCategory category) {
         //TODO
         return null;
     }
@@ -356,22 +355,26 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
      * @return
      * @throws JSONException
      */
-    private  ArrayList<SubmissionShortcut> jsonArrayToArrayList(JSONArray jsonSubmissions) throws JSONException {
+    public ArrayList<Submission> jsonArrayToArrayList(JSONArray jsonSubmissions) throws JSONException {
 
-        ArrayList<SubmissionShortcut> submissionsList = new ArrayList<>();
+        ArrayList<Submission> submissionsList = new ArrayList<>();
 
         for(int i = 0; i < jsonSubmissions.length(); i++){
-            //TODO: also include image
+
+            //Only names and images are required since those are the only
+            //fields displayed in the tabs
             JSONObject jsonSubmission = jsonSubmissions.getJSONObject(i);
             String name = jsonSubmission.getString("name");
-            //String location = jsonSubmission.getString("location");
-            //SubmissionCategory category  = getCorrespondingCategory(jsonSubmission.getString("category"));
-            String image  = jsonSubmission.getString("image");
+            String image = jsonSubmission.getString("image");
 
-            SubmissionShortcut submission = new SubmissionShortcut(name, image);
+            Submission.Builder builder = new Submission.Builder().name(name).image(image);
+            Submission submission = builder.build();
             submissionsList.add(submission);
         }
 
+        if (BuildConfig.DEBUG && (jsonSubmissions.length() != submissionsList.size())){
+            throw new AssertionError();
+        }
         return submissionsList;
 
     }

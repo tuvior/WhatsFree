@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
+import ch.epfl.sweng.freeapp.communication.FakeCommunicationLayer;
 import ch.epfl.sweng.freeapp.mainScreen.AroundYouFragment;
 import ch.epfl.sweng.freeapp.mainScreen.CategoriesFragment;
 import ch.epfl.sweng.freeapp.mainScreen.WhatsNewFragment;

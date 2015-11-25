@@ -100,13 +100,15 @@ public  class Submission  {
 
         this.image = builder.image;
 
-        this.submitted = builder.calendarSubmitted.getTime();
-        this.startOfEvent = builder.calendarStartOfEvent.getTime();
-        this.endOfEvent = builder.calendarEndOfEvent.getTime();
-
-        assert(name != null && category != null &&
-                description != null && location != null &&
-                keywords != null && image != null && submitted != null && this.endOfEvent!= null);
+        if(builder.calendarSubmitted != null) {
+            this.submitted = builder.calendarSubmitted.getTime();
+        }
+        if(builder.calendarStartOfEvent != null) {
+            this.startOfEvent = builder.calendarStartOfEvent.getTime();
+        }
+        if(builder.calendarEndOfEvent != null) {
+            this.endOfEvent = builder.calendarEndOfEvent.getTime();
+        }
 
     }
 

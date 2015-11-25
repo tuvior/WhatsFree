@@ -1,4 +1,4 @@
-package ch.epfl.sweng.freeapp;
+package ch.epfl.sweng.freeapp.loginAndRegistration;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,8 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
+import ch.epfl.sweng.freeapp.R;
 
 
 public class RegistrationActivity extends AppCompatActivity {

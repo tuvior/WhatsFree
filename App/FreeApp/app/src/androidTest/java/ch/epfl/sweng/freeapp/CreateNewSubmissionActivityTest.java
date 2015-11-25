@@ -17,6 +17,10 @@ import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 
+import ch.epfl.sweng.freeapp.communication.DefaultCommunicationLayer;
+import ch.epfl.sweng.freeapp.communication.FakeCommunicationLayer;
+import ch.epfl.sweng.freeapp.mainScreen.CreateNewSubmissionActivity;
+
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.scrollTo;

@@ -12,22 +12,15 @@ import android.os.Bundle;
 import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
-import ch.epfl.sweng.freeapp.CommunicationLayer;
-import ch.epfl.sweng.freeapp.CommunicationLayerException;
-import ch.epfl.sweng.freeapp.DefaultNetworkProvider;
-import ch.epfl.sweng.freeapp.NetworkProvider;
+import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
+import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
+import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 import ch.epfl.sweng.freeapp.R;
 import ch.epfl.sweng.freeapp.Submission;
-import ch.epfl.sweng.freeapp.FakeCommunicationLayer;
 
 public class DisplaySubmissionActivity extends AppCompatActivity {
 
