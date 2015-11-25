@@ -16,13 +16,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import ch.epfl.sweng.freeapp.BuildConfig;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
+import ch.epfl.sweng.freeapp.communication.DefaultCommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 import ch.epfl.sweng.freeapp.R;
 import ch.epfl.sweng.freeapp.Submission;
+import ch.epfl.sweng.freeapp.communication.FakeCommunicationLayer;
 
 public class DisplaySubmissionActivity extends AppCompatActivity {
+
+    public static boolean isTest = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,9 +37,6 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
         // Get the message from the intent
         Intent intent = getIntent();
         String submissionName = intent.getStringExtra(MainScreenActivity.SUBMISSION_MESSAGE);
-
-        //CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
-        //Submission submission = null;
 
         //Check connection
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -46,26 +48,6 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
             displayToast();
         }
 
-        /**
-        try {
-            submission = communicationLayer.fetchSubmission(submissionName);
-        } catch (CommunicationLayerException e) {
-            e.printStackTrace();
-        }
-        **/
-
-        /**
-        TextView nameTextView = (TextView)findViewById(R.id.submissionName);
-        nameTextView.setText(submission.getName());
-
-        TextView descriptionTextView = (TextView)findViewById(R.id.submissionDescription);
-        descriptionTextView.setText(submission.getDescription());
-
-        Bitmap image = decodeImage(submission.getImage());
-        ImageView submissionImage = (ImageView) findViewById(R.id.submissionImageView);
-        submissionImage.setImageBitmap(image);
-
-         **/
     }
 
     @Override
@@ -95,11 +77,13 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
         @Override
         protected Submission doInBackground(String... submissionName) {
 
-            assert(submissionName.length == 1);
+            if(BuildConfig.DEBUG && (submissionName.length != 1)){
+                throw new AssertionError();
+            }
             String name = submissionName[0];
             Submission submission = null;
-            CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
 
+            CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
             try {
                 submission = communicationLayer.fetchSubmission(name);
             } catch (CommunicationLayerException e) {

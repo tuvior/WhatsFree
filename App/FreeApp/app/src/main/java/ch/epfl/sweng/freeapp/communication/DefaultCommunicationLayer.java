@@ -40,6 +40,6 @@ public interface DefaultCommunicationLayer {
      * @param category The category for which submissions shortcuts should be retrieved
      * @return The submission shortcuts corresponding to the given category
      */
-    abstract ArrayList<Submission> sendCategoryRequest(SubmissionCategory category);
+    abstract ArrayList<Submission> sendCategoryRequest(SubmissionCategory category) throws CommunicationLayerException;
 
 }

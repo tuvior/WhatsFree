@@ -54,10 +54,10 @@ public class CommunicationLayerTest {
 
         builder.name("Croissant ");
         builder.description("Good Food");
-        builder.category(SubmissionCategory.FOOD);
+        builder.category(SubmissionCategory.Food);
         builder.location("EPFL ecublens 1203");
         builder.image("RUBBISH IMAGE");
-        builder.keywords("FOOD BREAD FREE");
+        builder.keywords("Food BREAD FREE");
 
         builder.startOfEvent(startTime);
         builder.endOfEvent(endTime);
