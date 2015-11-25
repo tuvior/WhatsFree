@@ -5,13 +5,13 @@ package ch.epfl.sweng.freeapp;
  */
 public enum SubmissionCategory {
 
-    FOOD,
-    CLOTHING,
-    NIGHTLIFE,
-    SPORT,
-    MISCELLANEOUS,
-    CULTURE,
-    LIFESTYLE;
+    Food,
+    Clothing,
+    Nightlife,
+    Sport,
+    Miscellaneous,
+    Culture,
+    Lifestyle;
 
     public static boolean contains(String test) {
 

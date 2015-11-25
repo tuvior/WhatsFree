@@ -65,7 +65,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
         }
 
         try {
-            //FIXME: refactor code related to connection + create a FakeNetworkProvider
+            //FIXME: refactor code related to connection
 
             URL url = new URL(SERVER_URL + "/login?user=" + logInInfo.getUsername() + "&password=" + logInInfo.getPassword());
 
@@ -282,7 +282,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
             if(SubmissionCategory.contains(jsonSubmission.getString("category"))) {
                  submissionCategory = SubmissionCategory.valueOf(jsonSubmission.getString("category"));
             } else {
-                submissionCategory = SubmissionCategory.MISCELLANEOUS;
+                submissionCategory = SubmissionCategory.Miscellaneous;
             }
             String image = jsonSubmission.getString("image");
             String location = jsonSubmission.getString("location");
@@ -297,7 +297,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
     }
 
     @Override
-    public ArrayList<Submission> sendCategoryRequest(SubmissionCategory category) {
+    public ArrayList<Submission> sendCategoryRequest(SubmissionCategory category) throws CommunicationLayerException {
         //TODO
         return null;
     }
