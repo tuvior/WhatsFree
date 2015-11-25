@@ -51,7 +51,7 @@ public class WhatsNewFragment extends ListFragment {
 
         } else {
             //Connection problem
-            displayToast();
+            displayToast("Connection problem");
         }
 
         /**
@@ -114,19 +114,21 @@ public class WhatsNewFragment extends ListFragment {
 
         // onPostExecute displays the results of the AsyncTask.
         @Override
-        protected void onPostExecute(ArrayList<Submission> shortcuts) {
+        protected void onPostExecute(ArrayList<Submission> submissions) {
 
-            //Adapter provides a view for each item in the data set
-            SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, shortcuts);
+            SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, submissions);
             setListAdapter(adapter);
+            if(submissions.size() == 0){
+                displayToast("No new submissions yet");
+            }
 
         }
 
     }
 
-    private void displayToast(){
+    private void displayToast(String message){
         Context context = getActivity().getApplicationContext();
-        CharSequence text = "Error retrieving submission.";
+        CharSequence text = message;
         int duration = Toast.LENGTH_SHORT;
         Toast toast = Toast.makeText(context, text, duration);
 

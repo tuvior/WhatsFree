@@ -44,7 +44,7 @@ public class CategoryDisplaySubmissionsActivity extends ListActivity {
 
         } else {
             //Connection problem
-            displayToast();
+            displayToast("No submissions in this category yet");
         }
 
     }
@@ -90,17 +90,20 @@ public class CategoryDisplaySubmissionsActivity extends ListActivity {
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(ArrayList<Submission> submissions) {
-            //Adapter provides a view for each item in the data set
+
             SubmissionListAdapter adapter = new SubmissionListAdapter(getApplicationContext(), R.layout.item_list_row, submissions);
             setListAdapter(adapter);
+            if(submissions.size() == 0){
+                displayToast("No submissions in this category yet");
+            }
 
         }
 
     }
 
-    private void displayToast(){
+    private void displayToast(String message){
         Context context = getApplicationContext();
-        CharSequence text = "Error retrieving submission.";
+        CharSequence text = message;
         int duration = Toast.LENGTH_SHORT;
         Toast toast = Toast.makeText(context, text, duration);
 

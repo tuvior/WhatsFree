@@ -11,6 +11,8 @@ public enum SubmissionCategory {
     Sport,
     Miscellaneous,
     Culture,
+    Events,
+    Goods,
     Lifestyle;
 
     public static boolean contains(String test) {

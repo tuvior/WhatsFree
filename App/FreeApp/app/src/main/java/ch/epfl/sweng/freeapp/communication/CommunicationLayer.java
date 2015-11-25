@@ -314,9 +314,14 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
             }
 
             String content = fetchContent(conn);
-            JSONArray contentArray = new JSONArray(content);
-
-            return jsonArrayToArrayList(contentArray);
+            //FIXME: if there is no submission corresponding to the category, then the server will return a failure. This failure cannot be converted to JSONArray
+            if(!content.contains("failure")) {
+                JSONArray contentArray = new JSONArray(content);
+                return jsonArrayToArrayList(contentArray);
+            } else {
+                //return an empty array if no submissions corresponding to the category
+                return new ArrayList<>();
+            }
 
         }catch(IOException | JSONException e){
             throw new CommunicationLayerException();
