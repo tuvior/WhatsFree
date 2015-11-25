@@ -19,7 +19,6 @@ public class ServerSearchTest {private static final String SERVER_URL = "http://
     private NetworkProvider networkProvider = new DefaultNetworkProvider();
     private final static int HTTP_SUCCESS_START = 200;
     private final static int HTTP_SUCCESS_END = 299;
-    private final static String COOKIE = "BEY4L9lVSlA0hHQQ1ClTXYVUn5xwcr0BfYSKc7sw0Y54XYzWObTAsJ6PHQWPQVzO";
 
     private String fetchContent(HttpURLConnection conn) throws IOException {
         StringBuilder out = new StringBuilder();
@@ -69,19 +68,46 @@ public class ServerSearchTest {private static final String SERVER_URL = "http://
         return serverResponse.getJSONObject(option).getString("reason");
     }
 
+
+    private String getCookieFromJson(JSONObject serverResponse) throws JSONException {
+        return serverResponse.getJSONObject("login").getString("cookie");
+    }
+
+    @Test
+    public void serverRespondsWithFailureIfNoCookieParameter(){
+
+    }
+
+    @Test
+    public void serverRespondsWithFailureIfBadCookieParameter() {
+
+    }
+
     @Test
     public void serverRespondsWithFailureIfNoNameParameter() throws CommunicationLayerException, JSONException {
-        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?flag=5", "GET");
+        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete?name=searchtest", "GET");
+        JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=searchtest&password=password&email=searchtest@test.ch", "GET");
+        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=searchtest&password=password", "GET");
+        String cookie = getCookieFromJson(loginUser);
+
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?cookie="+cookie+"&flag=5", "GET");
         assertEquals("failure", getStatusFromJson(serverResponse, "search"));
         assertEquals("name", getReasonFromJson(serverResponse, "search"));
     }
 
     @Test
     public void serverRetrieveSubmission() throws CommunicationLayerException, JSONException {
-        JSONObject submission = establishConnectionAndReturnJsonResponse("/submission?cookie="+COOKIE+"name=testname&category=category&location=location&image=image", "POST");
-        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?flag=5&name=testname", "GET");
+        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete?name=searchtest", "GET");
+        JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=searchtest&password=password&email=searchtest@test.ch", "GET");
+        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=searchtest&password=password", "GET");
+        String cookie = getCookieFromJson(loginUser);
+        JSONObject submission = establishConnectionAndReturnJsonResponse("/submission?cookie="+cookie+"&name=testname&category=category&location=location&image=image", "POST");
+
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?cookie="+cookie+"&flag=5&name=testname", "GET");
         assertEquals("testname", serverResponse.getString("name"));
         assertEquals("image", serverResponse.getString("image"));
+        // Search must only return name and image, other fields must be ""
+        assertEquals("", serverResponse.getString("category"));
     }
 
 }

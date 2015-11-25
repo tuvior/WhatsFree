@@ -61,11 +61,11 @@ public class ServerAddSubmissionTest {
     }
 
     private String getStatusFromJson(JSONObject serverResponse) throws JSONException {
-        return serverResponse.getJSONObject("login").getString("status");
+        return serverResponse.getJSONObject("submission").getString("status");
     }
 
     private String getReasonFromJson(JSONObject serverResponse) throws JSONException {
-        return serverResponse.getJSONObject("login").getString("reason");
+        return serverResponse.getJSONObject("submission").getString("reason");
     }
 
     private String getCookieFromJson(JSONObject serverResponse) throws JSONException {
@@ -88,21 +88,21 @@ public class ServerAddSubmissionTest {
 
     @Test
     public void serverRespondsWithFailureIfMissingCategory() throws CommunicationLayerException, JSONException {
-        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/submission/cookie=cookie&name=name", "POST");
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/submission?cookie=cookie&name=name", "POST");
         assertEquals("failure", getStatusFromJson(serverResponse));
         assertEquals("category", getReasonFromJson(serverResponse));
     }
 
     @Test
     public void serverRespondsWithFailureIfMissingLocation() throws CommunicationLayerException, JSONException {
-        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/submission/cookie=cookie&name=name&category=category", "POST");
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/submission?cookie=cookie&name=name&category=category", "POST");
         assertEquals("failure", getStatusFromJson(serverResponse));
         assertEquals("location", getReasonFromJson(serverResponse));
     }
 
     @Test
     public void serverRespondsWithFailureIfMissingImage() throws CommunicationLayerException, JSONException {
-        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/submission/cookie=cookie&name=name&category=category&location=location", "POST");
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/submission?cookie=cookie&name=name&category=category&location=location", "POST");
         assertEquals("failure", getStatusFromJson(serverResponse));
         assertEquals("image", getReasonFromJson(serverResponse));
     }
@@ -110,17 +110,18 @@ public class ServerAddSubmissionTest {
 
     @Test
     public void serverRespondsWithFailureIfCookieNotInDataBase() throws CommunicationLayerException, JSONException {
-        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/submission/cookie=cookie&name=name&category=category&location=location&image=image", "POST");
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/submission?cookie=cookie&name=name&category=category&location=location&image=image", "POST");
         assertEquals("failure", getStatusFromJson(serverResponse));
         assertEquals("session", getReasonFromJson(serverResponse));
     }
 
     @Test
     public void serverRespondsWithOk() throws CommunicationLayerException, JSONException {
+        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete?name=submissiontest", "GET");
         JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=submissiontest&password=password&email=submissiontest@test.ch", "GET");
         JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=submissiontest&password=password", "GET");
         String cookie = getCookieFromJson(loginUser);
-        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/submission?cookie="+cookie+"name=name&category=category&location=location&image=image", "POST");
-        assertEquals("status", getStatusFromJson(serverResponse));
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/submission?cookie="+cookie+"&name=name&category=category&location=location&image=image", "POST");
+        assertEquals("ok", getStatusFromJson(serverResponse));
     }
 }

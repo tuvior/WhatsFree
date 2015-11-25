@@ -95,11 +95,10 @@ public class ServerRegistrationTest {
         assertEquals("invalid", getStatusFromJson(serverResponse));
     }
 
-    //Could do more test like if only password missing and so on...
-
-    //READ: If run more than once, test will fail because we will have an already existing user stored in the database
     @Test
     public void testRegisterServerRespondWithOkStatus() throws CommunicationLayerException, JSONException {
+        //We delete the user if it already exists, so that we can run the test more than once
+        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete?name=test", "GET");
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/register?user=test&password=test&email=test@test.com", "GET");
         assertEquals("ok", getStatusFromJson(serverResponse));
     }

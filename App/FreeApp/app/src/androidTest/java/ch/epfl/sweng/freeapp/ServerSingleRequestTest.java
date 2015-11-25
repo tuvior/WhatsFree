@@ -69,22 +69,55 @@ public class ServerSingleRequestTest {
         return serverResponse.getJSONObject(option).getString("reason");
     }
 
-    @Test
-    public void serverRespondsWithInvalidIfNoParameters() throws CommunicationLayerException, JSONException {
-        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?", "GET");
-        assertEquals("invalid", getStatusFromJson(serverResponse, "retrieve"));
+
+    private String getCookieFromJson(JSONObject serverResponse) throws JSONException {
+        return serverResponse.getJSONObject("login").getString("cookie");
     }
 
     @Test
-    public void serverResponsWithFailureIfNoNameParameter() throws CommunicationLayerException, JSONException {
-        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?flag=1", "GET");
+    public void serverRespondsWithFailureIfNoCookie() throws CommunicationLayerException, JSONException {
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?", "GET");
+        assertEquals("failure", getStatusFromJson(serverResponse, "none"));
+        assertEquals("cookie", getReasonFromJson(serverResponse, "none"));
+    }
+
+    @Test
+    public void serverRespondsWithFailureIfCookieNotInDatabase() throws CommunicationLayerException, JSONException {
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?cookie=cookie&flag=1", "GET");
+        assertEquals("failure", getStatusFromJson(serverResponse, "none"));
+        assertEquals("session", getReasonFromJson(serverResponse, "none"));
+    }
+
+
+    @Test
+    public void serverRespondsWithFailureIfNoParameters() throws CommunicationLayerException, JSONException {
+        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete?name=singlerequesttest", "GET");
+        JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=singlerequesttest&password=password&email=singlerequesttest@test.ch", "GET");
+        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=singlerequesttest&password=password", "GET");
+        String cookie = getCookieFromJson(loginUser);
+
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?cookie="+cookie, "GET");
+        assertEquals("failure", getStatusFromJson(serverResponse, "retrieve"));
+    }
+
+    @Test
+    public void serverResponsWithFailureIfNoNameParameter() throws CommunicationLayerException, JSONException {JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete?name=singlerequesttest", "GET");
+        JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=singlerequesttest&password=password&email=singlerequesttest@test.ch", "GET");
+        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=singlerequesttest&password=password", "GET");
+        String cookie = getCookieFromJson(loginUser);
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?cookie="+cookie+"&flag=1", "GET");
         assertEquals("failure", getStatusFromJson(serverResponse, "single request"));
         assertEquals("name", getReasonFromJson(serverResponse, "single request"));
     }
 
     @Test
     public void serverResponsWithFailureIfNoCorrespondingSubmission() throws CommunicationLayerException, JSONException {
-        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?flag=1&name=testDoesn'tPass", "GET");
+        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete?name=singlerequesttest", "GET");
+        JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=singlerequesttest&password=password&email=singlerequesttest@test.ch", "GET");
+        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=singlerequesttest&password=password", "GET");
+        String cookie = getCookieFromJson(loginUser);
+
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?cookie="+cookie+"&flag=1&name=testDoesn'tPass", "GET");
         assertEquals("failure", getStatusFromJson(serverResponse, "single request"));
         assertEquals("no corresponding submission", getReasonFromJson(serverResponse, "single request"));
     }
@@ -92,12 +125,19 @@ public class ServerSingleRequestTest {
 
     @Test
     public void serverResponsWithCorrespondingSubmission() throws CommunicationLayerException, JSONException {
-        //Submission created directly in the datastore in order to test
-        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?flag=1&name=testname", "GET");
+        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete?name=singlerequesttest", "GET");
+        JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=singlerequesttest&password=password&email=singlerequesttest@test.ch", "GET");
+        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=singlerequesttest&password=password", "GET");
+        String cookie = getCookieFromJson(loginUser);
+        JSONObject createSubmission = establishConnectionAndReturnJsonResponse("/submission?cookie="+cookie+"&name=testname&category=testcategory&location=testlocation&image=testimage", "POST");
+
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?cookie="+cookie+"&flag=1&name=testname", "GET");
+
+
         assertEquals("testname", serverResponse.getString("name"));
         assertEquals("testcategory", serverResponse.getString("category"));
-        assertEquals("testdescription", serverResponse.getString("description"));
         assertEquals("testlocation", serverResponse.getString("location"));
+        assertEquals("testimage", serverResponse.getString("image"));
     }
 
 

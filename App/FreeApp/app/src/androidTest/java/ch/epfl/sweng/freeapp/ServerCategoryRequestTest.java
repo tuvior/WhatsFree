@@ -62,6 +62,24 @@ public class ServerCategoryRequestTest {
         }
     }
 
+    private JSONArray establishConnectionAndReturnJsonResponseAsArray(String urlContd, String requestMethod) throws CommunicationLayerException, JSONException {
+        try {
+            URL url = new URL(SERVER_URL + urlContd);
+            HttpURLConnection conn = networkProvider.getConnection(url);
+            conn.setRequestMethod(requestMethod);
+            conn.setDoInput(true);
+            conn.connect();
+            int response = conn.getResponseCode();
+            if (response < HTTP_SUCCESS_START || response > HTTP_SUCCESS_END) {
+                throw new CommunicationLayerException("Invalid HTTP response code");
+            }
+            String serverResponseString = fetchContent(conn);
+            return new JSONArray(serverResponseString);
+        } catch (IOException e) {
+            throw new CommunicationLayerException();
+        }
+    }
+
     private String getStatusFromJson(JSONObject serverResponse, String option) throws JSONException {
         return serverResponse.getJSONObject(option).getString("status");
     }
@@ -71,10 +89,33 @@ public class ServerCategoryRequestTest {
         return serverResponse.getJSONObject(option).getString("reason");
     }
 
+    private String getCookieFromJson(JSONObject serverResponse) throws JSONException {
+        return serverResponse.getJSONObject("login").getString("cookie");
+    }
+
+
+    @Test
+    public void serverRespondsWithFailureIfNoCookieParameter() throws CommunicationLayerException, JSONException {
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?", "GET");
+        assertEquals("failure", getStatusFromJson(serverResponse, "none"));
+        assertEquals("cookie", getReasonFromJson(serverResponse, "none"));
+    }
+
+    @Test
+    public void serverRespondsWithFailureIfBadCookieParameter() throws CommunicationLayerException, JSONException {
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?cookie=cookie&flag=4", "GET");
+        assertEquals("failure", getStatusFromJson(serverResponse, "none"));
+        assertEquals("session", getReasonFromJson(serverResponse, "none"));
+    }
 
     @Test
     public void serverRespondsWithFailureIfNoCategoryParameter() throws CommunicationLayerException, JSONException {
-        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?flag=4", "GET");
+        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete?name=categorytest", "GET");
+        JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=categorytest&password=password&email=categorytest@test.ch", "GET");
+        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=categorytest&password=password", "GET");
+        String cookie = getCookieFromJson(loginUser);
+
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?cookie="+cookie+"&flag=4", "GET");
         assertEquals("failure", getStatusFromJson(serverResponse, "retrieve category"));
         assertEquals("no category", getReasonFromJson(serverResponse, "retrieve category"));
     }
@@ -82,52 +123,73 @@ public class ServerCategoryRequestTest {
 
     @Test
     public void serverRespondsWithFailureIfEmptyOrNonExistingCategory() throws CommunicationLayerException, JSONException {
-        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?flag=4&category=nocategory", "GET");
+        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete?name=categorytest", "GET");
+        JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=categorytest&password=password&email=categorytest@test.ch", "GET");
+        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=categorytest&password=password", "GET");
+        String cookie = getCookieFromJson(loginUser);
+
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?cookie="+cookie+"&flag=4&category=nocategory", "GET");
         assertEquals("failure", getStatusFromJson(serverResponse, "retrieve category"));
         //Empty or non existing category
         assertEquals("empty category", getReasonFromJson(serverResponse, "retrieve category"));
     }
 
+    //Test passes only if not run before, will be improved
     @Test
     public void serverRespondsWithJSONArrayOfLengthOne() throws CommunicationLayerException, JSONException {
-        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?flag=4&category=testcategory", "GET");
-        assertEquals("testname", serverResponse.getString("name"));
-        assertEquals("testcategory", serverResponse.getString("category"));
-        assertEquals("testdescription", serverResponse.getString("description"));
-        assertEquals("testlocation", serverResponse.getString("location"));
+        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete?name=categorytest", "GET");
+        JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=categorytest&password=password&email=categorytest@test.ch", "GET");
+        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=categorytest&password=password", "GET");
+        String cookie = getCookieFromJson(loginUser);
+
+        JSONObject submission = establishConnectionAndReturnJsonResponse("/submission?cookie=" + cookie + "&name=categorytest&category=testcategory&location=location&image=image", "POST");
+
+        JSONArray serverResponse = establishConnectionAndReturnJsonResponseAsArray("/retrieve?cookie=" + cookie + "&flag=4&category=testcategory", "GET");
+
+        JSONObject submissionRetrieved = new JSONObject(serverResponse.get(0).toString());
+
+        assertEquals(1, serverResponse.length());
+        assertEquals("categorytest", submissionRetrieved.getString("name"));
+        assertEquals("image", submissionRetrieved.getString("image"));
     }
 
 
+    //Test passes only if not run before
     @Test
     public void serverRespondsWithJSONArrayOfLengthTwo() throws CommunicationLayerException, JSONException {
-        JSONObject firstSubmission = establishConnectionAndReturnJsonResponse("/submission?cookie="+COOKIE+"name=name&category=testarraylength&location=location&image=image", "POST");
-        JSONObject secondSubmission = establishConnectionAndReturnJsonResponse("/submission?cookie="+COOKIE+"name=name&category=testarraylength&location=location&image=image", "POST");
-        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?flag=4&category=testarraylength", "GET");
-        JSONArray arrayResponse = new JSONArray(serverResponse.toString());
-        assertEquals(2, arrayResponse.length());
+        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete?name=categorytest", "GET");
+        JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=categorytest&password=password&email=categorytest@test.ch", "GET");
+        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=categorytest&password=password", "GET");
+        String cookie = getCookieFromJson(loginUser);
 
-        JSONObject firstSubmissionRetrieved = (JSONObject) arrayResponse.get(1);
-        JSONObject secondSubmissionRetrieved = (JSONObject) arrayResponse.get(2);
+        JSONObject firstSubmission = establishConnectionAndReturnJsonResponse("/submission?cookie=" + cookie + "&name=testarraylengthfirst&category=testarraylength&location=location&image=image", "POST");
+        JSONObject secondSubmission = establishConnectionAndReturnJsonResponse("/submission?cookie=" + cookie + "&name=testarraylengthsecond&category=testarraylength&location=location&image=image", "POST");
 
-        assertEquals("name", firstSubmissionRetrieved.getString("name"));
-        assertEquals("testarraylength", firstSubmissionRetrieved.getString("category"));
-        assertEquals("location", firstSubmissionRetrieved.getString("location"));
+        JSONArray serverResponse = establishConnectionAndReturnJsonResponseAsArray("/retrieve?cookie=" + cookie + "&flag=4&category=testarraylength", "GET");
+        assertEquals(2, serverResponse.length());
+
+        JSONObject firstSubmissionRetrieved = new JSONObject(serverResponse.get(0).toString());
+        JSONObject secondSubmissionRetrieved = new JSONObject(serverResponse.get(1).toString());
+
+
+        //cannot test names because we don't know if get(0) really return the first submission or the second
         assertEquals("image", firstSubmissionRetrieved.getString("image"));
 
-        assertEquals("name", secondSubmissionRetrieved.getString("name"));
-        assertEquals("testarraylength", secondSubmissionRetrieved.getString("category"));
-        assertEquals("location", secondSubmissionRetrieved.getString("location"));
         assertEquals("image", secondSubmissionRetrieved.getString("image"));
 
     }
 
     @Test
-    public void serverRespondsWithJSONArrayOfLenghtFiveIfMaxNumberOfSubmissionsReached() throws CommunicationLayerException, JSONException {
-        // Change FOOD
-        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?flag=4&category=FOOD", "GET");
-        JSONArray arrayResponse = new JSONArray(serverResponse.toString());
+    public void serverRespondsWithJSONArrayOfLenghtTwentyIfMaxNumberOfSubmissionsReached() throws CommunicationLayerException, JSONException {
+        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete?name=categorytest", "GET");
+        JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=categorytest&password=password&email=categorytest@test.ch", "GET");
+        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=categorytest&password=password", "GET");
+        String cookie = getCookieFromJson(loginUser);
 
-        assertEquals(5, arrayResponse.length());
+        // Change FOOD
+        JSONArray serverResponse = establishConnectionAndReturnJsonResponseAsArray("/retrieve?cookie=" + cookie + "&flag=4&category=FOOD", "GET");
+
+        assertEquals(20, serverResponse.length());
     }
 
 }
