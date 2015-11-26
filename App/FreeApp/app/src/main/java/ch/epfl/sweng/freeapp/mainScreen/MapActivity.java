@@ -2,14 +2,19 @@ package ch.epfl.sweng.freeapp.mainScreen;
 
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
+import android.provider.SyncStateContract;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -20,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import ch.epfl.sweng.freeapp.R;
 import ch.epfl.sweng.freeapp.Submission;
@@ -27,72 +33,65 @@ import ch.epfl.sweng.freeapp.communication.FakeCommunicationLayer;
 
 /**
  *
+ * Important note: If running this Activity on an emulator, do not worry if by clicking
+ * the my location button (top-right hand corner of the screen) nothing happens.
+ * Even if the GPS/Location is enabled, the emulator need to be provided a mock location
+ * in order to function properly.
+ * Go to Tools -> Android -> Android Device Monitor, then under location controls, go on the
+ * Manual tab, choose decimal and provide the longitude and latitude of your choice (do this while
+ * the app is running on the emulator).
+ * Papeete: longitude: -149.558476      latitude: -17.551625
+ *
  * Created by lois on 11/19/2015
  *
  */
-public class MapActivity extends AppCompatActivity {
+public class MapActivity extends FragmentActivity {
 
-    // Google Map
-    private GoogleMap googleMap;
+    private GoogleMap mMap; // Might be null if Google Play services APK is not available.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-
         try {
-            // Loading map
-            initializeMap();
-
-        } catch (Exception e) {
+            setUpMapIfNeeded();
+        } catch (MapException e) {
             e.printStackTrace();
         }
-
-    }
-
-    /**
-     * function to load map. If map is not created it will create it for you
-     * */
-    private void initializeMap() throws JSONException {
-        if (googleMap == null) {
-            googleMap = ((MapFragment) getFragmentManager().findFragmentById(
-                    R.id.map)).getMap();
-            googleMap.getUiSettings().setZoomControlsEnabled(true);
-            centerCameraUser();
-            displaySubmissionMarkers();
-
-            // check if map is created successfully or not
-            if (googleMap == null) {
-                Toast.makeText(getApplicationContext(),
-                        "Sorry! unable to create maps", Toast.LENGTH_SHORT)
-                        .show();
-            }
-        }
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         try {
-            initializeMap();
-        } catch (JSONException e) {
+            setUpMapIfNeeded();
+        } catch (MapException e) {
             e.printStackTrace();
         }
     }
 
-    /**
-     * Center the camera and places a marker on the user's location
-     */
-    private void centerCameraUser() {
-        //TODO: figure out how to get the user's location
-        LatLng latLng = new LatLng(-17.536407, -149.566035);
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 10);
-        googleMap.animateCamera(cameraUpdate);
+    private void setUpMapIfNeeded() throws MapException {
+        // Do a null check to confirm that we have not already instantiated the map.
+        if (mMap == null) {
+            // Try to obtain the map from the SupportMapFragment.
+            mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
+                    .getMap();
+            // Check if we were successful in obtaining the map.
+            if (mMap != null) {
+                setUpMap();
+            }
+        }
+    }
 
-        MarkerOptions marker = new MarkerOptions().position(latLng).title("Your Location");
-        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-        googleMap.addMarker(marker);
+    /**
+     * This is where we can add markers or lines, add listeners or move the camera. In this case, we
+     * just add a marker near Africa.
+     * <p/>
+     * This should only be called once and when we are sure that {@link #mMap} is not null.
+     */
+    private void setUpMap() throws MapException {
+        displaySubmissionMarkers();
+        mMap.setMyLocationEnabled(true);
     }
 
     /**
@@ -101,10 +100,15 @@ public class MapActivity extends AppCompatActivity {
      * Submissions for which no coordinates are found (invalid address) do not get a marker.
      *
      */
-    private void displaySubmissionMarkers() throws JSONException {
+    private void displaySubmissionMarkers() throws MapException {
         //TODO: use real communication layer when available
         FakeCommunicationLayer fakeCommunicationLayer = new FakeCommunicationLayer();
-        ArrayList<Submission> shortcuts = fakeCommunicationLayer.sendSubmissionsRequest();
+        ArrayList<Submission> shortcuts = null;
+        try {
+            shortcuts = fakeCommunicationLayer.sendSubmissionsRequest();
+        } catch (JSONException e) {
+            throw new MapException();
+        }
 
         for (Submission shortcut : shortcuts) {
             Geocoder geocoder = new Geocoder(this, Locale.getDefault());
@@ -123,7 +127,7 @@ public class MapActivity extends AppCompatActivity {
                 double longitude = addresses.get(0).getLongitude();
                 LatLng latLng = new LatLng(latitude, longitude);
                 MarkerOptions marker = new MarkerOptions().position(latLng).title(shortcut.getName());
-                googleMap.addMarker(marker);
+                mMap.addMarker(marker);
             }
         }
     }
