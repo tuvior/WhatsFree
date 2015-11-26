@@ -1,8 +1,12 @@
 package ch.epfl.sweng.freeapp.mainScreen;
 
+import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.provider.SyncStateContract;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +33,10 @@ import java.util.Map;
 
 import ch.epfl.sweng.freeapp.R;
 import ch.epfl.sweng.freeapp.Submission;
+import ch.epfl.sweng.freeapp.SubmissionCategory;
+import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
+import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
+import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 import ch.epfl.sweng.freeapp.communication.FakeCommunicationLayer;
 
 /**
@@ -53,10 +61,16 @@ public class MapActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        try {
-            setUpMapIfNeeded();
-        } catch (MapException e) {
-            e.printStackTrace();
+
+        ConnectivityManager connMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            //mShortcuts will contain the shortcuts retrieved by the asynchronous task
+            new DownloadWebpageTask().execute(); //Caution: submission MUST be retrieved from an async task (performance). Otherwise the app will crash.
+
+        } else {
+            //Connection problem
+            displayToast("Connection problem");
         }
     }
 
@@ -90,47 +104,95 @@ public class MapActivity extends FragmentActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() throws MapException {
-        displaySubmissionMarkers();
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(true); // true to enable
-        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mMap.getUiSettings().setRotateGesturesEnabled(true);
     }
 
     /**
      *
-     * Displays markers corresponding to submissions that were listed in the AroundYou tab.
-     * Submissions for which no coordinates are found (invalid address) do not get a marker.
+     *Display markers corresponding to all submissions
      *
      */
-    private void displaySubmissionMarkers() throws MapException {
-        //TODO: use real communication layer when available
-        FakeCommunicationLayer fakeCommunicationLayer = new FakeCommunicationLayer();
-        ArrayList<Submission> shortcuts = null;
-        try {
-            shortcuts = fakeCommunicationLayer.sendSubmissionsRequest();
-        } catch (JSONException e) {
-            throw new MapException();
-        }
+    private void displaySubmissionMarkers(ArrayList<Submission> submissions) throws MapException, CommunicationLayerException {
 
-        for (Submission shortcut : shortcuts) {
+        //Each submission will get 1 marker if at least 1 geographical location is found with the
+        //address, or none if the address is not valid.
+        for (Submission submission : submissions) {
             Geocoder geocoder = new Geocoder(this, Locale.getDefault());
             List<Address> addresses = new ArrayList<>();
 
-            //Get maximum 1 address
+            if(submission.getLocation() != null) {
+                //Get maximum 1 address
+                try {
+                    addresses = geocoder.getFromLocationName(submission.getLocation(), 1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                //If an address has been found
+                if (addresses.size() > 0) {
+                    double latitude = addresses.get(0).getLatitude();
+                    double longitude = addresses.get(0).getLongitude();
+                    LatLng latLng = new LatLng(latitude, longitude);
+                    MarkerOptions marker = new MarkerOptions().position(latLng).title(submission.getName());
+                    mMap.addMarker(marker);
+                }
+            }
+        }
+    }
+
+    private class DownloadWebpageTask extends AsyncTask<Void, Void, ArrayList<Submission>> {
+
+        @Override
+        protected ArrayList<Submission> doInBackground(Void ... params) {
+
             try {
-                addresses = geocoder.getFromLocationName(shortcut.getLocation(), 1);
-            } catch (IOException e) {
+                setUpMapIfNeeded();
+            } catch (MapException e) {
                 e.printStackTrace();
             }
 
-            //If an address has been found
-            if (addresses.size() > 0) {
-                double latitude = addresses.get(0).getLatitude();
-                double longitude = addresses.get(0).getLongitude();
-                LatLng latLng = new LatLng(latitude, longitude);
-                MarkerOptions marker = new MarkerOptions().position(latLng).title(shortcut.getName());
-                mMap.addMarker(marker);
+            ArrayList<Submission> submissions = null;
+            CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
+
+            try {
+                //FIXME: once server is ready, use sendAroundYouRequest
+                submissions = communicationLayer.sendSubmissionsRequest();
+            } catch (CommunicationLayerException e) {
+                e.printStackTrace();
             }
+
+            return submissions;
+
         }
+
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(ArrayList<Submission> submissions) {
+
+            if(submissions.size() == 0){
+                displayToast("No submissions in your area");
+            } else {
+                try {
+                    displaySubmissionMarkers(submissions);
+                } catch (MapException e) {
+                    e.printStackTrace();
+                } catch (CommunicationLayerException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+
+    }
+
+    private void displayToast(String message){
+        Context context = getApplicationContext();
+        CharSequence text = message;
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
+
+        toast.show();
     }
 }

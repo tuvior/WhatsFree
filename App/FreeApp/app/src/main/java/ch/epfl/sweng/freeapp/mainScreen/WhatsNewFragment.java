@@ -54,19 +54,6 @@ public class WhatsNewFragment extends ListFragment {
             displayToast("Connection problem");
         }
 
-        /**
-        //Get the JSONArray corresponding to the submissions
-        try {
-            FakeCommunicationLayer fakeCommunicationLayer = new FakeCommunicationLayer();
-            ArrayList<SubmissionShortcut> submissions = fakeCommunicationLayer.sendSubmissionsRequest();
-            //Adapter provides a view for each item in the data set
-            SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, submissions);
-            this.setListAdapter(adapter);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        **/
-
         return rootView;
     }
 
