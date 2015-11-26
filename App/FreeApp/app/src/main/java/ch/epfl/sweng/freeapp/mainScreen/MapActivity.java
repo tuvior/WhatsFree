@@ -92,6 +92,8 @@ public class MapActivity extends FragmentActivity {
     private void setUpMap() throws MapException {
         displaySubmissionMarkers();
         mMap.setMyLocationEnabled(true);
+        mMap.getUiSettings().setZoomControlsEnabled(true); // true to enable
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
     }
 
     /**
