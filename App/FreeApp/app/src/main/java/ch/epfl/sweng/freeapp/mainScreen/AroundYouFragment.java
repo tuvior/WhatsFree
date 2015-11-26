@@ -65,25 +65,18 @@ public class AroundYouFragment extends ListFragment {
 
 
         //Get the JSONArray corresponding to the submissions
+        CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
+        ArrayList<Submission> submissions = null;
         try {
-
-
-            CommunicationLayer communicationLayer = new CommunicationLayer();
-            ArrayList<Submission> submissions = null;
-            try {
-                //TODO: replace by sendAroundYouRequest once server is ready
-                submissions = communicationLayer.sendSubmissionsRequest();
-            } catch (CommunicationLayerException e) {
-                e.printStackTrace();
-            }
-
-            //Adapter provides a view for each item in the data set
-            SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, submissions);
-            this.setListAdapter(adapter);
-
-        } catch (JSONException e) {
+            //TODO: replace by sendAroundYouRequest once server is ready
+            submissions = communicationLayer.sendSubmissionsRequest();
+        } catch (CommunicationLayerException e) {
             e.printStackTrace();
         }
+
+        //Adapter provides a view for each item in the data set
+        SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, submissions);
+        this.setListAdapter(adapter);
 
         //Set listener for mapButton
         ImageButton mapButton = (ImageButton) rootView.findViewById(R.id.mapButton);
