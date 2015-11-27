@@ -19,6 +19,8 @@ public  class Submission  {
     private Date startOfEvent;
     private Date endOfEvent;
     private int likes;
+    private int dislikes;
+
 
     public Submission(String name , String description, SubmissionCategory category, String location, String image){
         this.name = name;
@@ -153,6 +155,10 @@ public  class Submission  {
 
     public int getLikes (){
         return likes;
+    }
+
+    public int getDislikes(){
+        return dislikes;
     }
 
 }

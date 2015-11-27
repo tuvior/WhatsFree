@@ -102,7 +102,15 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Submission submission) {
 
+            int likes = submission.getLikes();
+            int dislikes = submission.getDislikes();
 
+            TextView numberOfLikes = (TextView)findViewById(R.id.numberOfLikes);
+            TextView numberOfDislikes = (TextView)findViewById(R.id.numberOfDislikes);
+
+
+            numberOfLikes.setText(Integer.toString(likes));
+            numberOfDislikes.setText(Integer.toString(dislikes));
 
             TextView nameTextView = (TextView)findViewById(R.id.submissionName);
             nameTextView.setText(submission.getName());
