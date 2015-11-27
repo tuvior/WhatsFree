@@ -34,12 +34,14 @@
         android:src="@drawable/ic_action_bad"
         android:layout_below="@+id/like"
         android:layout_alignLeft="@+id/like"
-        android:layout_alignStart="@+id/like" />
+        android:layout_alignStart="@+id/like"
+        android:contentDescription="dislike" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TODO"
+        android:text=""
+        android:onClick="likeButtonOnClick"
         android:id="@+id/numberOfLikes"
         android:layout_above="@+id/dislike"
         android:layout_toRightOf="@+id/like"
@@ -49,7 +51,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TODO"
+        android:text=""
+        android:onClick="dislikeButtonOnclick"
         android:id="@+id/numberOfDislikes"
         android:layout_marginTop="13dp"
         android:layout_below="@+id/like"

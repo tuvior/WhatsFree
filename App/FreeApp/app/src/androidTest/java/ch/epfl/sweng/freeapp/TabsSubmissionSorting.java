@@ -1,6 +1,5 @@
 package ch.epfl.sweng.freeapp;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.junit.Test;
 
@@ -51,7 +50,7 @@ public class TabsSubmissionSorting {
         ArrayList<Submission> submissions = fakeCommunicationLayer.sendSubmissionsRequest();
 
         CategoriesFragment categoriesFragment = new CategoriesFragment();
-        ArrayList<Submission> sortedSubmissions = categoriesFragment.sortSubmissions(submissions);
+       // ArrayList<Submission> sortedSubmissions = categoriesFragment.sortSubmissions(submissions);
 
         //TODO assert submissions are in the good order
     }

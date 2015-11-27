@@ -7,23 +7,22 @@ import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import ch.epfl.sweng.freeapp.BuildConfig;
-import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
-import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
-import ch.epfl.sweng.freeapp.communication.DefaultCommunicationLayer;
-import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 import ch.epfl.sweng.freeapp.R;
 import ch.epfl.sweng.freeapp.Submission;
-import ch.epfl.sweng.freeapp.communication.FakeCommunicationLayer;
+import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
+import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
+import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 
 public class DisplaySubmissionActivity extends AppCompatActivity {
 
@@ -72,6 +71,9 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void dislikeButtonOnclick(View view) {
+    }
+
     private class DownloadWebpageTask extends AsyncTask<String, Void, Submission> {
 
         @Override
@@ -90,6 +92,8 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
+
+
             return submission;
 
         }
@@ -97,6 +101,8 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(Submission submission) {
+
+
 
             TextView nameTextView = (TextView)findViewById(R.id.submissionName);
             nameTextView.setText(submission.getName());
