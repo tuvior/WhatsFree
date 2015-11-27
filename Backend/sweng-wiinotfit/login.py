@@ -2,6 +2,8 @@ import webapp2
 import string
 import random
 from google.appengine.ext import ndb
+from user import User
+from session import Session
 
 def json_response( status , cookie = '' ):
     if status == 0:
@@ -32,15 +34,6 @@ def json_response( status , cookie = '' ):
     }
 }"""
     return res
-
-class User(ndb.Model):
-    username = ndb.StringProperty()
-    pswd = ndb.StringProperty()
-    email = ndb.StringProperty()
-
-class Session(ndb.Model):
-    cookie = ndb.StringProperty()
-    user = ndb.StringProperty()
 
 class Login(webapp2.RequestHandler):
             

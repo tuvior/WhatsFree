@@ -4,8 +4,12 @@ package ch.epfl.sweng.freeapp.mainScreen;
  * Created by lois on 11/6/15.
  */
 
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
@@ -13,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -51,18 +56,16 @@ public class AroundYouFragment extends ListFragment {
 
         View rootView = inflater.inflate(R.layout.around_you_fragment, container, false);
 
-        CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
-        ArrayList<Submission> submissions = null;
-        try {
-            //TODO: replace by sendAroundYouRequest once server is ready
-            submissions = communicationLayer.sendSubmissionsRequest();
-        } catch (CommunicationLayerException e) {
-            e.printStackTrace();
-        }
+        ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            //mShortcuts will contain the shortcuts retrieved by the asynchronous task
+            new DownloadWebpageTask().execute(); //Caution: submission MUST be retrieved from an async task (performance). Otherwise the app will crash.
 
-        //Adapter provides a view for each item in the data set
-        SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, submissions);
-        this.setListAdapter(adapter);
+        } else {
+            //Connection problem
+            displayToast("Connection problem");
+        }
 
         //Set listener for mapButton
         ImageButton mapButton = (ImageButton) rootView.findViewById(R.id.mapButton);
@@ -104,5 +107,45 @@ public class AroundYouFragment extends ListFragment {
             }
         });
         return submissionShortcuts;
+    }
+
+    private class DownloadWebpageTask extends AsyncTask<Void, Void, ArrayList<Submission>> {
+
+        @Override
+        protected ArrayList<Submission> doInBackground(Void ... params) {
+            ArrayList<Submission> submissions = null;
+            CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
+
+            try {
+                submissions = communicationLayer.sendSubmissionsRequest();
+            } catch (CommunicationLayerException e) {
+                e.printStackTrace();
+            }
+
+            return submissions;
+
+        }
+
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(ArrayList<Submission> submissions) {
+
+            SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, submissions);
+            setListAdapter(adapter);
+            if(submissions.size() == 0){
+                displayToast("No submissions around you yet");
+            }
+
+        }
+
+    }
+
+    private void displayToast(String message){
+        Context context = getActivity().getApplicationContext();
+        CharSequence text = message;
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
+
+        toast.show();
     }
 }
