@@ -1,4 +1,4 @@
-package ch.epfl.sweng.freeapp;
+package ch.epfl.sweng.freeapp.communication;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;

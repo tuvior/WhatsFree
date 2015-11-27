@@ -1,4 +1,4 @@
-package ch.epfl.sweng.freeapp;
+package ch.epfl.sweng.freeapp.loginAndRegistration;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +12,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
+import ch.epfl.sweng.freeapp.R;
+import ch.epfl.sweng.freeapp.communication.ResponseStatus;
+import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
+import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
 import ch.epfl.sweng.freeapp.mainScreen.MainScreenActivity;
 
 public class LoginActivity extends AppCompatActivity {
@@ -210,7 +215,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 }else{
 
-                    assert(responseStatus == ResponseStatus.EMAIL.EMPTY);
+                    assert(responseStatus == ResponseStatus.EMPTY);
 
                     alertUser("Empty Field(s)");
 

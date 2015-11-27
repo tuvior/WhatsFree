@@ -10,6 +10,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
     <string name="title_activity_whats_new_tab">WhatsNewTabActivity</string>
     <string name="title_activity_around_you_tab">AroundYouTabActivity</string>
     <string name="title_activity_categories_tab_activities">CategoriesTabActivities</string>
@@ -20,23 +21,36 @@
     <string name="three">Around you</string>
     <string name="title_activity_display_submissions">DisplaySubmissionsActivity</string>
 
+
     <string name="title_activity_create_new_submission">CreateNewSubmission</string>
     <string name="description">Description </string>
     <string name="name_of_event">Whats Free </string>
     <string name="location">Location</string>
     <string name="categories">Category</string>
     <string name="set_date">Set Date</string>
+
+    <string name="start_time">Starts</string>
+    <string name="end_time">Ends</string>
+    <string name="existImage">OPEN EXISTING IMAGE</string>
+    <string name="takeImage">TAKE PHOTO</string>
+    <string name="keyword">Key Words</string>
+    <string name="create">CREATE</string>
+    <string name="pictureOFLocation">LocationPicture</string>
+
+
     <string name="new_submission">New Submission</string>
     <string name="map_mode">Map mode</string>
     <string name="search">Search</string>
     <string name="report">Report</string>
     <string-array name="categories">
+
         <item>Food</item>
-        <item>Clothes</item>
+        <item>Clothing</item>
         <item>Sport</item>
         <item>Culture</item>
         <item>NightLife</item>
         <item>Lifestyle</item>
         <item>Miscellaneous</item>
     </string-array>
+    <string name="title_activity_map">MapActivity</string>
 </resources>

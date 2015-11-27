@@ -3,26 +3,42 @@ package ch.epfl.sweng.freeapp.mainScreen;
 /**
  * Created by lois on 11/6/15.
  */
+
+import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
-import org.json.JSONArray;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import ch.epfl.sweng.freeapp.FakeCommunicationLayer;
-import ch.epfl.sweng.freeapp.R;
+import java.util.Collections;
+import java.util.Comparator;
 
+import ch.epfl.sweng.freeapp.Submission;
+import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
+import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
+import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
+import ch.epfl.sweng.freeapp.communication.FakeCommunicationLayer;
+import ch.epfl.sweng.freeapp.R;
 
 public class AroundYouFragment extends ListFragment {
 
-    public final static String SUBMISSION_MESSAGE = "ch.epfl.sweng.freeapp.SUBMISSION";
+    private GoogleMap googleMap;
+    private Location location;
 
     public AroundYouFragment() {
         // Required empty public constructor
@@ -39,24 +55,31 @@ public class AroundYouFragment extends ListFragment {
 
         View rootView = inflater.inflate(R.layout.around_you_fragment, container, false);
 
-        //Get the JSONArray corresponding to the submissions
-        FakeCommunicationLayer fakeCommunicationLayer = new FakeCommunicationLayer();
-        try {
-            JSONArray jsonNamesAndPictures = fakeCommunicationLayer.sendWhatIsNewRequest();
-            ArrayList<SubmissionShortcut> submissions = jsonArrayToArrayList(jsonNamesAndPictures);
-            //Adapter provides a view for each item in the data set
-            SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, submissions);
-            this.setListAdapter(adapter);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            //mShortcuts will contain the shortcuts retrieved by the asynchronous task
+            new DownloadWebpageTask().execute(); //Caution: submission MUST be retrieved from an async task (performance). Otherwise the app will crash.
+
+        } else {
+            //Connection problem
+            displayToast("Connection problem");
         }
+
+        //Set listener for mapButton
+        ImageButton mapButton = (ImageButton) rootView.findViewById(R.id.mapButton);
+        mapButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), MapActivity.class);
+                //intent.putExtra(MAP_MESSAGE, mapMessage);
+                startActivity(intent);
+            }
+        });
 
         return rootView;
     }
 
     /**
-     * When the user clicks on a specific category, launch
-     * the activity (fragment?) responsible for displaying the related submissions
      *
      * @param l
      * @param v
@@ -65,29 +88,63 @@ public class AroundYouFragment extends ListFragment {
      */
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        SubmissionShortcut submissionShortcut = (SubmissionShortcut)getListAdapter().getItem(position);
+        Submission submissionShortcut = (Submission)getListAdapter().getItem(position);
         String submissionName = submissionShortcut.getName();
         Intent intent = new Intent(v.getContext(), DisplaySubmissionActivity.class);
-        intent.putExtra(SUBMISSION_MESSAGE, submissionName);
+        intent.putExtra(MainScreenActivity.SUBMISSION_MESSAGE, submissionName);
         startActivity(intent);
     }
 
-    private ArrayList<SubmissionShortcut> jsonArrayToArrayList(JSONArray jsonSubmissions) throws JSONException {
+    /**
+     * Sort submissions according to how close they are to you
+     */
+    public ArrayList<Submission> sortSubmissions(ArrayList<Submission> submissionShortcuts){
+        Collections.sort(submissionShortcuts, new Comparator<Submission>() {
+            @Override
+            public int compare(Submission lhs, Submission rhs) {
+                return lhs.getName().compareTo(rhs.getName());
+            }
+        });
+        return submissionShortcuts;
+    }
 
-        ArrayList<SubmissionShortcut> submissionsList = new ArrayList<>();
+    private class DownloadWebpageTask extends AsyncTask<Void, Void, ArrayList<Submission>> {
 
-        for(int i = 0; i < jsonSubmissions.length(); i++){
-            //TODO: also include image
-            JSONObject jsonSubmission = jsonSubmissions.getJSONObject(i);
-            String name = jsonSubmission.getString("name");
+        @Override
+        protected ArrayList<Submission> doInBackground(Void ... params) {
+            ArrayList<Submission> submissions = null;
+            CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
 
-            SubmissionShortcut submission = new SubmissionShortcut(name);
-            submissionsList.add(submission);
+            try {
+                submissions = communicationLayer.sendSubmissionsRequest();
+            } catch (CommunicationLayerException e) {
+                e.printStackTrace();
+            }
+
+            return submissions;
+
         }
 
-        return submissionsList;
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(ArrayList<Submission> submissions) {
+
+            SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, submissions);
+            setListAdapter(adapter);
+            if(submissions.size() == 0){
+                displayToast("No submissions around you yet");
+            }
+
+        }
 
     }
 
+    private void displayToast(String message){
+        Context context = getActivity().getApplicationContext();
+        CharSequence text = message;
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
 
+        toast.show();
+    }
 }

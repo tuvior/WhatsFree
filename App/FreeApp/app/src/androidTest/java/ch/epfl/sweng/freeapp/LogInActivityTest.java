@@ -8,6 +8,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
+import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
+import ch.epfl.sweng.freeapp.communication.NetworkProvider;
+import ch.epfl.sweng.freeapp.communication.ResponseStatus;
+import ch.epfl.sweng.freeapp.loginAndRegistration.LogInInfo;
+import ch.epfl.sweng.freeapp.loginAndRegistration.LoginActivity;
+
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
@@ -225,6 +232,15 @@ public class LogInActivityTest {
 
         assertEquals(true, username.getError().toString().equals("No spaces allowed"));
         assertEquals(true, password.getError().toString().equals("No spaces allowed"));
+
+
+    }
+
+    @Test
+    public void testGoesToRegisterActivityWhenSignUpClicked(){
+
+        onView(withId(R.id.sign_up)).perform(click());
+       // onView(withId(R.id.sign_up)).check(matches(not(isDisplayed())));
 
 
     }

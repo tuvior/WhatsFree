@@ -12,8 +12,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import ch.epfl.sweng.freeapp.CategoryDisplaySubmissionsActivity;
+import java.util.ArrayList;
+
 import ch.epfl.sweng.freeapp.R;
+import ch.epfl.sweng.freeapp.Submission;
 
 public class CategoriesFragment extends ListFragment {
 
@@ -37,7 +39,7 @@ public class CategoriesFragment extends ListFragment {
         View rootView = inflater.inflate(R.layout.categories_fragment, container,
                 false);
 
-        String[] values = new String[] { "Food", "Clothing", "Events", "Nightlife", "Goods","Miscellaneous" };
+        String[] values = new String[] { "Food", "Clothing", "Events", "Nightlife", "Sport", "Culture", "Goods", "Lifestyle", "Miscellaneous" };
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1, values);
         setListAdapter(adapter);
@@ -60,6 +62,16 @@ public class CategoriesFragment extends ListFragment {
         Intent intent = new Intent(v.getContext(), CategoryDisplaySubmissionsActivity.class);
         intent.putExtra(CATEGORY_MESSAGE, category);
         startActivity(intent);
+    }
+
+    /**
+     * Clicking on a specific category will filter submissions, but
+     * there still needs to be an ordering among them.
+     * Here the criterion is distance from your location.
+     */
+    public ArrayList<Submission> sortSubmissions(ArrayList<Submission> submissionShortcuts){
+        //TODO
+        return null;
     }
 
 }
