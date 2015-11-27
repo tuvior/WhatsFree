@@ -2,6 +2,7 @@ import webapp2
 import string
 import json
 import datetime
+import math
 from google.appengine.ext import ndb
 from google.appengine.api import images
 from submission import Submission
@@ -25,6 +26,7 @@ def json_response(status):
 
     return res
 
+# add lat and lon
 def json_string(name, category , description , location , image , keywords, submitter, tfrom, tto):
     json_string = {'name': name,'category': category, 'description': description, 'location': location, 'image': image,
                    'keywords': keywords, 'submitter': submitter, 'from': tfrom, 'to': tto}
@@ -113,7 +115,45 @@ class retrieveSubmission(webapp2.RequestHandler):
                             self.response.write(response)
         
                     # flag = 3 means that we are requesting submissions for around you
+                    elif flag == '3':
+                        latitude = self.request.get('latitude')
+                        longitude = self.request.get('longitude')
+                        submissions_number = 20
 
+                        if not lat:
+                            error = json_error('around you', 'failure', 'latitude')
+                            self.response.write(json.dumps(error))
+
+                        elif not lon:
+                            error = json_error('around you', 'failure', 'longitude')
+                            self.response.write(json.dumps(error))
+
+                        else:
+                            sin_lat = math.sin(latitude);
+                            cos_lat = math.cos(latitude);
+                            R = 6371 * math.pow(10, 3);
+                            max_distance = 1000;
+                            around_you_submissions = Submission.query(math.acos(sin_lat*math.sin(Submission.latitude) + 
+                                                                      cos_lat*math.cos(Submission.latitude)*math.cos(longitude - Submission.longitude)) * 
+                                                                      R <= max_distance).fetch(submissions_number);
+                            else:
+                                submissions_array = []
+                                if(submissions_number <= len(submissions_array)):
+                                    for i in range(0, submissions_number):
+                                        submission = submissions[i]
+                                        json_submission = json_string(submission.name, '', '', '', submission.image, '', '', '', '')
+                                        submissions_array.append(json_submission)
+
+                                else:
+                                    for i in range(0, len(submissions)):
+                                        submission = submissions[i]
+                                        json_submission = json_string(submission.name, '', '', '', submission.image, '', '', '', '')
+                                        submissions_array.append(json_submission)
+
+                                response = json.dumps(submissions_array)
+                                self.response.write(response)
+
+        
                     # flag = 4 means that we are requesting submissions for a specific category
                     elif flag == '4':
                         category = self.request.get('category')
