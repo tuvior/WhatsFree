@@ -42,13 +42,13 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
     private final String passwordPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z0-9]).+$";
     private final String EmailPattern = "^(.+)@(.+)\\.(.+)$"; // Loose local email validation
 
-    protected static final int USERNAME_MIN_LENGTH = 6;
-    protected static final int USERNAME_MAX_LENGTH = 30; // arbitrary
+    public static final int USERNAME_MIN_LENGTH = 6;
+    public static final int USERNAME_MAX_LENGTH = 30; // arbitrary
 
-    protected static final int PASSWORD_MIN_LENGTH = 8;
-    protected static final int PASSWORD_MAX_LENGTH = 30; // arbitrary
+    public static final int PASSWORD_MIN_LENGTH = 8;
+    public static final int PASSWORD_MAX_LENGTH = 30; // arbitrary
 
-    protected static final int EMAIL_MAX_LENGTH = 64; // wikipedia
+    public static final int EMAIL_MAX_LENGTH = 64; // wikipedia
 
 
 
@@ -114,13 +114,13 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
     }
 
 
-    protected boolean isUsernameValid(final String username){
+    public boolean isUsernameValid(final String username){
         Pattern pattern = Pattern.compile(usernamePattern);
         Matcher matcher = pattern.matcher(username);
         return USERNAME_MIN_LENGTH <= username.length() && username.length() <= USERNAME_MAX_LENGTH && !matcher.find();
     }
 
-    protected boolean isEmailValid(final String email) {
+    public boolean isEmailValid(final String email) {
         Pattern generalPattern = Pattern.compile(EmailPattern);
         Matcher generalMatcher = generalPattern.matcher(email);
 
@@ -132,7 +132,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
                 && generalMatcher.group(1).length() <= EMAIL_MAX_LENGTH;
     }
 
-    protected boolean isPasswordValid(final String password) {
+    public boolean isPasswordValid(final String password) {
         Pattern pattern = Pattern.compile(passwordPattern);
         Matcher matcher = pattern.matcher(password);
         return PASSWORD_MIN_LENGTH <= password.length() && password.length() <= PASSWORD_MAX_LENGTH && matcher.find();

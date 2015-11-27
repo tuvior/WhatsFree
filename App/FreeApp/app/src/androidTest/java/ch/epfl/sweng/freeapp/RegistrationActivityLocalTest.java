@@ -19,6 +19,8 @@ import org.junit.runner.RunWith;
 import java.util.Random;
 import java.util.UUID;
 
+import ch.epfl.sweng.freeapp.loginAndRegistration.RegistrationActivity;
+
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;

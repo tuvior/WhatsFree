@@ -11,6 +11,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
+import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
+import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
+import ch.epfl.sweng.freeapp.communication.ResponseStatus;
+import ch.epfl.sweng.freeapp.loginAndRegistration.RegistrationActivity;
+import ch.epfl.sweng.freeapp.loginAndRegistration.RegistrationInfo;
+
 import static junit.framework.Assert.assertNotNull;
 
 /**
