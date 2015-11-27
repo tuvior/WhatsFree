@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import ch.epfl.sweng.freeapp.Submission;
+import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
+import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
 import ch.epfl.sweng.freeapp.communication.FakeCommunicationLayer;
 import ch.epfl.sweng.freeapp.R;
 
@@ -63,18 +65,18 @@ public class AroundYouFragment extends ListFragment {
 
 
         //Get the JSONArray corresponding to the submissions
+        CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
+        ArrayList<Submission> submissions = null;
         try {
-
-            FakeCommunicationLayer fakeCommunicationLayer = new FakeCommunicationLayer();
-            ArrayList<Submission> submissions = fakeCommunicationLayer.sendSubmissionsRequest();
-
-            //Adapter provides a view for each item in the data set
-            SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, submissions);
-            this.setListAdapter(adapter);
-
-        } catch (JSONException e) {
+            //TODO: replace by sendAroundYouRequest once server is ready
+            submissions = communicationLayer.sendSubmissionsRequest();
+        } catch (CommunicationLayerException e) {
             e.printStackTrace();
         }
+
+        //Adapter provides a view for each item in the data set
+        SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, submissions);
+        this.setListAdapter(adapter);
 
         //Set listener for mapButton
         ImageButton mapButton = (ImageButton) rootView.findViewById(R.id.mapButton);
