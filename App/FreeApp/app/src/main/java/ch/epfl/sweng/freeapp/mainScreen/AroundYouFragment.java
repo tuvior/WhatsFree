@@ -17,17 +17,15 @@ import android.widget.ListView;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import ch.epfl.sweng.freeapp.R;
 import ch.epfl.sweng.freeapp.Submission;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
-import ch.epfl.sweng.freeapp.communication.FakeCommunicationLayer;
-import ch.epfl.sweng.freeapp.R;
+import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 
 public class AroundYouFragment extends ListFragment {
 
