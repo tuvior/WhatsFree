@@ -27,6 +27,10 @@ import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
 import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 
+import ch.epfl.sweng.freeapp.communication.FakeCommunicationLayer;
+import ch.epfl.sweng.freeapp.R;
+
+
 public class AroundYouFragment extends ListFragment {
 
     private GoogleMap googleMap;
@@ -47,22 +51,6 @@ public class AroundYouFragment extends ListFragment {
 
         View rootView = inflater.inflate(R.layout.around_you_fragment, container, false);
 
-        try{
-
-            if(googleMap == null ){
-                googleMap = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-            }
-
-           this.location =  googleMap.getMyLocation();
-
-
-
-        }catch(Exception  e){
-            e.printStackTrace();
-        }
-
-
-        //Get the JSONArray corresponding to the submissions
         CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
         ArrayList<Submission> submissions = null;
         try {
