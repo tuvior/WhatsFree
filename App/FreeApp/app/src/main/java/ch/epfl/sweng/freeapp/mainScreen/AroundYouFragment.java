@@ -50,9 +50,6 @@ public class AroundYouFragment extends ListFragment {
 
         View rootView = inflater.inflate(R.layout.around_you_fragment, container, false);
 
-        //Get the JSONArray corresponding to the submissions
-
-
         CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
         ArrayList<Submission> submissions = null;
         try {
