@@ -6,9 +6,9 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
+import ch.epfl.sweng.freeapp.communication.FakeCommunicationLayer;
 import ch.epfl.sweng.freeapp.mainScreen.AroundYouFragment;
 import ch.epfl.sweng.freeapp.mainScreen.CategoriesFragment;
-import ch.epfl.sweng.freeapp.mainScreen.SubmissionShortcut;
 import ch.epfl.sweng.freeapp.mainScreen.WhatsNewFragment;
 
 /**
@@ -25,32 +25,33 @@ public class TabsSubmissionSorting {
 
     @Test
     public void testWhatsNewOrdering() throws JSONException {
-        JSONArray submissionShortcutsJson = FakeCommunicationLayer.sendWhatIsNewRequest();
-        ArrayList<SubmissionShortcut> submissionShortcuts = FakeCommunicationLayer.jsonArrayToArrayList(submissionShortcutsJson);
+        FakeCommunicationLayer fakeCommunicationLayer = new FakeCommunicationLayer();
+        ArrayList<Submission> submissions = fakeCommunicationLayer.sendSubmissionsRequest();
 
         WhatsNewFragment whatsNewFragment = new WhatsNewFragment();
-        ArrayList<SubmissionShortcut> sortedSubmissionShortcuts = whatsNewFragment.sortSubmissions(submissionShortcuts);
+        ArrayList<Submission> sortedSubmissions = whatsNewFragment.sortSubmissions(submissions);
 
         //TODO assert submissions are in the good order
     }
 
     @Test
     public void testAroundYouOrdering() throws JSONException {
-        JSONArray submissionShortcutsJson = FakeCommunicationLayer.sendWhatIsNewRequest();
-        ArrayList<SubmissionShortcut> submissionShortcuts = FakeCommunicationLayer.jsonArrayToArrayList(submissionShortcutsJson);
+        FakeCommunicationLayer fakeCommunicationLayer = new FakeCommunicationLayer();
+        ArrayList<Submission> submissions = fakeCommunicationLayer.sendSubmissionsRequest();
 
         AroundYouFragment aroundYouFragment = new AroundYouFragment();
-        ArrayList<SubmissionShortcut> sortedSubmissionShortcuts = aroundYouFragment.sortSubmissions(submissionShortcuts);
+        ArrayList<Submission> sortedSubmissions = aroundYouFragment.sortSubmissions(submissions);
 
         //TODO assert submissions are in the good order
     }
 
     @Test
     public void testCategoryOrdering() throws JSONException {
-        ArrayList<SubmissionShortcut> submissionShortcuts = FakeCommunicationLayer.sendCategoryRequest(SubmissionCategory.FOOD);
+        FakeCommunicationLayer fakeCommunicationLayer = new FakeCommunicationLayer();
+        ArrayList<Submission> submissions = fakeCommunicationLayer.sendSubmissionsRequest();
 
         CategoriesFragment categoriesFragment = new CategoriesFragment();
-        ArrayList<SubmissionShortcut> sortedSubmissionShortcuts = categoriesFragment.sortSubmissions(submissionShortcuts);
+        ArrayList<Submission> sortedSubmissions = categoriesFragment.sortSubmissions(submissions);
 
         //TODO assert submissions are in the good order
     }

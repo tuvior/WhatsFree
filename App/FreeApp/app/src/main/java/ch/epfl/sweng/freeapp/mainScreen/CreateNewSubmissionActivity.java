@@ -1,4 +1,4 @@
-package ch.epfl.sweng.freeapp;
+package ch.epfl.sweng.freeapp.mainScreen;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -35,6 +35,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+import ch.epfl.sweng.freeapp.ProvideImage;
+import ch.epfl.sweng.freeapp.R;
+import ch.epfl.sweng.freeapp.Submission;
+import ch.epfl.sweng.freeapp.SubmissionCategory;
+import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
+import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
+import ch.epfl.sweng.freeapp.communication.DefaultCommunicationLayer;
+import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
+import ch.epfl.sweng.freeapp.communication.ResponseStatus;
 import ch.epfl.sweng.freeapp.mainScreen.MainScreenActivity;
 
 public class CreateNewSubmissionActivity extends AppCompatActivity {
@@ -382,7 +391,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
     }
 
 
-    private class UploadSubmissionTask extends AsyncTask<Submission,Void ,ResponseStatus >{
+    private class UploadSubmissionTask extends AsyncTask<Submission,Void ,ResponseStatus>{
 
         private Context context;
 

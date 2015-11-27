@@ -1,4 +1,4 @@
-package ch.epfl.sweng.freeapp;
+package ch.epfl.sweng.freeapp.loginAndRegistration;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,9 +11,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ch.epfl.sweng.freeapp.R;
+
+
+import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
+import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
+import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
+import ch.epfl.sweng.freeapp.communication.ResponseStatus;
 import ch.epfl.sweng.freeapp.mainScreen.MainScreenActivity;
 
 

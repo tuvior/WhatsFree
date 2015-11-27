@@ -17,15 +17,16 @@ import android.widget.ListView;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import ch.epfl.sweng.freeapp.FakeCommunicationLayer;
-import ch.epfl.sweng.freeapp.MapActivity;
+import ch.epfl.sweng.freeapp.Submission;
+import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
+import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
+import ch.epfl.sweng.freeapp.communication.FakeCommunicationLayer;
 import ch.epfl.sweng.freeapp.R;
 
 public class AroundYouFragment extends ListFragment {
@@ -64,15 +65,18 @@ public class AroundYouFragment extends ListFragment {
 
 
         //Get the JSONArray corresponding to the submissions
+        CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
+        ArrayList<Submission> submissions = null;
         try {
-            JSONArray jsonNamesAndPictures = FakeCommunicationLayer.sendWhatIsNewRequest();
-            ArrayList<SubmissionShortcut> submissions = sortSubmissions(FakeCommunicationLayer.jsonArrayToArrayList(jsonNamesAndPictures));
-            //Adapter provides a view for each item in the data set
-            SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, submissions);
-            this.setListAdapter(adapter);
-        } catch (JSONException e) {
+            //TODO: replace by sendAroundYouRequest once server is ready
+            submissions = communicationLayer.sendSubmissionsRequest();
+        } catch (CommunicationLayerException e) {
             e.printStackTrace();
         }
+
+        //Adapter provides a view for each item in the data set
+        SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, submissions);
+        this.setListAdapter(adapter);
 
         //Set listener for mapButton
         ImageButton mapButton = (ImageButton) rootView.findViewById(R.id.mapButton);
@@ -96,7 +100,7 @@ public class AroundYouFragment extends ListFragment {
      */
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        SubmissionShortcut submissionShortcut = (SubmissionShortcut)getListAdapter().getItem(position);
+        Submission submissionShortcut = (Submission)getListAdapter().getItem(position);
         String submissionName = submissionShortcut.getName();
         Intent intent = new Intent(v.getContext(), DisplaySubmissionActivity.class);
         intent.putExtra(MainScreenActivity.SUBMISSION_MESSAGE, submissionName);
@@ -106,10 +110,10 @@ public class AroundYouFragment extends ListFragment {
     /**
      * Sort submissions according to how close they are to you
      */
-    public ArrayList<SubmissionShortcut> sortSubmissions(ArrayList<SubmissionShortcut> submissionShortcuts){
-        Collections.sort(submissionShortcuts, new Comparator<SubmissionShortcut>() {
+    public ArrayList<Submission> sortSubmissions(ArrayList<Submission> submissionShortcuts){
+        Collections.sort(submissionShortcuts, new Comparator<Submission>() {
             @Override
-            public int compare(SubmissionShortcut lhs, SubmissionShortcut rhs) {
+            public int compare(Submission lhs, Submission rhs) {
                 return lhs.getName().compareTo(rhs.getName());
             }
         });

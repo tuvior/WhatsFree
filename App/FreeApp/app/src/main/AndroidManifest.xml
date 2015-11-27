@@ -47,7 +47,7 @@
 
 
         <activity
-            android:name=".LoginActivity"
+            android:name=".loginAndRegistration.LoginActivity"
             android:label="@string/title_activity_login"
 
             android:windowSoftInputMode="adjustPan">
@@ -80,7 +80,7 @@
 
 
         <activity
-            android:name=".RegistrationActivity"
+            android:name=".loginAndRegistration.RegistrationActivity"
             android:label="@string/title_activity_registration" >
             android:name=".DisplaySubmissionsActivity"
             android:label="@string/title_activity_display_submissions" >
@@ -90,7 +90,7 @@
 
 
         <activity
-            android:name=".CreateNewSubmissionActivity"
+            android:name=".mainScreen.CreateNewSubmissionActivity"
             android:label="@string/title_activity_create_new_submission" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -104,7 +104,7 @@
 
         </activity>
         <activity
-            android:name=".CategoryDisplaySubmissionsActivity"
+            android:name=".mainScreen.CategoryDisplaySubmissionsActivity"
             android:label="CategoryDisplaySubmissions" >
         </activity>
         <activity
@@ -112,7 +112,7 @@
             android:label="DisplaySubmissionActivity" >
         </activity>
         <activity
-            android:name=".MapActivity"
+            android:name=".mainScreen.MapActivity"
             android:label="@string/title_activity_map" >
         </activity>
     </application>

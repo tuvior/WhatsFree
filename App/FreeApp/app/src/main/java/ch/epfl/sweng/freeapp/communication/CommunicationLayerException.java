@@ -1,4 +1,4 @@
-package ch.epfl.sweng.freeapp;
+package ch.epfl.sweng.freeapp.communication;
 
 /**
  * Created by francisdamachi on 22/10/15.

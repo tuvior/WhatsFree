@@ -14,8 +14,8 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-import ch.epfl.sweng.freeapp.CategoryDisplaySubmissionsActivity;
 import ch.epfl.sweng.freeapp.R;
+import ch.epfl.sweng.freeapp.Submission;
 
 public class CategoriesFragment extends ListFragment {
 
@@ -39,7 +39,7 @@ public class CategoriesFragment extends ListFragment {
         View rootView = inflater.inflate(R.layout.categories_fragment, container,
                 false);
 
-        String[] values = new String[] { "Food", "Clothing", "Events", "Nightlife", "Goods","Miscellaneous" };
+        String[] values = new String[] { "Food", "Clothing", "Events", "Nightlife", "Sport", "Culture", "Goods", "Lifestyle", "Miscellaneous" };
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1, values);
         setListAdapter(adapter);
@@ -69,7 +69,7 @@ public class CategoriesFragment extends ListFragment {
      * there still needs to be an ordering among them.
      * Here the criterion is distance from your location.
      */
-    public ArrayList<SubmissionShortcut> sortSubmissions(ArrayList<SubmissionShortcut> submissionShortcuts){
+    public ArrayList<Submission> sortSubmissions(ArrayList<Submission> submissionShortcuts){
         //TODO
         return null;
     }

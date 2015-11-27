@@ -12,6 +12,13 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Calendar;
 
+import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
+import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
+import ch.epfl.sweng.freeapp.communication.NetworkProvider;
+import ch.epfl.sweng.freeapp.communication.ResponseStatus;
+import ch.epfl.sweng.freeapp.loginAndRegistration.LogInInfo;
+import ch.epfl.sweng.freeapp.loginAndRegistration.RegistrationInfo;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
 public class CommunicationLayerTest {
@@ -47,10 +54,10 @@ public class CommunicationLayerTest {
 
         builder.name("Croissant ");
         builder.description("Good Food");
-        builder.category(SubmissionCategory.FOOD);
+        builder.category(SubmissionCategory.Food);
         builder.location("EPFL ecublens 1203");
         builder.image("RUBBISH IMAGE");
-        builder.keywords("FOOD BREAD FREE");
+        builder.keywords("Food BREAD FREE");
 
         builder.startOfEvent(startTime);
         builder.endOfEvent(endTime);

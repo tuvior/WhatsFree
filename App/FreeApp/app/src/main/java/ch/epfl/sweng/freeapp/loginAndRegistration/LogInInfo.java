@@ -1,4 +1,4 @@
-package ch.epfl.sweng.freeapp;
+package ch.epfl.sweng.freeapp.loginAndRegistration;
 
 
 public class LogInInfo {
