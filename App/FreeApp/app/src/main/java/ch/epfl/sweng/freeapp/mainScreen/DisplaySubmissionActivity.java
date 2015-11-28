@@ -26,7 +26,13 @@ import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 
 public class DisplaySubmissionActivity extends AppCompatActivity {
 
+    private int likes;
+    private int dislikes;
+    private boolean dislikedClicked = false;
+    private boolean likedClicked = false;
     public static boolean isTest = false;
+    private Submission submissionDisplayed;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +78,32 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
     }
 
     public void dislikeButtonOnclick(View view) {
+
+        if(dislikedClicked){
+            dislikes -=1;
+        }else {
+            dislikes += 1;
+            TextView disLikeTextView = (TextView) findViewById(R.id.numberOfDislikes);
+            disLikeTextView.setText(Integer.toString(dislikes));
+            if(likes > 0){
+
+                likes-=1;
+                TextView likeTextView = (TextView)findViewById(R.id.numberOfLikes);
+                likeTextView.setText(Integer.toString(likes));
+
+            }
+        }
+
+
+
+
+
+    }
+
+    public void likeButtonOnClick(View view) {
+        likes+=1;
+        TextView likeTextView = (TextView)findViewById(R.id.numberOfLikes);
+        likeTextView.setText(Integer.toString(likes));
     }
 
     private class DownloadWebpageTask extends AsyncTask<String, Void, Submission> {
@@ -102,8 +134,8 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Submission submission) {
 
-            int likes = submission.getLikes();
-            int dislikes = submission.getDislikes();
+            likes = submission.getLikes();
+            dislikes = submission.getDislikes();
 
             TextView numberOfLikes = (TextView)findViewById(R.id.numberOfLikes);
             TextView numberOfDislikes = (TextView)findViewById(R.id.numberOfDislikes);
