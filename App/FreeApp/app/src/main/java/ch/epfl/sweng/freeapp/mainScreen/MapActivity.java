@@ -1,5 +1,6 @@
 package ch.epfl.sweng.freeapp.mainScreen;
 
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.support.v7.app.AppCompatActivity;
@@ -35,19 +36,30 @@ public class MapActivity extends AppCompatActivity {
 
     // Google Map
     private GoogleMap googleMap;
+    private LatLng user_location;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
+        // Get the message from the intent
+        Intent intent = getIntent();
+        Bundle bundle = intent.getParcelableExtra(AroundYouFragment.BUNDLE);
+        user_location = bundle.getParcelable(AroundYouFragment.USER_LOCATION);
+
         try {
             // Loading map
             initializeMap();
 
+            //Perform these actions only once the map is correctly initialized
+            //Enable myLocation button
             googleMap.setMyLocationEnabled(true);
+
+            //Enable zoom in/ out buttons
             googleMap.getUiSettings().setZoomControlsEnabled(true);
-            centerCameraUser();
+
+            centerCameraUser(user_location);
             displaySubmissionMarkers();
 
         } catch (Exception e) {
@@ -57,7 +69,8 @@ public class MapActivity extends AppCompatActivity {
     }
 
     /**
-     * function to load map. If map is not created it will create it for you
+     * function to load map. If map is not created it will create it for you.
+     * Also retrieve
      * */
     private void initializeMap() throws JSONException {
         if (googleMap == null) {
@@ -89,13 +102,12 @@ public class MapActivity extends AppCompatActivity {
     /**
      * Center the camera and places a marker on the user's location
      */
-    private void centerCameraUser() {
+    private void centerCameraUser(LatLng userLocation) {
         //TODO: figure out how to get the user's location
-        LatLng latLng = new LatLng(-17.536407, -149.566035);
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 10);
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(userLocation, 10);
         googleMap.animateCamera(cameraUpdate);
 
-        MarkerOptions marker = new MarkerOptions().position(latLng).title("Your Location");
+        MarkerOptions marker = new MarkerOptions().position(userLocation).title("Your Location");
         marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
         googleMap.addMarker(marker);
     }
@@ -132,4 +144,6 @@ public class MapActivity extends AppCompatActivity {
             }
         }
     }
+
+
 }
