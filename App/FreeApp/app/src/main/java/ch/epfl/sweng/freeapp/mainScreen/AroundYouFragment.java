@@ -12,6 +12,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,14 +20,21 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import ch.epfl.sweng.freeapp.R;
+
+import ch.epfl.sweng.freeapp.LocationActivity;
+
 import ch.epfl.sweng.freeapp.Submission;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
@@ -36,10 +44,24 @@ import ch.epfl.sweng.freeapp.communication.FakeCommunicationLayer;
 import ch.epfl.sweng.freeapp.R;
 
 
-public class AroundYouFragment extends ListFragment {
+public class AroundYouFragment extends ListFragment implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
-    private GoogleMap googleMap;
-    private Location location;
+
+    public static final String BUNDLE = "bundle";
+    public static final String USER_LOCATION = "user_location";
+
+    // LogCat tag
+    private static final String TAG = LocationActivity.class.getSimpleName();
+
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
+
+    private Location mLastLocation;
+
+    // Google client to interact with Google API
+    private GoogleApiClient mGoogleApiClient;
+
+    private LatLng latLng;
 
     public AroundYouFragment() {
         // Required empty public constructor
@@ -55,6 +77,14 @@ public class AroundYouFragment extends ListFragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.around_you_fragment, container, false);
+
+        //get user's location
+        // First we need to check availability of play services
+        if (checkPlayServices()) {
+
+            // Building the GoogleApi client
+            buildGoogleApiClient();
+        }
 
         ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -72,7 +102,9 @@ public class AroundYouFragment extends ListFragment {
         mapButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), MapActivity.class);
-                //intent.putExtra(MAP_MESSAGE, mapMessage);
+                Bundle args = new Bundle();
+                args.putParcelable(USER_LOCATION, latLng);
+                intent.putExtra(BUNDLE, args);
                 startActivity(intent);
             }
         });
@@ -94,6 +126,35 @@ public class AroundYouFragment extends ListFragment {
         Intent intent = new Intent(v.getContext(), DisplaySubmissionActivity.class);
         intent.putExtra(MainScreenActivity.SUBMISSION_MESSAGE, submissionName);
         startActivity(intent);
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
+    }
+
+    /**
+     * Google api callback methods
+     */
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+        Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = "
+                + result.getErrorCode());
+    }
+
+    @Override
+    public void onConnected(Bundle arg0) {
+
+        // Once connected with google api, get the location
+        latLng = getLocation();
+    }
+
+    @Override
+    public void onConnectionSuspended(int arg0) {
+        mGoogleApiClient.connect();
     }
 
     /**
@@ -148,4 +209,55 @@ public class AroundYouFragment extends ListFragment {
 
         toast.show();
     }
+
+    /**
+     * Method to display the location on UI
+     */
+    private LatLng getLocation() {
+
+        LatLng latLng = null;
+
+        mLastLocation = LocationServices.FusedLocationApi
+                .getLastLocation(mGoogleApiClient);
+
+        if (mLastLocation != null) {
+            double latitude = mLastLocation.getLatitude();
+            double longitude = mLastLocation.getLongitude();
+            latLng = new LatLng(latitude, longitude);
+
+        } else {
+            displayToast("Couldn't get the location. Make sure location is enabled on the device");
+        }
+
+        return latLng;
+    }
+
+    /**
+     * Creating google api client object
+     */
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(getContext())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API).build();
+    }
+
+    /**
+     * Method to verify google play services on the device
+     */
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil
+                .isGooglePlayServicesAvailable(getContext());
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, getActivity(),
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+               displayToast("This device is not supported.");
+            }
+            return false;
+        }
+        return true;
+    }
+
 }
