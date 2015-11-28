@@ -55,7 +55,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
      * Used by the app to
      * send user-entered log in information to the user
      *
-     * @param logInInfo
+     * @param logInInfo login information entered by the user
      * @return "ok" if the operation was successful, or "failed" otherwise
      */
     public ResponseStatus sendLogInInfo(LogInInfo logInInfo) throws CommunicationLayerException {
@@ -65,19 +65,8 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
         }
 
         try {
-            //FIXME: refactor code related to connection
 
-            URL url = new URL(SERVER_URL + "/login?user=" + logInInfo.getUsername() + "&password=" + logInInfo.getPassword());
-
-            HttpURLConnection conn = networkProvider.getConnection(url);
-            conn.setRequestMethod("GET");
-            conn.setDoInput(true);
-            conn.connect();
-            int response = conn.getResponseCode();
-            if (response < HTTP_SUCCESS_START || response > HTTP_SUCCESS_END) {
-                throw new CommunicationLayerException("Invalid HTTP response code");
-            }
-            String serverResponseString = fetchContent(conn);
+            String serverResponseString = fetchStringFrom(SERVER_URL + "/login?user=" + logInInfo.getUsername() + "&password=" + logInInfo.getPassword());
             JSONObject serverResponse = new JSONObject(serverResponseString);
             JSONObject logInJson = serverResponse.getJSONObject("login");
             if (logInJson.getString("status").equals("failure")) {
@@ -93,7 +82,9 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
                 return ResponseStatus.EMPTY;
             } else {
 
-                assert (logInJson.get("status").equals("ok"));
+                if(BuildConfig.DEBUG && !(logInJson.get("status").equals("ok"))){
+                    throw new AssertionError();
+                }
                 this.cookieSession = logInJson.getString("cookie");
                 return ResponseStatus.OK;
             }
@@ -106,28 +97,18 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
      * Used by the app to
      * send user-entered registration information to the user
      *
-     * @param registrationInfo
+     * @param registrationInfo registration information entered by the user
      * @return "ok" if the operation was successful, or "failed" otherwise
      */
     public ResponseStatus sendRegistrationInfo(RegistrationInfo registrationInfo) throws CommunicationLayerException {
-        //Note: needs to use a method from the server (such as myServer.createAccount(registrationInfo))
+
         if (registrationInfo == null) {
             throw new CommunicationLayerException("null registrationInfo");
         }
         try {
-            URL url = new URL(SERVER_URL + "/register?user=" + registrationInfo.getUsername() + "&password=" + registrationInfo.getPassword() + "&email=" + registrationInfo.getEmail());
-
-            HttpURLConnection conn = networkProvider.getConnection(url);
-            conn.setRequestMethod("GET");
-            conn.setDoInput(true);
-            conn.connect();
-            int response = conn.getResponseCode();
-            if (response < HTTP_SUCCESS_START || response > HTTP_SUCCESS_END) {
-                throw new CommunicationLayerException("Invalid HTTP response code");
-            }
 
             //Get Response
-            String serverResponse = fetchContent(conn);
+            String serverResponse = fetchStringFrom(SERVER_URL + "/register?user=" + registrationInfo.getUsername() + "&password=" + registrationInfo.getPassword() + "&email=" + registrationInfo.getEmail());
             JSONObject jsonObject = new JSONObject(serverResponse);
             JSONObject serverResponseJson = jsonObject.getJSONObject("register");
             if (serverResponseJson.getString("status").equals("failure")) {
@@ -142,7 +123,9 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
                         throw new CommunicationLayerException();
                 }
             }
-            assert (serverResponseJson.getString("status").equals("ok"));
+            if (BuildConfig.DEBUG && !(serverResponseJson.getString("status").equals("ok"))){
+                throw new AssertionError();
+            }
             return ResponseStatus.OK;
         } catch (IOException e) {
             throw new CommunicationLayerException("Server Unresponsive");
@@ -225,23 +208,9 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
 
     @Override
     public ArrayList<Submission> sendSubmissionsRequest() throws CommunicationLayerException {
-        URL url ;
-
-        HttpURLConnection conn;
 
         try{
-            url = new URL(SERVER_URL+"/retrieve?cookie=" + COOKIE_TEST + "&flag=2");
-            conn = networkProvider.getConnection(url);
-            conn.setRequestMethod("GET");
-            conn.setDoInput(true);
-            conn.connect();
-            int response = conn.getResponseCode();
-
-            if (response < HTTP_SUCCESS_START || response > HTTP_SUCCESS_END) {
-                throw new CommunicationLayerException("Invalid HTTP response code");
-            }
-
-            String content = fetchContent(conn);
+            String content = fetchStringFrom(SERVER_URL+"/retrieve?cookie=" + COOKIE_TEST + "&flag=2");
             JSONArray contentArray = new JSONArray(content);
 
             return jsonArrayToArrayList(contentArray);
@@ -254,31 +223,21 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
 
     @Override
     public Submission fetchSubmission(String name) throws CommunicationLayerException {
-        URL url ;
-        HttpURLConnection conn;
+
         Submission submission;
 
         try{
-            url = new URL(SERVER_URL+"/retrieve?cookie=" + COOKIE_TEST + "&flag=1&name=" + name);
-            conn = networkProvider.getConnection(url);
-            conn.setRequestMethod("GET");
-            conn.setDoInput(true);
-            conn.connect();
-
-            int response = conn.getResponseCode();
-            if (response < HTTP_SUCCESS_START || response > HTTP_SUCCESS_END) {
-                throw new CommunicationLayerException("Invalid HTTP response code");
-            }
-
-            String content = fetchContent(conn);
+            String content = fetchStringFrom(SERVER_URL+"/retrieve?cookie=" + COOKIE_TEST + "&flag=1&name=" + name);
             System.out.println(content);
             JSONObject jsonSubmission = new JSONObject(content);
 
             //Retrieve specific submission fields
-            assert(name.equals(jsonSubmission.getString("name")));
+            if(BuildConfig.DEBUG && !(name.equals(jsonSubmission.getString("name")))){
+                throw new AssertionError();
+            }
             String description = jsonSubmission.getString("description");
 
-            SubmissionCategory submissionCategory = null;
+            SubmissionCategory submissionCategory;
             if(SubmissionCategory.contains(jsonSubmission.getString("category"))) {
                  submissionCategory = SubmissionCategory.valueOf(jsonSubmission.getString("category"));
             } else {
@@ -298,23 +257,10 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
 
     @Override
     public ArrayList<Submission> sendCategoryRequest(SubmissionCategory category) throws CommunicationLayerException {
-        URL url ;
-        HttpURLConnection conn;
 
         try{
-            url = new URL(SERVER_URL+"/retrieve?cookie=" + COOKIE_TEST + "&flag=4&category=" + category.toString().toUpperCase());
-            conn = networkProvider.getConnection(url);
-            conn.setRequestMethod("GET");
-            conn.setDoInput(true);
-            conn.connect();
-            int response = conn.getResponseCode();
-
-            if (response < HTTP_SUCCESS_START || response > HTTP_SUCCESS_END) {
-                throw new CommunicationLayerException("Invalid HTTP response code");
-            }
-
-            String content = fetchContent(conn);
-            //FIXME: if there is no submission corresponding to the category, then the server will return a failure. This failure cannot be converted to JSONArray
+            String content = fetchStringFrom(SERVER_URL+"/retrieve?cookie=" + COOKIE_TEST + "&flag=4&category=" + category.toString().toUpperCase());
+            //if there is no submission corresponding to the category, then the server will return a failure
             if(!content.contains("failure")) {
                 JSONArray contentArray = new JSONArray(content);
                 return jsonArrayToArrayList(contentArray);
@@ -377,8 +323,8 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
     /**
      * The server sends the submissions as a JSONArray, and the communication layer
      * conveys those to the tabs as an ArrayList
-     * @param jsonSubmissions
-     * @return
+     * @param jsonSubmissions the submissions returned by the server in a JSONArray format
+     * @return the same submissions but in an ArrayList
      * @throws JSONException
      */
     public ArrayList<Submission> jsonArrayToArrayList(JSONArray jsonSubmissions) throws JSONException {
@@ -403,6 +349,21 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
         }
         return submissionsList;
 
+    }
+
+    private String fetchStringFrom(String urlString) throws IOException, CommunicationLayerException {
+        URL url = new URL(urlString);
+        HttpURLConnection conn = networkProvider.getConnection(url);
+        conn.setRequestMethod("GET");
+        conn.setDoInput(true);
+        conn.connect();
+        int response = conn.getResponseCode();
+
+        if (response < HTTP_SUCCESS_START || response > HTTP_SUCCESS_END) {
+            throw new CommunicationLayerException("Invalid HTTP response code");
+        }
+
+        return fetchContent(conn);
     }
 
 }
