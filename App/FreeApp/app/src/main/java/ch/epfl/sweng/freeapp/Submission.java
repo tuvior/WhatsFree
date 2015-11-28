@@ -18,6 +18,7 @@ public  class Submission  {
     private Date submitted;
     private Date startOfEvent;
     private Date endOfEvent;
+    private int id;
     private int likes;
     private int dislikes;
 
@@ -159,6 +160,10 @@ public  class Submission  {
 
     public int getDislikes(){
         return dislikes;
+    }
+
+    public int getId(){
+        return id;
     }
 
 }
