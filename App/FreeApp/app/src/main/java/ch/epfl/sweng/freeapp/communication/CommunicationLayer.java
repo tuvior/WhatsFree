@@ -2,6 +2,8 @@ package ch.epfl.sweng.freeapp.communication;
 
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
@@ -273,6 +275,25 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
             throw new CommunicationLayerException();
         }
     }
+
+    @Override
+    public ArrayList<Submission> sendAroundYouRequest(LatLng userLocation) throws JSONException, CommunicationLayerException {
+        try{
+            String content = fetchStringFrom(SERVER_URL+"/retrieve?cookie=" + COOKIE_TEST + "&flag=3&longitude=" + userLocation.longitude + "&latitude=" + userLocation.latitude);
+            //if there is no submission corresponding to the category, then the server will return a failure
+            if(!content.contains("failure")) {
+                JSONArray contentArray = new JSONArray(content);
+                return jsonArrayToArrayList(contentArray);
+            } else {
+                //return an empty array if no submissions corresponding to the category
+                return new ArrayList<>();
+            }
+
+        }catch(IOException | JSONException e){
+            throw new CommunicationLayerException();
+        }
+    }
+
 
     //TODO: documentation
     private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException {

@@ -2,6 +2,8 @@ package ch.epfl.sweng.freeapp.communication;
 
 import android.graphics.Bitmap;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.json.JSONException;
 
 
@@ -106,6 +108,11 @@ public class FakeCommunicationLayer implements DefaultCommunicationLayer {
         }
 
         return submissions;
+    }
+
+    @Override
+    public ArrayList<Submission> sendAroundYouRequest(LatLng userLocation) throws JSONException, CommunicationLayerException {
+        return null;
     }
 
 
