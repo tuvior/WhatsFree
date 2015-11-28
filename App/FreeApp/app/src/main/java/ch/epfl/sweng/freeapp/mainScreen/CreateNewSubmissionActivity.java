@@ -360,7 +360,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
                     submission.keywords(keywords.getText().toString());
                     submission.image(encodeImage(bitmap));
 
-                    SubmissionCategory submissionCategory = SubmissionCategory.valueOf(spinnerCategory.getSelectedItem().toString().toUpperCase());
+                    SubmissionCategory submissionCategory = SubmissionCategory.valueOf(spinnerCategory.getSelectedItem().toString());
                     submission.category(submissionCategory);
                     submission.startOfEvent(startEventCalendar);
                     submission.endOfEvent(endEventCalendar);
