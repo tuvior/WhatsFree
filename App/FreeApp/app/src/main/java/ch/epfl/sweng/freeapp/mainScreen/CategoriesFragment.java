@@ -25,6 +25,7 @@ public class CategoriesFragment extends ListFragment {
         // Required empty public constructor
     }
 
+
     /**
      * The categories tab presents all the categories as a list
      * @param inflater
