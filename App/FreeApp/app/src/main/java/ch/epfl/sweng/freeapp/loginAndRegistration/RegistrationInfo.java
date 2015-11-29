@@ -4,13 +4,15 @@ package ch.epfl.sweng.freeapp.loginAndRegistration;
  */
 public class RegistrationInfo {
     private String username;
-    private String password;
     private String email;
+    private String password;
+
+    public RegistrationInfo(){}
 
     public RegistrationInfo(String username, String password, String email){
         this.username = username;
-        this.password = password;
         this.email = email;
+        this.password = password;
     }
 
     public String getUsername() {
@@ -24,4 +26,5 @@ public class RegistrationInfo {
     public String getEmail() {
         return email;
     }
+
 }

@@ -44,7 +44,7 @@
             android:name=".loginAndRegistration.LoginActivity"
             android:label="@string/title_activity_login"
             android:windowSoftInputMode="adjustPan" >
-            >
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -59,10 +59,17 @@
         <activity
             android:name=".mainScreen.MainScreenActivity"
             android:label="@string/title_activity_main_screen" >
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
         </activity>
         <activity
@@ -97,8 +104,14 @@
             android:label="@string/title_activity_map" >
         </activity>
         <activity
+
+            android:name=".SearchActivity"
+            android:label="@string/title_activity_search" >
+        </activity>
+        <activity
             android:name=".LocationActivity"
             android:label="@string/title_activity_location" >
+>
         </activity>
     </application>
 

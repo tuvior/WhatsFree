@@ -1,5 +1,8 @@
 package ch.epfl.sweng.freeapp.loginAndRegistration;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -7,41 +10,74 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import ch.epfl.sweng.freeapp.R;
 
 
-public class RegistrationActivity extends AppCompatActivity {
+import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
+import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
+import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
+import ch.epfl.sweng.freeapp.communication.ResponseStatus;
+import ch.epfl.sweng.freeapp.mainScreen.MainScreenActivity;
+
+
+public class RegistrationActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private CommunicationLayer communicationLayer;
 
     private EditText usernameView;
+
     private EditText emailView;
+
     private EditText passwordView;
     private EditText confirmPasswordView;
+
     private Button signUpView;
 
-    private RegistrationInfo registrationInfo;
+    private final String usernamePattern = "( )";
+    private final String passwordPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z0-9]).+$";
+    private final String EmailPattern = "^(.+)@(.+)\\.(.+)$"; // Loose local email validation
 
-    private static final String serverUrl = "http://sweng-wiinotfit.appspot.com";
+    public static final int USERNAME_MIN_LENGTH = 6;
+    public static final int USERNAME_MAX_LENGTH = 30; // arbitrary
+
+    public static final int PASSWORD_MIN_LENGTH = 8;
+    public static final int PASSWORD_MAX_LENGTH = 30; // arbitrary
+
+    public static final int EMAIL_MAX_LENGTH = 64; // wikipedia
+
+
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main);
-        setContentView(R.layout.activity_registration);
+        setContentView(R.layout.registration_main);
 
         usernameView = (EditText) findViewById(R.id.username);
+
         emailView = (EditText) findViewById(R.id.email);
+
         passwordView = (EditText) findViewById(R.id.password);
         confirmPasswordView = (EditText) findViewById(R.id.confirmPassword);
+
         signUpView = (Button) findViewById(R.id.button);
+
+        communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
+
 
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_registration, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -60,44 +96,147 @@ public class RegistrationActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onClickSignUp(View view){
-        int zero = 0;
-        if(usernameView.getText().length() == zero || emailView.getText().length() == zero
-                || passwordView.getText().length() == zero || confirmPasswordView.getText().length() == zero) {
-            Toast.makeText(getApplicationContext(), "One of the fields is empty", Toast.LENGTH_LONG).show();
-        }
-        else if(!passwordView.getText().toString().equals(confirmPasswordView.getText().toString()))
+
+
+    @Override
+    public void onClick(View v) {
+
+        if(localValidityCheck())
         {
-            Toast.makeText(getApplicationContext(), "passwords aren't identical", Toast.LENGTH_LONG).show();
+            String username = usernameView.getText().toString();
+            String email = emailView.getText().toString();
+            String password = passwordView.getText().toString();
 
+            RegistrationInfo registrationInfo = new RegistrationInfo(username, password, email);
+            new RetrieveServerResponse(this).execute(registrationInfo);
         }
-        else
+
+    }
+
+
+    public boolean isUsernameValid(final String username){
+        Pattern pattern = Pattern.compile(usernamePattern);
+        Matcher matcher = pattern.matcher(username);
+        return USERNAME_MIN_LENGTH <= username.length() && username.length() <= USERNAME_MAX_LENGTH && !matcher.find();
+    }
+
+    public boolean isEmailValid(final String email) {
+        Pattern generalPattern = Pattern.compile(EmailPattern);
+        Matcher generalMatcher = generalPattern.matcher(email);
+
+        String whitespace = "^(.+)\\s(.+)$";
+        Pattern whitespacePattern = Pattern.compile(whitespace);
+        Matcher matcherWhitespace = whitespacePattern.matcher(email);
+
+        return generalMatcher.matches() && !matcherWhitespace.matches() && 0 < generalMatcher.group(1).length()
+                && generalMatcher.group(1).length() <= EMAIL_MAX_LENGTH;
+    }
+
+    public boolean isPasswordValid(final String password) {
+        Pattern pattern = Pattern.compile(passwordPattern);
+        Matcher matcher = pattern.matcher(password);
+        return PASSWORD_MIN_LENGTH <= password.length() && password.length() <= PASSWORD_MAX_LENGTH && matcher.find();
+    }
+
+    /**
+     * Preliminary check without internet access that user's
+     * entered information are valid.
+     *
+     *@return true if all the fields are preliminarily correct,
+     *        false otherwise
+     */
+    private boolean localValidityCheck()
+    {
+        boolean valid = true;
+        String empty = "";
+
+
+
+        if(!isUsernameValid(usernameView.getText().toString())){
+            usernameView.setText(empty);
+            valid = false;
+        }
+
+        if(!isEmailValid(emailView.getText().toString())){
+            emailView.setText(empty);
+            valid = false;
+        }
+
+
+        if(!isPasswordValid(passwordView.getText().toString())){
+            valid = false;
+        }
+        else if(!passwordView.getText().toString().equals(confirmPasswordView.getText().toString())){
+            valid = false;
+        }
+
+        if(!valid)
         {
-            RegistrationInfo registrationInfo = new RegistrationInfo(usernameView.getText().toString(),
-                                                                     emailView.getText().toString(),
-                                                                     passwordView.getText().toString());
-
-            //CommunicationLayer communicationLayer = new CommunicationLayer(serverUrl);
-
-            /*
-            if(communicationLayer.sendRegistrationInfo(registrationInfo) == null ||
-                    !communicationLayer.sendRegistrationInfo(registrationInfo).equals("OK"))
-            {
-                Toast.makeText(getApplicationContext(), "Either the username already exists or the email address is invalid",
-                        Toast.LENGTH_LONG).show();
-            }*/
-
+            passwordView.setText(empty);
+            confirmPasswordView.setText(empty);
+            //Toast.makeText(RegistrationActivity.this, "Invalid registration", Toast.LENGTH_LONG).show();
         }
 
         /*
-        else if(emailView.getText().length() == zero)
-        {
+        if(usernameView.getText().toString().trim().isEmpty() ||
+                emailView.getText().toString().trim().isEmpty() ||
+                    passwordView.getText().toString().trim().isEmpty() ||
+                        confirmPasswordView.getText().toString().trim().isEmpty()){
 
-        }
-        else if(passwordView.getText().length() == zero){
+            Toast.makeText(RegistrationActivity.this, "Please fill all the fields", Toast.LENGTH_LONG).show();
 
         }
         */
+
+        return valid;
+
     }
 
+
+
+    /**
+     * Async task for getting a server response
+     *
+     */
+    private class RetrieveServerResponse extends AsyncTask<RegistrationInfo, RegistrationInfo, ResponseStatus>{
+
+        private Context context;
+
+        private RetrieveServerResponse(Context context){
+            this.context = context;
+        }
+
+        @Override
+        protected ResponseStatus doInBackground(RegistrationInfo... params) {
+
+            ResponseStatus responseStatus = null;
+            try {
+                responseStatus = communicationLayer.sendRegistrationInfo(params[0]);
+            } catch (CommunicationLayerException e) {
+                e.printStackTrace();
+            }
+            return responseStatus;
+        }
+
+
+
+        @Override
+        protected void onPostExecute(ResponseStatus responseStatus) {
+            if(responseStatus == ResponseStatus.OK){
+                Intent intent = new Intent(context, MainScreenActivity.class);
+                startActivity(intent);
+            }
+            else
+            {
+                String empty = "";
+                usernameView.setText(empty);
+                emailView.setText(empty);
+                passwordView.setText(empty);
+                confirmPasswordView.setText(empty);
+            }
+            return;
+        }
+
+
+    }
 }
