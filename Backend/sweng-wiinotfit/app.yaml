@@ -25,6 +25,9 @@ handlers:
 
 - url: /delete/submission
   script: delete_submission.app
+  
+- url: /vote
+  script: submit_vote.app
 
 libraries:
 - name: webapp2
