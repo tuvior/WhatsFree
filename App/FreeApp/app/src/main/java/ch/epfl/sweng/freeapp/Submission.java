@@ -112,8 +112,6 @@ public  class Submission  {
 
     }
 
-
-
     public String getCategory() {
         return category.toString();
     }

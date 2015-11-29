@@ -38,23 +38,12 @@ public class DisplaySubmissionActivityTest {
 
     @Test
     public void demonstrateIntentPrep() {
-        Intent intent = new Intent();
-        intent.putExtra(loisSubmission.getName(), MainScreenActivity.SUBMISSION_MESSAGE);
-        rule.launchActivity(intent);
-        onView(withId(R.id.submissionName)).check(matches(withText(loisSubmission.getName())));
+
     }
 
     @Test
     public void testCorrectName(){
 
-        /**
-        Intent customIntent = new Intent();
-        customIntent.putExtra(loisSubmission.getName(), MainScreenActivity.SUBMISSION_MESSAGE);
-
-        onView(withId(R.id.submissionName)).check(matches(withText(loisSubmission.getName())));
-        onView(withId(R.id.submissionDescription)).check(matches(withText(loisSubmission.getDescription())));
-        onView(withId(R.id.submissionImageView)).check(matches(withText(loisSubmission.getImage())));
-         **/
     }
 
     @Test
