@@ -44,21 +44,21 @@ class retrieveSubmission(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
 
         if not cookie:
-            error = json_error('none', 'failure', 'cookie')
+            error = json_error('retrieve', 'failure', 'cookie')
             self.response.write(json.dumps(error))
 
         else:
             flag = self.request.get('flag')
         
             if not flag:
-                error = json_error('retrieve', 'failure', 'flag')
+                error = json_error('retrieve', 'failure', 'no flag')
                 self.response.write(json.dumps(error))
 
             else:
                 session = Session.query(Session.cookie == cookie).get()
 
                 if not session:
-                    error = json_error('none', 'failure', 'session')
+                    error = json_error('retrieve', 'failure', 'session')
                     self.response.write(error)
 
                 else:
@@ -116,26 +116,31 @@ class retrieveSubmission(webapp2.RequestHandler):
         
                     # flag = 3 means that we are requesting submissions for around you
                     elif flag == '3':
-                        latitude = self.request.get('latitude')
-                        longitude = self.request.get('longitude')
+                        latitude = float(self.request.get('latitude'))
+                        longitude = float(self.request.get('longitude'))
                         submissions_number = 20
 
-                        if not lat:
+                        if not latitude:
                             error = json_error('around you', 'failure', 'latitude')
                             self.response.write(json.dumps(error))
 
-                        elif not lon:
+                        elif not longitude:
                             error = json_error('around you', 'failure', 'longitude')
                             self.response.write(json.dumps(error))
 
                         else:
-                            sin_lat = math.sin(latitude);
-                            cos_lat = math.cos(latitude);
-                            R = 6371 * math.pow(10, 3);
-                            max_distance = 1000;
+                            sin_lat = math.sin(latitude)
+                            cos_lat = math.cos(latitude)
+                            R = 6371 * math.pow(10, 3)
+                            max_distance = 1000
                             around_you_submissions = Submission.query(math.acos(sin_lat*math.sin(Submission.latitude) + 
                                                                       cos_lat*math.cos(Submission.latitude)*math.cos(longitude - Submission.longitude)) * 
-                                                                      R <= max_distance).fetch(submissions_number);
+                                                                      R <= max_distance).fetch(submissions_number)
+
+                            if not around_you_submissions:
+                                error = json_error('around you', 'failure', 'no submissions')
+                                self.response.write(json.dumps(error))
+
                             else:
                                 submissions_array = []
                                 if(submissions_number <= len(submissions_array)):
@@ -216,7 +221,7 @@ class retrieveSubmission(webapp2.RequestHandler):
 
                     # every other flag generate an error
                     else:
-                        error = json_error('no option' ,'failure', 'flag')
+                        error = json_error('retrieve' ,'failure', 'flag')
                         self.response.write(json.dumps(error))
 
 

@@ -17,8 +17,14 @@ handlers:
 - url: /retrieve
   script: retrieve_submission.app
 
-- url: /delete
-  script: delete.app
+- url: /delete/user
+  script: delete_user.app
+
+- url: /delete/session
+  script: delete_session.app
+
+- url: /delete/submission
+  script: delete_submission.app
 
 libraries:
 - name: webapp2
