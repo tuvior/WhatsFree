@@ -77,42 +77,46 @@ public class ServerSingleRequestTest {
     @Test
     public void serverRespondsWithFailureIfNoCookie() throws CommunicationLayerException, JSONException {
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?", "GET");
-        assertEquals("failure", getStatusFromJson(serverResponse, "none"));
-        assertEquals("cookie", getReasonFromJson(serverResponse, "none"));
+        assertEquals("failure", getStatusFromJson(serverResponse, "retrieve"));
+        assertEquals("cookie", getReasonFromJson(serverResponse, "retrieve"));
+    }
+
+    @Test
+    public void serverRespondsWithFailureIfNoFlagParameter() throws CommunicationLayerException, JSONException {
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?cookie=cookie", "GET");
+        assertEquals("failure", getStatusFromJson(serverResponse, "retrieve"));
+        assertEquals("no flag", getStatusFromJson(serverResponse, "retrieve"));
     }
 
     @Test
     public void serverRespondsWithFailureIfCookieNotInDatabase() throws CommunicationLayerException, JSONException {
+        //Make sure cookie not in db
+        JSONObject deleteSession = establishConnectionAndReturnJsonResponse("/delete/session?cookie=cookie", "GET");
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?cookie=cookie&flag=1", "GET");
-        assertEquals("failure", getStatusFromJson(serverResponse, "none"));
-        assertEquals("session", getReasonFromJson(serverResponse, "none"));
-    }
-
-
-    @Test
-    public void serverRespondsWithFailureIfNoParameters() throws CommunicationLayerException, JSONException {
-        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete?name=singlerequesttest", "GET");
-        JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=singlerequesttest&password=password&email=singlerequesttest@test.ch", "GET");
-        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=singlerequesttest&password=password", "GET");
-        String cookie = getCookieFromJson(loginUser);
-
-        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?cookie="+cookie, "GET");
         assertEquals("failure", getStatusFromJson(serverResponse, "retrieve"));
+        assertEquals("session", getReasonFromJson(serverResponse, "retrieve"));
     }
 
     @Test
-    public void serverResponsWithFailureIfNoNameParameter() throws CommunicationLayerException, JSONException {JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete?name=singlerequesttest", "GET");
+    public void serverRespondsWithFailureIfNoNameParameter() throws CommunicationLayerException, JSONException {
+        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete/user?name=singlerequesttest", "GET");
         JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=singlerequesttest&password=password&email=singlerequesttest@test.ch", "GET");
         JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=singlerequesttest&password=password", "GET");
         String cookie = getCookieFromJson(loginUser);
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?cookie="+cookie+"&flag=1", "GET");
         assertEquals("failure", getStatusFromJson(serverResponse, "single request"));
         assertEquals("name", getReasonFromJson(serverResponse, "single request"));
+
+        //Delete user and session
+        JSONObject deleteUserAgain = establishConnectionAndReturnJsonResponse("/delete/user?name=singlerequesttest", "GET");
+        JSONObject deleteSession = establishConnectionAndReturnJsonResponse("/delete/session?cookie="+cookie, "GET");
     }
 
     @Test
-    public void serverResponsWithFailureIfNoCorrespondingSubmission() throws CommunicationLayerException, JSONException {
-        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete?name=singlerequesttest", "GET");
+    public void serverRespondsWithFailureIfNoCorrespondingSubmission() throws CommunicationLayerException, JSONException {
+        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete/user?name=singlerequesttest", "GET");
+        JSONObject deleteSubmission = establishConnectionAndReturnJsonResponse("/delete/submission?name=testDoesn'tPass", "GET");
+
         JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=singlerequesttest&password=password&email=singlerequesttest@test.ch", "GET");
         JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=singlerequesttest&password=password", "GET");
         String cookie = getCookieFromJson(loginUser);
@@ -120,12 +124,18 @@ public class ServerSingleRequestTest {
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?cookie="+cookie+"&flag=1&name=testDoesn'tPass", "GET");
         assertEquals("failure", getStatusFromJson(serverResponse, "single request"));
         assertEquals("no corresponding submission", getReasonFromJson(serverResponse, "single request"));
+
+        //Delete user and session
+        JSONObject deleteUserAgain = establishConnectionAndReturnJsonResponse("/delete/user?name=singlerequesttest", "GET");
+        JSONObject deleteSession = establishConnectionAndReturnJsonResponse("/delete/session?cookie="+cookie, "GET");
     }
 
 
     @Test
     public void serverResponsWithCorrespondingSubmission() throws CommunicationLayerException, JSONException {
-        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete?name=singlerequesttest", "GET");
+        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete/user?name=singlerequesttest", "GET");
+        JSONObject deleteSubmission = establishConnectionAndReturnJsonResponse("/delete/submission?name=testname", "GET");
+
         JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=singlerequesttest&password=password&email=singlerequesttest@test.ch", "GET");
         JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=singlerequesttest&password=password", "GET");
         String cookie = getCookieFromJson(loginUser);
@@ -138,6 +148,11 @@ public class ServerSingleRequestTest {
         assertEquals("testcategory", serverResponse.getString("category"));
         assertEquals("testlocation", serverResponse.getString("location"));
         assertEquals("testimage", serverResponse.getString("image"));
+
+        //Delete user, session and submission
+        JSONObject deleteUserAgain = establishConnectionAndReturnJsonResponse("/delete/user?name=singlerequesttest", "GET");
+        JSONObject deleteSession = establishConnectionAndReturnJsonResponse("/delete/session?cookie="+cookie, "GET");
+        JSONObject deleteSubmissionAgain = establishConnectionAndReturnJsonResponse("/delete/submission?name=testname", "GET");
     }
 
 

@@ -74,42 +74,47 @@ public class ServerLogInTest {
     }
 
     @Test
-    public void serverRespondWithInvalidWhenNoParameters() throws CommunicationLayerException, JSONException {
+    public void serverRespondsWithInvalidWhenNoParameters() throws CommunicationLayerException, JSONException {
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/login", "GET");
         assertEquals("invalid", getStatusFromJson(serverResponse));
     }
 
     @Test
-    public void serverRespondWithInvalidWhenNoPassword() throws CommunicationLayerException, JSONException {
+    public void serverRespondsWithInvalidWhenNoPassword() throws CommunicationLayerException, JSONException {
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/login?user=user", "GET");
         assertEquals("invalid", getStatusFromJson(serverResponse));
     }
 
     @Test
-    public void serverRespondWithInvalidWhenNoUserName() throws CommunicationLayerException, JSONException {
+    public void serverRespondsWithInvalidWhenNoUserName() throws CommunicationLayerException, JSONException {
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/login?password=password", "GET");
         assertEquals("invalid", getStatusFromJson(serverResponse));
     }
 
     @Test
-    public void serverResponsWithFailureIfWrongUserName() throws CommunicationLayerException, JSONException {
+    public void serverRespondsWithFailureIfWrongUserName() throws CommunicationLayerException, JSONException {
+        //Make sure newuser is not there
+        JSONObject deleteUserIfThere = establishConnectionAndReturnJsonResponse("/delete/user?name=newuser", "GET");
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse(("/login?user=newuser&password=somepassword"), "GET");
         assertEquals("failure", getStatusFromJson(serverResponse));
         assertEquals("user", getReasonFromJson(serverResponse));
     }
 
     @Test
-    public void serverResponsWithFailureIfWrongPassword() throws CommunicationLayerException, JSONException {
+    public void serverRespondsWithFailureIfWrongPassword() throws CommunicationLayerException, JSONException {
         //Registration won't work if there is already an existing user (example if we have already run the test)
         //but there is no problem because the login will work and will find that the password is incorrect
         JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=user&password=password&email=abc@abc.com", "GET");
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse(("/login?user=user&password=wrong"), "GET");
         assertEquals("failure", getStatusFromJson(serverResponse));
         assertEquals("password", getReasonFromJson(serverResponse));
+
+        //Delete user so that it is no more in db
+        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete/user?name=user", "GET");
     }
 
     @Test
-    public void serverRespondWithOkAndCookieIfLogInIsOk() throws CommunicationLayerException, JSONException {
+    public void serverRespondsWithOkAndCookieIfLogInIsOk() throws CommunicationLayerException, JSONException {
         //Registration won't work if there is already an existing user (example if we have already run the test)
         //but there is no problem because the login will work
         JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=a&password=b&email=c", "GET");
@@ -118,6 +123,10 @@ public class ServerLogInTest {
         assertEquals("ok", getStatusFromJson(serverResponse));
         assertNotSame("", cookie);
         assertEquals(64, cookie.length());
+
+        //Delete user and session so that it is no more in db
+        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete/user?name=user", "GET");
+        JSONObject deleteSession = establishConnectionAndReturnJsonResponse("/delete/session?cookie="+cookie, "GET");
     }
 
 
