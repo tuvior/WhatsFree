@@ -6,25 +6,18 @@ package ch.epfl.sweng.freeapp;
 
 import android.support.test.runner.AndroidJUnit4;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
-import java.util.ArrayList;
 
-import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
-import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
 import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 
-import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertSame;
 import static junit.framework.Assert.fail;
 
