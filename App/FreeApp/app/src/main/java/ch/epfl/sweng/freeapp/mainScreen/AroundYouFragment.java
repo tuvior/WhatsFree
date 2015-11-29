@@ -34,12 +34,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import ch.epfl.sweng.freeapp.LocationActivity;
 import ch.epfl.sweng.freeapp.Submission;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
 import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
-import ch.epfl.sweng.freeapp.communication.FakeCommunicationLayer;
 import ch.epfl.sweng.freeapp.R;
 
 public class AroundYouFragment extends ListFragment implements GoogleApiClient.ConnectionCallbacks,
@@ -49,7 +47,7 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
     public static final String USER_LOCATION = "user_location";
 
     // LogCat tag
-    private static final String TAG = LocationActivity.class.getSimpleName();
+    private static final String TAG = AroundYouFragment.class.getSimpleName();
 
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
 

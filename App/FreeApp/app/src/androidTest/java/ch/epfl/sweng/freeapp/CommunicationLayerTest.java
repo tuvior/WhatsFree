@@ -10,16 +10,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
+import ch.epfl.sweng.freeapp.communication.DefaultCommunicationLayer;
+import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 import ch.epfl.sweng.freeapp.communication.NetworkProvider;
 import ch.epfl.sweng.freeapp.communication.ResponseStatus;
 import ch.epfl.sweng.freeapp.loginAndRegistration.LogInInfo;
 import ch.epfl.sweng.freeapp.loginAndRegistration.RegistrationInfo;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 public class CommunicationLayerTest {
     private CommunicationLayer communicationLayer;
@@ -48,7 +52,6 @@ public class CommunicationLayerTest {
     @Before
     public void setUp() throws Exception {
 
-
         startTime.set(Calendar.HOUR_OF_DAY,17);
         endTime.set(Calendar.HOUR_OF_DAY,18);
 
@@ -68,19 +71,6 @@ public class CommunicationLayerTest {
         Mockito.doReturn(connection).when(networkProvider).getConnection(Mockito.any(URL.class));
         this.communicationLayer = new CommunicationLayer(networkProvider);
     }
-    private void configureCrash(int status) throws IOException {
-        InputStream dataStream = Mockito.mock(InputStream.class);
-        Mockito.when(dataStream.read())
-                .thenReturn(ASCII_SPACE, ASCII_SPACE, ASCII_SPACE, ASCII_SPACE)
-                .thenThrow(new IOException());
-        Mockito.doReturn(status).when(connection).getResponseCode();
-        Mockito.doReturn(dataStream).when(connection).getInputStream();
-    }
-    private void configureResponse (String content, int status ) throws IOException {
-        InputStream dataStream = new ByteArrayInputStream(content.getBytes());
-        Mockito.doReturn(dataStream).when(connection).getInputStream();
-        Mockito.doReturn(status).when(connection).getResponseCode();
-    }
 
     @Test
     public void testCreateSubmission() throws CommunicationLayerException, IOException{
@@ -88,41 +78,49 @@ public class CommunicationLayerTest {
         assertEquals(ResponseStatus.OK,communicationLayer.sendAddSubmissionRequest(builder.build()));
 
     }
+
     @Test
     public void testLogInSuccessful() throws CommunicationLayerException, IOException {
         configureResponse(JSON_LOG_IN_GOOD, HttpURLConnection.HTTP_OK);
         assertEquals(ResponseStatus.OK, communicationLayer.sendLogInInfo(new LogInInfo("test", "test")));
     }
+
     @Test
     public void testLogInUserProblem() throws CommunicationLayerException, IOException {
         configureResponse(JSON_LOG_IN_USERNAME, HttpURLConnection.HTTP_OK);
         assertEquals(ResponseStatus.USERNAME, communicationLayer.sendLogInInfo(new LogInInfo("test", "test")));
     }
+
     @Test
     public void testLogInPasswordProblem() throws CommunicationLayerException, IOException {
         configureResponse(JSON_LOG_IN_PASSWORD, HttpURLConnection.HTTP_OK);
         assertEquals(ResponseStatus.PASSWORD, communicationLayer.sendLogInInfo(new LogInInfo("test", "test")));
     }
+
     @Test
     public void testCorrectDataSuccessRegister () throws IOException, CommunicationLayerException {
         configureResponse(JSON_RESPONSE_GOOD, HttpURLConnection.HTTP_OK);
         assertEquals(ResponseStatus.OK, communicationLayer.sendRegistrationInfo(new RegistrationInfo("test", "test", "test")));
     }
+
     @Test
     public void testCorrectDataFailureUsername() throws IOException, CommunicationLayerException{
         configureResponse(JSON_RESPONSE_USERNAME,HttpURLConnection.HTTP_OK);
         assertEquals(ResponseStatus.USERNAME, communicationLayer.sendRegistrationInfo(new RegistrationInfo("test", "test", "test")));
     }
+
     @Test
     public void testCorrectDataFailureEmail() throws IOException, CommunicationLayerException {
         configureResponse(JSON_RESPONSE_EMAIL,HttpURLConnection.HTTP_OK);
         assertEquals(ResponseStatus.EMAIL, communicationLayer.sendRegistrationInfo(new RegistrationInfo("test", "test", "test")));
     }
+
     @Test
     public void testCorrectDataFailurePassword() throws IOException, CommunicationLayerException {
         configureResponse(JSON_RESPONSE_PASSWORD,HttpURLConnection.HTTP_OK);
         assertEquals(ResponseStatus.PASSWORD, communicationLayer.sendRegistrationInfo(new RegistrationInfo("test", "test", "test")));
     }
+
     @Test
     public void testInvalidJson() throws IOException {
         try {
@@ -133,6 +131,7 @@ public class CommunicationLayerTest {
             //PERFECT exception thrown
         }
     }
+
     /** Test that communication throws CommunicationLayerException  when connection is broken */
     @Test
     public void testResponseConnectionBroken() throws IOException {
@@ -144,6 +143,7 @@ public class CommunicationLayerTest {
             // PERFECT
         }
     }
+
     private static JSONObject buildJson(String testType, String reason){
         JSONObject outerObject = new JSONObject();
         JSONObject inner = new JSONObject();
@@ -156,18 +156,18 @@ public class CommunicationLayerTest {
         }
         return outerObject;
     }
+
     private static JSONObject buildOkJSON(String status){
         JSONObject outerObject = new JSONObject();
         JSONObject inner = new JSONObject();
         try{
-            inner.put("status",status);
-            outerObject.put("register",inner);
+            inner.put("status", status);
+            outerObject.put("register", inner);
         }catch (JSONException e){
             e.printStackTrace();
         }
         return  outerObject;
     }
-
 
     private static JSONObject buildOKSubmission(){
 
@@ -181,6 +181,7 @@ public class CommunicationLayerTest {
         }
         return  outerObject;
     }
+
     private static JSONObject buildSuccessfulLogInJSON(){
         JSONObject outerObject = new JSONObject();
         JSONObject inner = new JSONObject();
@@ -192,5 +193,20 @@ public class CommunicationLayerTest {
             e.printStackTrace();
         }
         return  outerObject;
+    }
+
+    private void configureCrash(int status) throws IOException {
+        InputStream dataStream = Mockito.mock(InputStream.class);
+        Mockito.when(dataStream.read())
+                .thenReturn(ASCII_SPACE, ASCII_SPACE, ASCII_SPACE, ASCII_SPACE)
+                .thenThrow(new IOException());
+        Mockito.doReturn(status).when(connection).getResponseCode();
+        Mockito.doReturn(dataStream).when(connection).getInputStream();
+    }
+
+    private void configureResponse (String content, int status ) throws IOException {
+        InputStream dataStream = new ByteArrayInputStream(content.getBytes());
+        Mockito.doReturn(dataStream).when(connection).getInputStream();
+        Mockito.doReturn(status).when(connection).getResponseCode();
     }
 }
