@@ -15,3 +15,4 @@ class Submission(ndb.Model):
     tto = ndb.DateTimeProperty()
     latitude = ndb.FloatProperty()
     longitude = ndb.FloatProperty()
+    score = ndb.IntegerProperty()
