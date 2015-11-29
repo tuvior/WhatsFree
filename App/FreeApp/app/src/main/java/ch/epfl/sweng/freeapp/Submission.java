@@ -166,4 +166,11 @@ public  class Submission  {
         return id;
     }
 
+    public void setLikes(int likes ){
+        this.likes = likes;
+    }
+    public  void setDislikes(int dislikes){
+        this.dislikes =  dislikes;
+    }
+
 }

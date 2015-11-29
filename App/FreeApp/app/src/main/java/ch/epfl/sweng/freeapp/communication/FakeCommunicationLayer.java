@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import ch.epfl.sweng.freeapp.Submission;
 import ch.epfl.sweng.freeapp.SubmissionCategory;
+import ch.epfl.sweng.freeapp.mainScreen.Vote;
 
 /**
  * This communication layer is independent of the server and allows sending the app
@@ -112,6 +113,11 @@ public class FakeCommunicationLayer implements DefaultCommunicationLayer {
 
     @Override
     public ArrayList<Submission> sendAroundYouRequest(LatLng userLocation) throws JSONException, CommunicationLayerException {
+        return null;
+    }
+
+    @Override
+    public ResponseStatus sendVote(Submission submission, Vote vote) throws CommunicationLayerException {
         return null;
     }
 

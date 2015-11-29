@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -13,6 +14,7 @@ import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,7 +24,10 @@ import ch.epfl.sweng.freeapp.R;
 import ch.epfl.sweng.freeapp.Submission;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
+import ch.epfl.sweng.freeapp.communication.DefaultCommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
+import ch.epfl.sweng.freeapp.communication.ProvideCommunicationLayer;
+import ch.epfl.sweng.freeapp.communication.ResponseStatus;
 
 public class DisplaySubmissionActivity extends AppCompatActivity {
 
@@ -30,14 +35,27 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
     private int dislikes;
     private boolean dislikedClicked = false;
     private boolean likedClicked = false;
-    public static boolean isTest = false;
+
+
     private Submission submissionDisplayed;
 
+    //useful for testing
+    private DefaultCommunicationLayer communicationLayer = ProvideCommunicationLayer.getCommunicationLayer();
+    private int defaultColor = Color.LTGRAY;
+
+    private ImageButton likeButton;
+    private ImageButton dislikeButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_submission);
+
+        this.likeButton = (ImageButton)findViewById(R.id.like);
+        this.dislikeButton = (ImageButton)findViewById(R.id.dislike);
+        this.likeButton.setColorFilter(defaultColor);
+        this.dislikeButton.setColorFilter(defaultColor);
+
 
         // Get the message from the intent
         Intent intent = getIntent();
@@ -47,7 +65,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
-            new DownloadWebpageTask().execute(submissionName); //Caution: submission MUST be retrieved from an async task (performance). Otherwise the app will crash.
+            new DownloadWebPageTask().execute(submissionName); //Caution: submission MUST be retrieved from an async task (performance). Otherwise the app will crash.
         } else {
             //Connection problem
             displayToast();
@@ -79,34 +97,141 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
 
     public void dislikeButtonOnclick(View view) {
 
+        //how do you know when a button is already clicked when going to the activity for the first time.
+        //Easiest when inside activity, you can return 0  1 -1
+        //When starting activity, you can only send 1 -1 and based on the server response//
+
+        Vote vote = Vote.DISLIKE;
+
         if(dislikedClicked){
-            dislikes -=1;
-        }else {
-            dislikes += 1;
-            TextView disLikeTextView = (TextView) findViewById(R.id.numberOfDislikes);
-            disLikeTextView.setText(Integer.toString(dislikes));
-            if(likes > 0){
-
-                likes-=1;
-                TextView likeTextView = (TextView)findViewById(R.id.numberOfLikes);
-                likeTextView.setText(Integer.toString(likes));
-
-            }
+            vote = Vote.NEUTRAL;
         }
 
 
 
+        Vote buttonClicked = Vote.DISLIKE;
 
+        SubmissionVoteWrapper submissionVoteWrapper = new SubmissionVoteWrapper();
+        submissionVoteWrapper.submission = submissionDisplayed;
+        submissionVoteWrapper.voteToServer = vote;
 
+        new GetVoteTask(this,buttonClicked).execute(submissionVoteWrapper);
+
+        dislikedClicked = true;
     }
 
     public void likeButtonOnClick(View view) {
-        likes+=1;
-        TextView likeTextView = (TextView)findViewById(R.id.numberOfLikes);
-        likeTextView.setText(Integer.toString(likes));
+        Vote vote = Vote.LIKE;
+
+        if(likedClicked){
+            vote = Vote.NEUTRAL;
+        }
+
+        Vote buttonClicked = Vote.LIKE;
+
+        SubmissionVoteWrapper submissionVoteWrapper = new SubmissionVoteWrapper();
+        submissionVoteWrapper.submission = submissionDisplayed;
+        submissionVoteWrapper.voteToServer = vote;
+
+        new GetVoteTask(this,buttonClicked).execute(submissionVoteWrapper);
+
+        likedClicked = true;
+
+
     }
 
-    private class DownloadWebpageTask extends AsyncTask<String, Void, Submission> {
+
+
+    //class used to pass Multiple arguments in Async task
+    private class SubmissionVoteWrapper{
+        public  Submission submission;
+        public  Vote voteToServer;
+    }
+
+    private class GetVoteTask extends  AsyncTask<SubmissionVoteWrapper,Void,ResponseStatus>{
+
+        private Context context;
+        private Vote typeVote;
+        private Vote buttonClicked;
+
+
+        public GetVoteTask(Context context, Vote buttonClicked){
+            this.context = context;
+            this.buttonClicked = buttonClicked;
+        }
+
+        @Override
+        protected ResponseStatus doInBackground(SubmissionVoteWrapper... params) {
+            typeVote = params[0].voteToServer;
+            try {
+                return  communicationLayer.sendVote(params[0].submission,params[0].voteToServer);
+            } catch (CommunicationLayerException e) {
+                e.printStackTrace();
+                return  null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(ResponseStatus status) {
+
+
+            if(status == null ){
+
+                Toast.makeText(context,"Problem from the server side", Toast.LENGTH_SHORT ).show();
+            }else if ( status == ResponseStatus.OK){
+                if(typeVote == Vote.LIKE){
+
+                    submissionDisplayed.setLikes(submissionDisplayed.getLikes() + 1);
+                    TextView view = (TextView)(findViewById(R.id.numberOfLikes));
+                    view.setText(Integer.toString(submissionDisplayed.getLikes()));
+                    likeButton.setColorFilter(Color.rgb(135,206,250));  //Light blue
+
+
+                }else if(typeVote == Vote.DISLIKE){
+
+                    submissionDisplayed.setDislikes(submissionDisplayed.getDislikes() + 1);
+                    TextView view = (TextView)(findViewById(R.id.numberOfDislikes));
+                    view.setText(Integer.toString(submissionDisplayed.getDislikes()));
+                    dislikeButton.setColorFilter(Color.rgb(255,0,0));  // Red
+
+                }else{
+                    //Case when neutral ,basically we want to undo or action.
+
+                    if(buttonClicked == Vote.LIKE){
+
+                        submissionDisplayed.setLikes(submissionDisplayed.getLikes()-1);
+                        TextView view = (TextView)(findViewById(R.id.numberOfLikes));
+                        view.setText(Integer.toString(submissionDisplayed.getLikes()));
+
+                        likeButton.setColorFilter(defaultColor);
+                    }else{
+
+                        submissionDisplayed.setLikes(submissionDisplayed.getDislikes()-1);
+                        TextView view = (TextView)(findViewById(R.id.numberOfDislikes));
+                        view.setText(Integer.toString(submissionDisplayed.getDislikes()));
+                        dislikeButton.setColorFilter(defaultColor);
+
+                    }
+
+                }
+            }else{
+                //Response status will be some failure indicating that it already exists
+                if(buttonClicked == Vote.LIKE){
+
+                    likeButton.setColorFilter(Color.rgb(135,206,250));  //Light blue
+                }else{
+                    dislikeButton.setColorFilter(Color.rgb(255,0,0)); //Red
+
+
+                }
+
+            }
+        }
+    }
+
+
+
+    private class DownloadWebPageTask extends AsyncTask<String, Void, Submission> {
 
         @Override
         protected Submission doInBackground(String... submissionName) {
@@ -120,6 +245,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
             CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
             try {
                 submission = communicationLayer.fetchSubmission(name);
+                submissionDisplayed = submission;
             } catch (CommunicationLayerException e) {
                 e.printStackTrace();
             }
