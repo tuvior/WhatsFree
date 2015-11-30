@@ -38,7 +38,6 @@ import static junit.framework.Assert.assertTrue;
 @LargeTest
 public class CommunicationEndToEndTest {
 
-    /**
     @Test
     public void testGetNewSubmissions() throws CommunicationLayerException {
         DefaultNetworkProvider defaultNetworkProvider = new DefaultNetworkProvider();
@@ -61,7 +60,6 @@ public class CommunicationEndToEndTest {
 
         submissionsAssertions(submissions);
     }
-    **/
 
     private void submissionsAssertions(ArrayList<Submission> submissions){
         for(Submission submission: submissions){

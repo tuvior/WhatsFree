@@ -224,17 +224,17 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
     }
 
     @Override
-    public Submission fetchSubmission(String name) throws CommunicationLayerException {
+    public Submission fetchSubmission(String id) throws CommunicationLayerException {
 
         Submission submission;
 
         try{
-            String content = fetchStringFrom(SERVER_URL+"/retrieve?cookie=" + COOKIE_TEST + "&flag=1&name=" + name);
+            String content = fetchStringFrom(SERVER_URL+"/retrieve?cookie=" + COOKIE_TEST + "&flag=1&id=" + id);
             System.out.println(content);
             JSONObject jsonSubmission = new JSONObject(content);
 
             //Retrieve specific submission fields
-            if(BuildConfig.DEBUG && !(name.equals(jsonSubmission.getString("name")))){
+            if(BuildConfig.DEBUG && !(id.equals(jsonSubmission.getString("id")))){
                 throw new AssertionError();
             }
             String description = jsonSubmission.getString("description");
@@ -247,8 +247,9 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
             }
             String image = jsonSubmission.getString("image");
             String location = jsonSubmission.getString("location");
+            String name = jsonSubmission.getString("name");
 
-            submission = new Submission(name, description, submissionCategory, location, image);
+            submission = new Submission(name, description, submissionCategory, location, image, id);
 
         }catch(IOException | JSONException e){
             throw new CommunicationLayerException();
@@ -359,8 +360,9 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
             JSONObject jsonSubmission = jsonSubmissions.getJSONObject(i);
             String name = jsonSubmission.getString("name");
             String image = jsonSubmission.getString("image");
+            String id = jsonSubmission.getString("id");
 
-            Submission.Builder builder = new Submission.Builder().name(name).image(image);
+            Submission.Builder builder = new Submission.Builder().name(name).image(image).id(id);
             Submission submission = builder.build();
             submissionsList.add(submission);
         }

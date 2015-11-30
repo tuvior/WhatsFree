@@ -117,9 +117,9 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         Submission submissionShortcut = (Submission)getListAdapter().getItem(position);
-        String submissionName = submissionShortcut.getName();
+        String submissionId = submissionShortcut.getId();
         Intent intent = new Intent(v.getContext(), DisplaySubmissionActivity.class);
-        intent.putExtra(MainScreenActivity.SUBMISSION_MESSAGE, submissionName);
+        intent.putExtra(MainScreenActivity.SUBMISSION_MESSAGE, submissionId);
         startActivity(intent);
     }
 

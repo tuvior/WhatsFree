@@ -36,13 +36,13 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
 
         // Get the message from the intent
         Intent intent = getIntent();
-        String submissionName = intent.getStringExtra(MainScreenActivity.SUBMISSION_MESSAGE);
+        String submissionId = intent.getStringExtra(MainScreenActivity.SUBMISSION_MESSAGE);
 
         //Check connection
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
-            new DownloadWebpageTask().execute(submissionName); //Caution: submission MUST be retrieved from an async task (performance). Otherwise the app will crash.
+            new DownloadWebpageTask().execute(submissionId); //Caution: submission MUST be retrieved from an async task (performance). Otherwise the app will crash.
         } else {
             //Connection problem
             displayToast();
@@ -75,17 +75,18 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
     private class DownloadWebpageTask extends AsyncTask<String, Void, Submission> {
 
         @Override
-        protected Submission doInBackground(String... submissionName) {
+        protected Submission doInBackground(String... submissionId) {
 
-            if(BuildConfig.DEBUG && (submissionName.length != 1)){
+            //Only 1 id should be passed as parameter
+            if(BuildConfig.DEBUG && (submissionId.length != 1)){
                 throw new AssertionError();
             }
-            String name = submissionName[0];
+            String id = submissionId[0];
             Submission submission = null;
 
             CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
             try {
-                submission = communicationLayer.fetchSubmission(name);
+                submission = communicationLayer.fetchSubmission(id);
             } catch (CommunicationLayerException e) {
                 e.printStackTrace();
             }

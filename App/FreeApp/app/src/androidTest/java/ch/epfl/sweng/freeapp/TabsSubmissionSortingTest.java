@@ -21,7 +21,7 @@ import ch.epfl.sweng.freeapp.mainScreen.WhatsNewFragment;
  *
  * Created by lois on 11/17/15.
  */
-public class TabsSubmissionSorting {
+public class TabsSubmissionSortingTest {
 
     /**
 
