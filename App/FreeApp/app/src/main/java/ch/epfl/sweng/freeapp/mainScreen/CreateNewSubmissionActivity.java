@@ -426,10 +426,17 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
             }else if (status == ResponseStatus.LOCATION) {
                 Toast.makeText(context, "Unknown location", Toast.LENGTH_SHORT).show();
 
-            }else if (status == ResponseStatus.COOKIE || status == ResponseStatus.SESSION || status==null){
+            }else if (status == ResponseStatus.COOKIE  ){
                 Toast.makeText(context,"Cookie session", Toast.LENGTH_SHORT).show();
 
-            }else {
+            }else if(status == ResponseStatus.SESSION) {
+
+                Toast.makeText(context,"Lost session", Toast.LENGTH_SHORT).show();
+            }else if(status==null){
+
+                Toast.makeText(context,"Problem with server", Toast.LENGTH_SHORT).show();
+
+            }else  {
                 assert(status == ResponseStatus.CATEGORY );
 
                 Toast.makeText(context, "Unknown Category", Toast.LENGTH_SHORT).show();

@@ -89,6 +89,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
                     throw new AssertionError();
                 }
                 this.cookieSession = logInJson.getString("cookie");
+
                 return ResponseStatus.OK;
             }
         } catch (IOException | JSONException e) {
