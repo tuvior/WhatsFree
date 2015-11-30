@@ -44,7 +44,6 @@ import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
 import ch.epfl.sweng.freeapp.communication.DefaultCommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 import ch.epfl.sweng.freeapp.communication.ResponseStatus;
-import ch.epfl.sweng.freeapp.mainScreen.MainScreenActivity;
 
 public class CreateNewSubmissionActivity extends AppCompatActivity {
 
@@ -428,7 +427,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
                 Toast.makeText(context, "Unknown location", Toast.LENGTH_SHORT).show();
 
             }else if (status == ResponseStatus.COOKIE || status == ResponseStatus.SESSION || status==null){
-                Toast.makeText(context,"Server unable to respond to request", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"Cookie session", Toast.LENGTH_SHORT).show();
 
             }else {
                 assert(status == ResponseStatus.CATEGORY );
