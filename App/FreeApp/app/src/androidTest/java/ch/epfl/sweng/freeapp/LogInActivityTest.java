@@ -48,15 +48,6 @@ public class LogInActivityTest {
 
     }
 
-
-    private void configureResponseFromCommunicationLayer(ResponseStatus status) throws CommunicationLayerException {
-
-        // assert(status == ResponseStatus.OK || status ==ResponseStatus.USERNAME|| status== ResponseStatus.PASSWORD);
-        Mockito.doReturn(status).when(communicationLayer).sendLogInInfo(logInfo);
-
-    }
-
-
     @Test
     public void testWhenLoginButtonPressedCorrectDataShouldBeUsed(){
         LoginActivity loginActivity = mActivityRule.getActivity();
@@ -242,6 +233,13 @@ public class LogInActivityTest {
         onView(withId(R.id.sign_up)).perform(click());
        // onView(withId(R.id.sign_up)).check(matches(not(isDisplayed())));
 
+
+    }
+
+    //TODO: use this method to complete tests
+    private void configureResponseFromCommunicationLayer(ResponseStatus status) throws CommunicationLayerException {
+
+        Mockito.doReturn(status).when(communicationLayer).sendLogInInfo(logInfo);
 
     }
 

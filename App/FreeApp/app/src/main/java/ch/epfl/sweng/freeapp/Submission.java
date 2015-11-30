@@ -18,17 +18,19 @@ public  class Submission  {
     private Date submitted;
     private Date startOfEvent;
     private Date endOfEvent;
-    private int id;
+
     private int likes;
     private int dislikes;
+    private String id;
 
 
-    public Submission(String name , String description, SubmissionCategory category, String location, String image){
+    public Submission(String name , String description, SubmissionCategory category, String location, String image, String id){
         this.name = name;
         this.description = description;
         this.category = category;
         this.location = location;
         this.image = image;
+        this.id = id;
     }
 
     public static class Builder {
@@ -39,6 +41,7 @@ public  class Submission  {
         private String description;
         private String location;
         private String keywords;
+        private String id;
 
         private Calendar calendarSubmitted;
         private Calendar calendarStartOfEvent;
@@ -88,6 +91,11 @@ public  class Submission  {
             return this;
         }
 
+        public Builder id(String id){
+            this.id = id;
+            return this;
+        }
+
 
         public Submission build(){
             return new Submission(this);
@@ -101,6 +109,7 @@ public  class Submission  {
         this.description = builder.description;
         this.location = builder.location;
         this.keywords = builder.keywords;
+        this.id = builder.id;
 
         this.image = builder.image;
 
@@ -115,8 +124,6 @@ public  class Submission  {
         }
 
     }
-
-
 
     public String getCategory() {
         return category.toString();
@@ -154,6 +161,7 @@ public  class Submission  {
         return image;
     }
 
+
     public int getLikes (){
         return likes;
     }
@@ -162,15 +170,18 @@ public  class Submission  {
         return dislikes;
     }
 
-    public int getId(){
-        return id;
-    }
+
 
     public void setLikes(int likes ){
         this.likes = likes;
     }
     public  void setDislikes(int dislikes){
         this.dislikes =  dislikes;
+    }
+
+
+    public String getId() {
+        return id;
     }
 
 }

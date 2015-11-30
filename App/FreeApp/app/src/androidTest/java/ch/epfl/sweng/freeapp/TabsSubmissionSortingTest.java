@@ -20,7 +20,9 @@ import ch.epfl.sweng.freeapp.mainScreen.WhatsNewFragment;
  *
  * Created by lois on 11/17/15.
  */
-public class TabsSubmissionSorting {
+public class TabsSubmissionSortingTest {
+
+    /**
 
     @Test
     public void testWhatsNewOrdering() throws JSONException {
@@ -54,4 +56,6 @@ public class TabsSubmissionSorting {
 
         //TODO assert submissions are in the good order
     }
+
+    **/
 }

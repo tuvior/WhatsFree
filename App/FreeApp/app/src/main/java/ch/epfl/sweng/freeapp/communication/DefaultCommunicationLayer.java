@@ -37,7 +37,7 @@ public interface DefaultCommunicationLayer {
      */
     Submission fetchSubmission(String  name) throws CommunicationLayerException;
 
-    Submission fetchSubmission(int id ) throws CommunicationLayerException;
+
 
     /**
      * Asks the server for all submissions shortcuts related to the given category (see

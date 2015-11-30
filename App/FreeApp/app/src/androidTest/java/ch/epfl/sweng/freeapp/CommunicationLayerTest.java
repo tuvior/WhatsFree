@@ -10,10 +10,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
 import java.util.Calendar;
 
 import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
+
+
 import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 import ch.epfl.sweng.freeapp.communication.NetworkProvider;
 import ch.epfl.sweng.freeapp.communication.ResponseStatus;
@@ -21,6 +24,7 @@ import ch.epfl.sweng.freeapp.loginAndRegistration.LogInInfo;
 import ch.epfl.sweng.freeapp.loginAndRegistration.RegistrationInfo;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 public class CommunicationLayerTest {
     private CommunicationLayer communicationLayer;
@@ -29,8 +33,8 @@ public class CommunicationLayerTest {
     private HttpURLConnection connection;
     private static final int ASCII_SPACE = 0x20;
     private static String JSON_RESPONSE_USERNAME = buildJson("register", "user").toString();
-    private static String JSON_RESPONSE_EMAIL =  buildJson("register", "email").toString();
-    private static String JSON_RESPONSE_PASSWORD =  buildJson("register", "password").toString();
+    private static String JSON_RESPONSE_EMAIL = buildJson("register", "email").toString();
+    private static String JSON_RESPONSE_PASSWORD = buildJson("register", "password").toString();
     private static String JSON_RESPONSE_GOOD = buildOkJSON("ok").toString();
     private static String JSON_LOG_IN_GOOD = buildSuccessfulLogInJSON().toString();
     private static String JSON_LOG_IN_USERNAME = buildJson("login", "user").toString();
@@ -43,16 +47,14 @@ public class CommunicationLayerTest {
     private Submission.Builder builder = new Submission.Builder();
 
 
-
     private static String JSON_CREATE_SUBMISSION_OK = buildOKSubmission().toString();
 
 
     @Before
     public void setUp() throws Exception {
 
-
-        startTime.set(Calendar.HOUR_OF_DAY,17);
-        endTime.set(Calendar.HOUR_OF_DAY,18);
+        startTime.set(Calendar.HOUR_OF_DAY, 17);
+        endTime.set(Calendar.HOUR_OF_DAY, 18);
 
         builder.name("Croissant ");
         builder.description("Good Food");
@@ -70,6 +72,7 @@ public class CommunicationLayerTest {
         Mockito.doReturn(connection).when(networkProvider).getConnection(Mockito.any(URL.class));
         this.communicationLayer = new CommunicationLayer(networkProvider);
     }
+
     private void configureCrash(int status) throws IOException {
         InputStream dataStream = Mockito.mock(InputStream.class);
         Mockito.when(dataStream.read())
@@ -78,7 +81,8 @@ public class CommunicationLayerTest {
         Mockito.doReturn(status).when(connection).getResponseCode();
         Mockito.doReturn(dataStream).when(connection).getInputStream();
     }
-    private void configureResponse (String content, int status ) throws IOException {
+
+    private void configureResponse(String content, int status) throws IOException {
         InputStream dataStream = new ByteArrayInputStream(content.getBytes());
         Mockito.doReturn(dataStream).when(connection).getInputStream();
         Mockito.doReturn(status).when(connection).getResponseCode();
@@ -189,57 +193,68 @@ public class CommunicationLayerTest {
 
 
     @Test
-    public void testCreateSubmission() throws CommunicationLayerException, IOException{
-        configureResponse(JSON_CREATE_SUBMISSION_OK,HttpURLConnection.HTTP_OK);
-        assertEquals(ResponseStatus.OK,communicationLayer.sendAddSubmissionRequest(builder.build()));
+    public void testCreateSubmission() throws CommunicationLayerException, IOException {
+        configureResponse(JSON_CREATE_SUBMISSION_OK, HttpURLConnection.HTTP_OK);
+        assertEquals(ResponseStatus.OK, communicationLayer.sendAddSubmissionRequest(builder.build()));
 
     }
+
     @Test
     public void testLogInSuccessful() throws CommunicationLayerException, IOException {
         configureResponse(JSON_LOG_IN_GOOD, HttpURLConnection.HTTP_OK);
         assertEquals(ResponseStatus.OK, communicationLayer.sendLogInInfo(new LogInInfo("test", "test")));
     }
+
     @Test
     public void testLogInUserProblem() throws CommunicationLayerException, IOException {
         configureResponse(JSON_LOG_IN_USERNAME, HttpURLConnection.HTTP_OK);
         assertEquals(ResponseStatus.USERNAME, communicationLayer.sendLogInInfo(new LogInInfo("test", "test")));
     }
+
     @Test
     public void testLogInPasswordProblem() throws CommunicationLayerException, IOException {
         configureResponse(JSON_LOG_IN_PASSWORD, HttpURLConnection.HTTP_OK);
         assertEquals(ResponseStatus.PASSWORD, communicationLayer.sendLogInInfo(new LogInInfo("test", "test")));
     }
+
     @Test
-    public void testCorrectDataSuccessRegister () throws IOException, CommunicationLayerException {
+    public void testCorrectDataSuccessRegister() throws IOException, CommunicationLayerException {
         configureResponse(JSON_RESPONSE_GOOD, HttpURLConnection.HTTP_OK);
         assertEquals(ResponseStatus.OK, communicationLayer.sendRegistrationInfo(new RegistrationInfo("test", "test", "test")));
     }
+
     @Test
-    public void testCorrectDataFailureUsername() throws IOException, CommunicationLayerException{
-        configureResponse(JSON_RESPONSE_USERNAME,HttpURLConnection.HTTP_OK);
+    public void testCorrectDataFailureUsername() throws IOException, CommunicationLayerException {
+        configureResponse(JSON_RESPONSE_USERNAME, HttpURLConnection.HTTP_OK);
         assertEquals(ResponseStatus.USERNAME, communicationLayer.sendRegistrationInfo(new RegistrationInfo("test", "test", "test")));
     }
+
     @Test
     public void testCorrectDataFailureEmail() throws IOException, CommunicationLayerException {
-        configureResponse(JSON_RESPONSE_EMAIL,HttpURLConnection.HTTP_OK);
+        configureResponse(JSON_RESPONSE_EMAIL, HttpURLConnection.HTTP_OK);
         assertEquals(ResponseStatus.EMAIL, communicationLayer.sendRegistrationInfo(new RegistrationInfo("test", "test", "test")));
     }
+
     @Test
     public void testCorrectDataFailurePassword() throws IOException, CommunicationLayerException {
-        configureResponse(JSON_RESPONSE_PASSWORD,HttpURLConnection.HTTP_OK);
+        configureResponse(JSON_RESPONSE_PASSWORD, HttpURLConnection.HTTP_OK);
         assertEquals(ResponseStatus.PASSWORD, communicationLayer.sendRegistrationInfo(new RegistrationInfo("test", "test", "test")));
     }
+
     @Test
     public void testInvalidJson() throws IOException {
         try {
             configureResponse("this is rubbish JSON", HttpURLConnection.HTTP_OK);
             communicationLayer.sendRegistrationInfo(new RegistrationInfo("test", "test", "test"));
             fail("exception wasn't thrown");
-        }catch (CommunicationLayerException e) {
+        } catch (CommunicationLayerException e) {
             //PERFECT exception thrown
         }
     }
-    /** Test that communication throws CommunicationLayerException  when connection is broken */
+
+    /**
+     * Test that communication throws CommunicationLayerException  when connection is broken
+     */
     @Test
     public void testResponseConnectionBroken() throws IOException {
         configureCrash(HttpURLConnection.HTTP_OK);
@@ -250,53 +265,56 @@ public class CommunicationLayerTest {
             // PERFECT
         }
     }
-    private static JSONObject buildJson(String testType, String reason){
+
+    private static JSONObject buildJson(String testType, String reason) {
         JSONObject outerObject = new JSONObject();
         JSONObject inner = new JSONObject();
         try {
             inner.put("status", "failure");
             inner.put("reason", reason);
             outerObject.put(testType, inner);
-        }catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         return outerObject;
     }
-    private static JSONObject buildOkJSON(String status){
+
+    private static JSONObject buildOkJSON(String status) {
         JSONObject outerObject = new JSONObject();
         JSONObject inner = new JSONObject();
-        try{
-            inner.put("status",status);
-            outerObject.put("register",inner);
-        }catch (JSONException e){
+        try {
+            inner.put("status", status);
+            outerObject.put("register", inner);
+        } catch (JSONException e) {
             e.printStackTrace();
         }
-        return  outerObject;
+        return outerObject;
     }
 
-
-    private static JSONObject buildOKSubmission(){
+    private static JSONObject buildOKSubmission() {
 
         JSONObject outerObject = new JSONObject();
         JSONObject inner = new JSONObject();
-        try{
+        try {
             inner.put("status", "ok");
-            outerObject.put("submission",inner);
-        }catch (JSONException e){
+            outerObject.put("submission", inner);
+        } catch (JSONException e) {
             e.printStackTrace();
         }
-        return  outerObject;
+        return outerObject;
     }
-    private static JSONObject buildSuccessfulLogInJSON(){
+
+    private static JSONObject buildSuccessfulLogInJSON() {
         JSONObject outerObject = new JSONObject();
         JSONObject inner = new JSONObject();
-        try{
+        try {
             inner.put("status", "ok");
             inner.put("cookie", "TXeh4vQVdNOccioCdM6ZweQH5QK5T1j3pIwhdZkn9dSfqHiRSXScqn0TeAq3A4CE");
-            outerObject.put("login",inner);
-        }catch (JSONException e){
+            outerObject.put("login", inner);
+        } catch (JSONException e) {
             e.printStackTrace();
         }
-        return  outerObject;
+        return outerObject;
     }
+
 }

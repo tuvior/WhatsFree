@@ -102,7 +102,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
         if(submission == null ){
             throw new CommunicationLayerException("No submission");
         }
-        int id = submission.getId();
+        String id  = submission.getId();
 
         String serverUrl= null;
         serverUrl = SERVER_URL +"/vote?id="+id+"&cookie="+ COOKIE_TEST+"&value="+vote.getValue();
@@ -267,18 +267,20 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
 
     }
 
+
+
     @Override
-    public Submission fetchSubmission(String name) throws CommunicationLayerException {
+    public Submission fetchSubmission(String id) throws CommunicationLayerException {
 
         Submission submission;
 
         try{
-            String content = fetchStringFrom(SERVER_URL+"/retrieve?cookie=" + COOKIE_TEST + "&flag=1&name=" + name);
+            String content = fetchStringFrom(SERVER_URL+"/retrieve?cookie=" + COOKIE_TEST + "&flag=1&id=" + id);
             System.out.println(content);
             JSONObject jsonSubmission = new JSONObject(content);
 
             //Retrieve specific submission fields
-            if(BuildConfig.DEBUG && !(name.equals(jsonSubmission.getString("name")))){
+            if(BuildConfig.DEBUG && !(id.equals(jsonSubmission.getString("id")))){
                 throw new AssertionError();
             }
             String description = jsonSubmission.getString("description");
@@ -291,47 +293,9 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
             }
             String image = jsonSubmission.getString("image");
             String location = jsonSubmission.getString("location");
+            String name = jsonSubmission.getString("name");
 
-            submission = new Submission(name, description, submissionCategory, location, image);
-
-        }catch(IOException | JSONException e){
-            throw new CommunicationLayerException();
-        }
-
-        return submission;
-    }
-
-    @Override
-    public Submission fetchSubmission(int id) throws CommunicationLayerException {
-
-        Submission submission;
-
-        String name = null;
-
-        try{
-            String content = fetchStringFrom(SERVER_URL+"/retrieve?cookie=" + COOKIE_TEST + "&flag=1&name=" + name);
-            System.out.println(content);
-            JSONObject jsonSubmission = new JSONObject(content);
-
-            name = jsonSubmission.getString("name");
-            //Retrieve specific submission fields
-
-           /* if(BuildConfig.DEBUG && !(name.equals(jsonSubmission.getString("name")))){
-                throw new AssertionError();
-            }
-            */
-            String description = jsonSubmission.getString("description");
-
-            SubmissionCategory submissionCategory;
-            if(SubmissionCategory.contains(jsonSubmission.getString("category"))) {
-                submissionCategory = SubmissionCategory.valueOf(jsonSubmission.getString("category"));
-            } else {
-                submissionCategory = SubmissionCategory.Miscellaneous;
-            }
-            String image = jsonSubmission.getString("image");
-            String location = jsonSubmission.getString("location");
-
-            submission = new Submission(name, description, submissionCategory, location, image);
+            submission = new Submission(name, description, submissionCategory, location, image, id);
 
         }catch(IOException | JSONException e){
             throw new CommunicationLayerException();
@@ -443,8 +407,9 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
             JSONObject jsonSubmission = jsonSubmissions.getJSONObject(i);
             String name = jsonSubmission.getString("name");
             String image = jsonSubmission.getString("image");
+            String id = jsonSubmission.getString("id");
 
-            Submission.Builder builder = new Submission.Builder().name(name).image(image);
+            Submission.Builder builder = new Submission.Builder().name(name).image(image).id(id);
             Submission submission = builder.build();
             submissionsList.add(submission);
         }
