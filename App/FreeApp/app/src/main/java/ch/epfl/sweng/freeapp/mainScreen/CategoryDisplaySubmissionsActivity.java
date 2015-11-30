@@ -83,6 +83,7 @@ public class CategoryDisplaySubmissionsActivity extends ListActivity {
                 submissions = communicationLayer.sendCategoryRequest(category[0]);
             } catch (CommunicationLayerException e) {
                 e.printStackTrace();
+                return null;
             }
 
             return submissions;
@@ -93,11 +94,14 @@ public class CategoryDisplaySubmissionsActivity extends ListActivity {
         @Override
         protected void onPostExecute(ArrayList<Submission> submissions) {
 
+            if(submissions == null){
 
-            SubmissionListAdapter adapter = new SubmissionListAdapter(getApplicationContext(), R.layout.item_list_row, submissions);
-            setListAdapter(adapter);
-            if(submissions.size() == 0){
                 displayToast("No submissions in this category yet");
+
+            }else {
+
+                SubmissionListAdapter adapter = new SubmissionListAdapter(getApplicationContext(), R.layout.item_list_row, submissions);
+                setListAdapter(adapter);
             }
 
         }

@@ -179,6 +179,7 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
                 submissions = communicationLayer.sendSubmissionsRequest();
             } catch (CommunicationLayerException e) {
                 e.printStackTrace();
+                return null;
             }
 
             return submissions;
@@ -189,10 +190,13 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
         @Override
         protected void onPostExecute(ArrayList<Submission> submissions) {
 
-            SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, submissions);
-            setListAdapter(adapter);
-            if(submissions.size() == 0){
+            if(submissions == null){
                 displayToast("No submissions around you yet");
+            }else {
+
+                SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, submissions);
+                setListAdapter(adapter);
+
             }
 
         }
