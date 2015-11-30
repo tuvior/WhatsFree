@@ -34,11 +34,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
  */
 public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTestCase2<CreateNewSubmissionActivity> {
 
-    // In order to insert an image in the beginning
+    // In order to insert an image at the beginning
     Bitmap icon = BitmapFactory.decodeResource(InstrumentationRegistry.getTargetContext().getResources(), R.mipmap.ic_launcher);
-
-    //Calendar calendar = Calendar.getInstance();
-
 
     DefaultCommunicationLayer communicationLayer = new FakeCommunicationLayer();
 
@@ -52,80 +49,8 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
     }
 
-   // public void test
-
-
-    //  @Rule
-    //public IntentsTestRule<CreateNewSubmissionActivity> mIntentsRule = new IntentsTestRule<>(
-           // CreateNewSubmissionActivity.class);
-
-
-
-    @Before
-    public void stubCameraIntent() {
-        //Instrumentation.ActivityResult result = createImageCaptureActivityResultStub();
-
-        // Stub the Intent.
-      //  intending(hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(result);
-    }
-
-    /*
-    private Instrumentation.ActivityResult createImageCaptureActivityResultStub() {
-
-        // Put the drawable in a bundle.
-        Bundle bundle = new Bundle();
-
-        Bitmap icon = BitmapFactory.decodeResource(
-                InstrumentationRegistry.getTargetContext().getResources(),
-                R.mipmap.ic_launcher);
-        bundle.putParcelable(CreateNewSubmissionActivity.KEY_IMAGE_DATA,icon);
-
-        // Create the Intent that will include the bundle.
-        Intent resultData = new Intent();
-        resultData.putExtras(bundle);
-
-        // Create the ActivityResult with the Intent.
-        return new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData);
-    }
-
-*/
-
-
- /*   @Test
-    public void checkCamera(){
-
-
-
-        mActivityRule.getActivity();
-       Bitmap icon = BitmapFactory.decodeResource(
-               InstrumentationRegistry.getTargetContext().getResources(),
-               R.mipmap.ic_launcher);
-
-
-        // Build a result to return from the Camera app
-        Intent resultData = new Intent();
-        resultData.putExtra("data", icon);
-        Instrumentation.ActivityResult result = new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData);
-
-        // Stub out the Camera. When an intent is sent to the Camera, this tells Espresso to respond
-        // with the ActivityResult we just created
-        intending(toPackage("com.android.camera2")).respondWith(result);
-
-        // Now that we have the stub in place, click on the button in our app that launches into the Camera
-        onView(withId(R.id.takePictureButton)).perform(click());
-
-        // We can also validate that an intent resolving to the "camera" activity has been sent out by our app
-        intended(toPackage("com.android.camera2"));
-
-        // ... additional test steps and validation ...
-    }
-
-
-
-*/
-
-
    // @Test
+    //TODO: complete
     public void successfullyCreateSubmissionToServer(){
 
         int year = 2015;
@@ -164,7 +89,6 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
 
 
         onView(withId(R.id.keywords)).perform(typeText("yummy food"));
-
 
     }
 
@@ -271,15 +195,6 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
 
 
     }
-
-
-
-
-
-
-
-
-
 
 
 }

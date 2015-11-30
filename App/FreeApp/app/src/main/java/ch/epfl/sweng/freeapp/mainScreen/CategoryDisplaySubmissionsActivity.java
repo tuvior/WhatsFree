@@ -59,9 +59,9 @@ public class CategoryDisplaySubmissionsActivity extends ListActivity {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         Submission submission = (Submission)getListAdapter().getItem(position);
-        String submissionName = submission.getName();
+        String submissionId = submission.getId();
         Intent intent = new Intent(v.getContext(), DisplaySubmissionActivity.class);
-        intent.putExtra(MainScreenActivity.SUBMISSION_MESSAGE, submissionName);
+        intent.putExtra(MainScreenActivity.SUBMISSION_MESSAGE, submissionId);
         startActivity(intent);
     }
 

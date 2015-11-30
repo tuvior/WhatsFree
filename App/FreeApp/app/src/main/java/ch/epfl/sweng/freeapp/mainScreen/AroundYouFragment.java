@@ -34,12 +34,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import ch.epfl.sweng.freeapp.LocationActivity;
 import ch.epfl.sweng.freeapp.Submission;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
 import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
-import ch.epfl.sweng.freeapp.communication.FakeCommunicationLayer;
 import ch.epfl.sweng.freeapp.R;
 
 public class AroundYouFragment extends ListFragment implements GoogleApiClient.ConnectionCallbacks,
@@ -49,7 +47,7 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
     public static final String USER_LOCATION = "user_location";
 
     // LogCat tag
-    private static final String TAG = LocationActivity.class.getSimpleName();
+    private static final String TAG = AroundYouFragment.class.getSimpleName();
 
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
 
@@ -119,9 +117,9 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         Submission submissionShortcut = (Submission)getListAdapter().getItem(position);
-        String submissionName = submissionShortcut.getName();
+        String submissionId = submissionShortcut.getId();
         Intent intent = new Intent(v.getContext(), DisplaySubmissionActivity.class);
-        intent.putExtra(MainScreenActivity.SUBMISSION_MESSAGE, submissionName);
+        intent.putExtra(MainScreenActivity.SUBMISSION_MESSAGE, submissionId);
         startActivity(intent);
     }
 

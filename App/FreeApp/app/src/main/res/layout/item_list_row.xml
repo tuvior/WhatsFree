@@ -11,7 +11,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/submissionImageView"
-            android:src="@drawable/unicorn"
+            android:src="@drawable/no_image_available"
             android:adjustViewBounds="true"
             android:maxHeight="120sp"
             android:maxWidth="120sp"
