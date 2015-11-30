@@ -96,6 +96,9 @@ public class WhatsNewFragment extends ListFragment {
                 submissions = communicationLayer.sendSubmissionsRequest();
             } catch (CommunicationLayerException e) {
                 e.printStackTrace();
+
+                return null;
+
             }
 
             return submissions;
@@ -106,10 +109,15 @@ public class WhatsNewFragment extends ListFragment {
         @Override
         protected void onPostExecute(ArrayList<Submission> submissions) {
 
-            SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, submissions);
-            setListAdapter(adapter);
-            if(submissions.size() == 0){
-                displayToast("No new submissions yet");
+            if(submissions == null){
+
+                    displayToast("No new submissions yet");
+
+            }else {
+
+                SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, submissions);
+                setListAdapter(adapter);
+
             }
 
         }
