@@ -24,27 +24,28 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-
-import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+
 import ch.epfl.sweng.freeapp.Submission;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
 import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
+
 import ch.epfl.sweng.freeapp.R;
+
 
 public class AroundYouFragment extends ListFragment implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
+
     public static final String BUNDLE = "bundle";
     public static final String USER_LOCATION = "user_location";
+    private static final String ID = "ID";
 
     // LogCat tag
     private static final String TAG = AroundYouFragment.class.getSimpleName();
@@ -117,9 +118,11 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         Submission submissionShortcut = (Submission)getListAdapter().getItem(position);
+
         String submissionId = submissionShortcut.getId();
         Intent intent = new Intent(v.getContext(), DisplaySubmissionActivity.class);
         intent.putExtra(MainScreenActivity.SUBMISSION_MESSAGE, submissionId);
+
         startActivity(intent);
     }
 
@@ -176,6 +179,7 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
                 submissions = communicationLayer.sendSubmissionsRequest();
             } catch (CommunicationLayerException e) {
                 e.printStackTrace();
+                return null;
             }
 
             return submissions;
@@ -186,10 +190,13 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
         @Override
         protected void onPostExecute(ArrayList<Submission> submissions) {
 
-            SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, submissions);
-            setListAdapter(adapter);
-            if(submissions.size() == 0){
+            if(submissions == null){
                 displayToast("No submissions around you yet");
+            }else {
+
+                SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, submissions);
+                setListAdapter(adapter);
+
             }
 
         }

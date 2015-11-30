@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import ch.epfl.sweng.freeapp.Submission;
 import ch.epfl.sweng.freeapp.SubmissionCategory;
+import ch.epfl.sweng.freeapp.mainScreen.Vote;
 
 /**
  * Created by lois on 11/22/15.
@@ -31,10 +32,12 @@ public interface DefaultCommunicationLayer {
 
     /**
      * Asks the server to send a specific submission.
-     * @param name The submission's name
+     * @param name The submission's id
      * @return The submission
      */
-    Submission fetchSubmission(String name) throws CommunicationLayerException;
+    Submission fetchSubmission(String  name) throws CommunicationLayerException;
+
+
 
     /**
      * Asks the server for all submissions shortcuts related to the given category (see
@@ -51,4 +54,6 @@ public interface DefaultCommunicationLayer {
      */
     ArrayList<Submission> sendAroundYouRequest(LatLng userLocation) throws JSONException, CommunicationLayerException;
 
+    //TODO : javadoc
+    ResponseStatus sendVote(Submission submission, Vote vote) throws CommunicationLayerException;
 }

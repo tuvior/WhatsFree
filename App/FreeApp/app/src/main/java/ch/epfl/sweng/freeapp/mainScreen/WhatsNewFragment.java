@@ -26,7 +26,8 @@ import ch.epfl.sweng.freeapp.R;
  */
 public class WhatsNewFragment extends ListFragment {
 
-    ArrayList<Submission> mShortcuts;
+  private   ArrayList<Submission> mShortcuts;
+    private  static String ID = "ID";
 
     public WhatsNewFragment() {
         // Required empty public constructor
@@ -67,9 +68,11 @@ public class WhatsNewFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         Submission submission = (Submission)getListAdapter().getItem(position);
+
         String submissionId = submission.getId();
         Intent intent = new Intent(v.getContext(), DisplaySubmissionActivity.class);
         intent.putExtra(MainScreenActivity.SUBMISSION_MESSAGE, submissionId);
+
         startActivity(intent);
     }
 
@@ -93,6 +96,9 @@ public class WhatsNewFragment extends ListFragment {
                 submissions = communicationLayer.sendSubmissionsRequest();
             } catch (CommunicationLayerException e) {
                 e.printStackTrace();
+
+                return null;
+
             }
 
             return submissions;
@@ -103,10 +109,15 @@ public class WhatsNewFragment extends ListFragment {
         @Override
         protected void onPostExecute(ArrayList<Submission> submissions) {
 
-            SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, submissions);
-            setListAdapter(adapter);
-            if(submissions.size() == 0){
-                displayToast("No new submissions yet");
+            if(submissions == null){
+
+                    displayToast("No new submissions yet");
+
+            }else {
+
+                SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, submissions);
+                setListAdapter(adapter);
+
             }
 
         }

@@ -12,6 +12,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import ch.epfl.sweng.freeapp.BuildConfig;
 import ch.epfl.sweng.freeapp.R;
@@ -81,6 +83,7 @@ public class CategoryDisplaySubmissionsActivity extends ListActivity {
                 submissions = communicationLayer.sendCategoryRequest(category[0]);
             } catch (CommunicationLayerException e) {
                 e.printStackTrace();
+                return null;
             }
 
             return submissions;
@@ -91,15 +94,36 @@ public class CategoryDisplaySubmissionsActivity extends ListActivity {
         @Override
         protected void onPostExecute(ArrayList<Submission> submissions) {
 
-            SubmissionListAdapter adapter = new SubmissionListAdapter(getApplicationContext(), R.layout.item_list_row, submissions);
-            setListAdapter(adapter);
-            if(submissions.size() == 0){
+            if(submissions == null){
+
                 displayToast("No submissions in this category yet");
+
+            }else {
+
+                SubmissionListAdapter adapter = new SubmissionListAdapter(getApplicationContext(), R.layout.item_list_row, submissions);
+                setListAdapter(adapter);
             }
 
         }
 
     }
+
+    /*
+    Just so far sorts by name
+     */
+
+    public ArrayList<Submission> sortSubmissions(ArrayList<Submission> submissions){
+
+        Collections.sort(submissions, new Comparator<Submission>() {
+            @Override
+            public int compare(Submission lhs, Submission rhs) {
+                return lhs.getCategory().toString().compareTo(rhs.getCategory().toString());
+            }
+        });
+
+        return submissions;
+    }
+
 
     private void displayToast(String message){
         Context context = getApplicationContext();

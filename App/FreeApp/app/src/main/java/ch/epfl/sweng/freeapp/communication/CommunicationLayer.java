@@ -24,10 +24,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.epfl.sweng.freeapp.BuildConfig;
-import ch.epfl.sweng.freeapp.loginAndRegistration.LogInInfo;
-import ch.epfl.sweng.freeapp.loginAndRegistration.RegistrationInfo;
 import ch.epfl.sweng.freeapp.Submission;
 import ch.epfl.sweng.freeapp.SubmissionCategory;
+import ch.epfl.sweng.freeapp.loginAndRegistration.LogInInfo;
+import ch.epfl.sweng.freeapp.loginAndRegistration.RegistrationInfo;
+import ch.epfl.sweng.freeapp.mainScreen.Vote;
 
 
 public class CommunicationLayer implements  DefaultCommunicationLayer {
@@ -95,6 +96,46 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
         }
     }
 
+
+    public ResponseStatus sendVote(Submission submission, Vote vote ) throws CommunicationLayerException {
+
+        if(submission == null ){
+            throw new CommunicationLayerException("No submission");
+        }
+        String id  = submission.getId();
+
+        String serverUrl= null;
+        serverUrl = SERVER_URL +"/vote?id="+id+"&cookie="+ COOKIE_TEST+"&value="+vote.getValue();
+
+        String content = null;
+        try {
+            content = fetchStringFrom(serverUrl);
+            JSONObject jsonObject = new JSONObject(content);
+            JSONObject response =  jsonObject.getJSONObject("vote");
+
+           //FixMe : figure out response
+
+            return null;
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+
+            throw new CommunicationLayerException();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            throw new CommunicationLayerException();
+        }
+
+
+    }
+
+
+
+
+
+
+
     /**
      * Used by the app to
      * send user-entered registration information to the user
@@ -136,6 +177,9 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
         }
 
     }
+
+
+
 
     @Override
     public ResponseStatus sendAddSubmissionRequest(Submission param) throws CommunicationLayerException {
@@ -223,6 +267,8 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
 
     }
 
+
+
     @Override
     public Submission fetchSubmission(String id) throws CommunicationLayerException {
 
@@ -241,7 +287,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
 
             SubmissionCategory submissionCategory;
             if(SubmissionCategory.contains(jsonSubmission.getString("category"))) {
-                 submissionCategory = SubmissionCategory.valueOf(jsonSubmission.getString("category"));
+                submissionCategory = SubmissionCategory.valueOf(jsonSubmission.getString("category"));
             } else {
                 submissionCategory = SubmissionCategory.Miscellaneous;
             }
@@ -257,6 +303,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
 
         return submission;
     }
+
 
     @Override
     public ArrayList<Submission> sendCategoryRequest(SubmissionCategory category) throws CommunicationLayerException {

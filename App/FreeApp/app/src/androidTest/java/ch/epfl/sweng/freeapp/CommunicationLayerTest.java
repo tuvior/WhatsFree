@@ -10,12 +10,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
+
 import java.util.Calendar;
 
 import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
-import ch.epfl.sweng.freeapp.communication.DefaultCommunicationLayer;
+
+
 import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 import ch.epfl.sweng.freeapp.communication.NetworkProvider;
 import ch.epfl.sweng.freeapp.communication.ResponseStatus;
@@ -27,6 +28,7 @@ import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 public class CommunicationLayerTest {
     private CommunicationLayer communicationLayer;
+    private CommunicationLayer communicationLayerOnLine = new CommunicationLayer(new DefaultNetworkProvider());
     private NetworkProvider networkProvider;
     private HttpURLConnection connection;
     private static final int ASCII_SPACE = 0x20;
@@ -85,6 +87,110 @@ public class CommunicationLayerTest {
         Mockito.doReturn(dataStream).when(connection).getInputStream();
         Mockito.doReturn(status).when(connection).getResponseCode();
     }
+    @Test
+    public void testResponseOkForCreateSubmissionOnline() throws CommunicationLayerException {
+
+
+        ResponseStatus status = communicationLayerOnLine.sendAddSubmissionRequest(builder.build());
+        assertEquals(ResponseStatus.OK, status);
+
+
+
+    }
+
+
+    @Test
+    public void testDecodeEncodeMethodInDefaultCommunicationLayer(){
+
+        //TODO after refactoring code
+    }
+
+
+
+
+    //@Test
+    //FIXME : this test fails due to the server not giving back correct  images in base.64
+    /*.
+    public void testRetrievalOfSubmissions() throws CommunicationLayerException {
+
+        ArrayList<Submission > submissionShortcutArrayList;
+        try {
+            submissionShortcutArrayList = communicationLayerOnLine.sendSubmissionsRequest();
+
+            assertEquals(false, submissionShortcutArrayList.isEmpty());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    */
+
+    @Test
+    public void testAllResponseLocationForCreateSubmissionOnLine() throws CommunicationLayerException {
+
+
+        builder.name("Croissant ");
+        builder.description("Good Food");
+        builder.category(SubmissionCategory.Food);
+        builder.location("");
+
+        builder.image("RUBBISH IMAGE");
+        builder.keywords("FOOD BREAD FREE");
+
+        builder.startOfEvent(startTime);
+        builder.endOfEvent(endTime);
+        builder.submitted(current);
+
+        ResponseStatus status = communicationLayerOnLine.sendAddSubmissionRequest(builder.build());
+        assertEquals(ResponseStatus.LOCATION, status);
+
+
+    }
+
+    @Test
+    public void testResponseErrorNameForCreateSubmissionOnLine() throws CommunicationLayerException {
+
+        builder.name("");
+        builder.description("Good Food");
+        builder.category(SubmissionCategory.Food);
+        builder.location("address");
+
+        builder.image("image");
+        builder.keywords("FOOD BREAD FREE");
+
+        builder.startOfEvent(startTime);
+        builder.endOfEvent(endTime);
+        builder.submitted(current);
+        ResponseStatus status = communicationLayerOnLine.sendAddSubmissionRequest(builder.build());
+        assertEquals(ResponseStatus.NAME, status);
+
+
+    }
+
+    @Test
+    public void testResponseNoImageForCreateSubmissionOnLine()throws  CommunicationLayerException{
+
+        builder.name("name");
+        builder.description("Good Food");
+        builder.category(SubmissionCategory.Food);
+        builder.location("address");
+
+        builder.image("");
+        builder.keywords("FOOD BREAD FREE");
+
+        builder.startOfEvent(startTime);
+        builder.endOfEvent(endTime);
+        builder.submitted(current);
+        ResponseStatus status = communicationLayerOnLine.sendAddSubmissionRequest(builder.build());
+        assertEquals(ResponseStatus.IMAGE, status);
+
+    }
+
+
+
+
+
 
     @Test
     public void testCreateSubmission() throws CommunicationLayerException, IOException {
