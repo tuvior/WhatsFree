@@ -24,24 +24,18 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-
 import ch.epfl.sweng.freeapp.LocationActivity;
-
+import ch.epfl.sweng.freeapp.R;
 import ch.epfl.sweng.freeapp.Submission;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
 import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
-
-import ch.epfl.sweng.freeapp.communication.FakeCommunicationLayer;
-import ch.epfl.sweng.freeapp.R;
 
 
 public class AroundYouFragment extends ListFragment implements GoogleApiClient.ConnectionCallbacks,
@@ -50,6 +44,7 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
 
     public static final String BUNDLE = "bundle";
     public static final String USER_LOCATION = "user_location";
+    private static final String ID = "ID";
 
     // LogCat tag
     private static final String TAG = LocationActivity.class.getSimpleName();
@@ -123,8 +118,12 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
     public void onListItemClick(ListView l, View v, int position, long id) {
         Submission submissionShortcut = (Submission)getListAdapter().getItem(position);
         String submissionName = submissionShortcut.getName();
+
+        int submissionId = submissionShortcut.getId();
         Intent intent = new Intent(v.getContext(), DisplaySubmissionActivity.class);
         intent.putExtra(MainScreenActivity.SUBMISSION_MESSAGE, submissionName);
+        intent.putExtra(ID, submissionId );
+
         startActivity(intent);
     }
 

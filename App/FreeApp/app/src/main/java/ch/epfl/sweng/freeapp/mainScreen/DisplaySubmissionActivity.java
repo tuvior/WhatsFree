@@ -53,8 +53,8 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
 
         this.likeButton = (ImageButton)findViewById(R.id.like);
         this.dislikeButton = (ImageButton)findViewById(R.id.dislike);
-        this.likeButton.setColorFilter(defaultColor);
-        this.dislikeButton.setColorFilter(defaultColor);
+       // this.likeButton.setColorFilter(defaultColor);
+        //this.dislikeButton.setColorFilter(defaultColor);
 
 
         // Get the message from the intent
@@ -178,7 +178,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
             if(status == null ){
 
                 Toast.makeText(context,"Problem from the server side", Toast.LENGTH_SHORT ).show();
-            }else if ( status == ResponseStatus.OK){
+            }else if (status == ResponseStatus.OK){
                 if(typeVote == Vote.LIKE){
 
                     submissionDisplayed.setLikes(submissionDisplayed.getLikes() + 1);

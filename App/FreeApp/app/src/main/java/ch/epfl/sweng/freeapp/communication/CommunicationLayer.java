@@ -302,6 +302,46 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
     }
 
     @Override
+    public Submission fetchSubmission(int id) throws CommunicationLayerException {
+
+        Submission submission;
+
+        String name = null;
+
+        try{
+            String content = fetchStringFrom(SERVER_URL+"/retrieve?cookie=" + COOKIE_TEST + "&flag=1&name=" + name);
+            System.out.println(content);
+            JSONObject jsonSubmission = new JSONObject(content);
+
+            name = jsonSubmission.getString("name");
+            //Retrieve specific submission fields
+
+           /* if(BuildConfig.DEBUG && !(name.equals(jsonSubmission.getString("name")))){
+                throw new AssertionError();
+            }
+            */
+            String description = jsonSubmission.getString("description");
+
+            SubmissionCategory submissionCategory;
+            if(SubmissionCategory.contains(jsonSubmission.getString("category"))) {
+                submissionCategory = SubmissionCategory.valueOf(jsonSubmission.getString("category"));
+            } else {
+                submissionCategory = SubmissionCategory.Miscellaneous;
+            }
+            String image = jsonSubmission.getString("image");
+            String location = jsonSubmission.getString("location");
+
+            submission = new Submission(name, description, submissionCategory, location, image);
+
+        }catch(IOException | JSONException e){
+            throw new CommunicationLayerException();
+        }
+
+        return submission;
+    }
+
+
+    @Override
     public ArrayList<Submission> sendCategoryRequest(SubmissionCategory category) throws CommunicationLayerException {
 
         try{

@@ -66,7 +66,14 @@ public class FakeCommunicationLayer implements DefaultCommunicationLayer {
     }
 
     @Override
+    public Submission fetchSubmission(int id) throws CommunicationLayerException {
+        return null;
+    }
+
+    //@Override
     public Submission fetchSubmission(String name) {
+
+
 
         Submission submission;
         switch (name) {
@@ -82,6 +89,7 @@ public class FakeCommunicationLayer implements DefaultCommunicationLayer {
             default:
                 return null;
         }
+
 
         return submission;
     }
@@ -118,7 +126,14 @@ public class FakeCommunicationLayer implements DefaultCommunicationLayer {
 
     @Override
     public ResponseStatus sendVote(Submission submission, Vote vote) throws CommunicationLayerException {
-        return null;
+
+        if( submission == null){
+            throw new CommunicationLayerException();
+        }
+
+        //for now lets just allow all votes
+        return ResponseStatus.OK;
+
     }
 
 

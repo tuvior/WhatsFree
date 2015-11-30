@@ -26,7 +26,8 @@ import ch.epfl.sweng.freeapp.R;
  */
 public class WhatsNewFragment extends ListFragment {
 
-    ArrayList<Submission> mShortcuts;
+  private   ArrayList<Submission> mShortcuts;
+    private  static String ID = "ID";
 
     public WhatsNewFragment() {
         // Required empty public constructor
@@ -68,7 +69,9 @@ public class WhatsNewFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         Submission submission = (Submission)getListAdapter().getItem(position);
         String submissionName = submission.getName();
+
         Intent intent = new Intent(v.getContext(), DisplaySubmissionActivity.class);
+        intent.putExtra(ID,submission.getId());
         intent.putExtra(MainScreenActivity.SUBMISSION_MESSAGE, submissionName);
         startActivity(intent);
     }
