@@ -33,10 +33,12 @@ import ch.epfl.sweng.freeapp.mainScreen.Vote;
 
 public class CommunicationLayer implements  DefaultCommunicationLayer {
     private static final String SERVER_URL = "http://sweng-wiinotfit.appspot.com";
-    private NetworkProvider networkProvider;
     private final static int HTTP_SUCCESS_START = 200;
     private final static int HTTP_SUCCESS_END = 299;
-    private static  String cookieSession;
+    private static  String cookieSession;  //"BEY4L9lVSlA0hHQQ1ClTXYVUn5xwcr0BfYSKc7sw0Y54XYzWObTAsJ6PHQWPQVzO";
+
+    private NetworkProvider networkProvider;
+
 
 
    // private final static String COOKIE_TEST = "BEY4L9lVSlA0hHQQ1ClTXYVUn5xwcr0BfYSKc7sw0Y54XYzWObTAsJ6PHQWPQVzO";
@@ -209,6 +211,9 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
             params.add(new BasicNameValuePair("from", Long.toString(param.getStartOfEvent())));
             params.add(new BasicNameValuePair("to", Long.toString(param.getEndOfEvent())));
             params.add(new BasicNameValuePair("cookie",cookieSession));
+          //  params.add(new BasicNameValuePair("latitude",Integer.toString(45)));
+            //params.add(new BasicNameValuePair("longitude",Integer.toString(45)));
+
 
             OutputStream os = conn.getOutputStream();
             BufferedWriter writer = new BufferedWriter(
@@ -237,6 +242,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
                     case "category": return ResponseStatus.CATEGORY;
                     case "cookie": return ResponseStatus.COOKIE;
                     case "session": return ResponseStatus.SESSION;
+
                     default: throw new CommunicationLayerException();
                 }
             }else {

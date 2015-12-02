@@ -10,13 +10,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
 import java.util.Calendar;
 
 import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
-
-
 import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 import ch.epfl.sweng.freeapp.communication.NetworkProvider;
 import ch.epfl.sweng.freeapp.communication.ResponseStatus;
@@ -24,7 +21,6 @@ import ch.epfl.sweng.freeapp.loginAndRegistration.LogInInfo;
 import ch.epfl.sweng.freeapp.loginAndRegistration.RegistrationInfo;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 public class CommunicationLayerTest {
     private CommunicationLayer communicationLayer;
@@ -45,6 +41,10 @@ public class CommunicationLayerTest {
     private Calendar current = Calendar.getInstance();
 
     private Submission.Builder builder = new Submission.Builder();
+    private String latitude  = "45";
+    private String longitude =  "-45";
+
+
 
 
     private static String JSON_CREATE_SUBMISSION_OK = buildOKSubmission().toString();
@@ -66,6 +66,8 @@ public class CommunicationLayerTest {
         builder.startOfEvent(startTime);
         builder.endOfEvent(endTime);
         builder.submitted(current);
+        builder.latitude(latitude);
+        builder.longitude(longitude);
 
         this.connection = Mockito.mock(HttpURLConnection.class);
         this.networkProvider = Mockito.mock(NetworkProvider.class);
@@ -141,6 +143,9 @@ public class CommunicationLayerTest {
         builder.startOfEvent(startTime);
         builder.endOfEvent(endTime);
         builder.submitted(current);
+        builder.latitude(latitude);
+        builder.longitude(longitude);
+
 
         ResponseStatus status = communicationLayerOnLine.sendAddSubmissionRequest(builder.build());
         assertEquals(ResponseStatus.LOCATION, status);
@@ -162,6 +167,9 @@ public class CommunicationLayerTest {
         builder.startOfEvent(startTime);
         builder.endOfEvent(endTime);
         builder.submitted(current);
+        builder.latitude(latitude);
+        builder.longitude(longitude);
+
         ResponseStatus status = communicationLayerOnLine.sendAddSubmissionRequest(builder.build());
         assertEquals(ResponseStatus.NAME, status);
 
@@ -182,6 +190,8 @@ public class CommunicationLayerTest {
         builder.startOfEvent(startTime);
         builder.endOfEvent(endTime);
         builder.submitted(current);
+        builder.latitude(latitude);
+        builder.longitude(longitude);
         ResponseStatus status = communicationLayerOnLine.sendAddSubmissionRequest(builder.build());
         assertEquals(ResponseStatus.IMAGE, status);
 

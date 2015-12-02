@@ -23,6 +23,8 @@ public  class Submission  {
     private int dislikes;
     private String id;
 
+    private String latitude;
+    private String longitude;
 
     public Submission(String name , String description, SubmissionCategory category, String location, String image, String id){
         this.name = name;
@@ -46,6 +48,8 @@ public  class Submission  {
         private Calendar calendarSubmitted;
         private Calendar calendarStartOfEvent;
         private Calendar calendarEndOfEvent;
+        private String latitude;
+        private String longitude;
 
         private String image; //see how to deal with it
 
@@ -85,6 +89,17 @@ public  class Submission  {
             return this;
         }
 
+        public Builder latitude(String latitude){
+            this.latitude = latitude;
+            return this;
+        }
+
+        public Builder longitude(String longitude){
+            this.longitude = longitude;
+            return this;
+        }
+
+
 
         public Builder image(String image){
             this.image = image;
@@ -113,6 +128,7 @@ public  class Submission  {
 
         this.image = builder.image;
 
+
         if(builder.calendarSubmitted != null) {
             this.submitted = builder.calendarSubmitted.getTime();
         }
@@ -123,6 +139,15 @@ public  class Submission  {
             this.endOfEvent = builder.calendarEndOfEvent.getTime();
         }
 
+
+        if(builder.latitude != null){
+            this.latitude = builder.latitude;
+        }
+
+        if(builder.longitude != null ){
+            this.longitude = builder.longitude;
+
+        }
     }
 
     public String getCategory() {
@@ -182,6 +207,14 @@ public  class Submission  {
 
     public String getId() {
         return id;
+    }
+
+    public String getLatitude(){
+        return latitude;
+    }
+
+    public String getLongitude(){
+        return longitude;
     }
 
 }
