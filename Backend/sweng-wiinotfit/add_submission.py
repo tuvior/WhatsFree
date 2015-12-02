@@ -6,12 +6,12 @@ from google.appengine.ext import ndb
 from submission import Submission
 from session import Session
 
-def json_response(status, id):
+def json_response(status, id = ''):
     if status == 0:
         res = """{
     "submission": {
-        "status": "ok"
-        "id": \"""" + str(id) + """\"
+        "status": "ok",
+        "id": \"""" + id + """\"
     }
 }"""
 
@@ -104,7 +104,7 @@ class addSubmission(webapp2.RequestHandler):
                                         keywords = subKeywords, rating = 0, submitter = session.user, latitude = subLatitude, longitude = subLongitude)
                 submission_key = submission.put()      
                 submission_id = submission_key.id()
-                self.response.write(json_response(0, submission_id))
+                self.response.write(json_response(0, str(submission_id)))
                 
             else:
                 self.response.write(json_response(6, 0))
