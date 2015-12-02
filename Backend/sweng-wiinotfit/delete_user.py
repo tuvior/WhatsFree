@@ -21,7 +21,7 @@ class deleteUser(webapp2.RequestHandler):
             user = User.query(User.username == name).get()
             
             if not user:
-            	error = json_error('delete', 'failure', 'no such user')
+            	error = json_error('delete user', 'failure', 'no such user')
                 self.response.write(json.dumps(error))
 
             else:
