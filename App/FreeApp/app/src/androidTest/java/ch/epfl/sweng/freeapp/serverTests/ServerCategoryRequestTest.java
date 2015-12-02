@@ -101,20 +101,22 @@ public class ServerCategoryRequestTest {
     @Test
     public void serverRespondsWithFailureIfNoCookieParameter() throws CommunicationLayerException, JSONException {
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?", "GET");
-        assertEquals("failure", getStatusFromJson(serverResponse, "none"));
-        assertEquals("cookie", getReasonFromJson(serverResponse, "none"));
+        assertEquals("failure", getStatusFromJson(serverResponse, "retrieve"));
+        assertEquals("cookie", getReasonFromJson(serverResponse, "retrieve"));
     }
+
 
     @Test
     public void serverRespondsWithFailureIfBadCookieParameter() throws CommunicationLayerException, JSONException {
+        JSONObject deleteCookie = establishConnectionAndReturnJsonResponse("/delete/session?cookie=cookie", "GET");
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?cookie=cookie&flag=4", "GET");
-        assertEquals("failure", getStatusFromJson(serverResponse, "none"));
-        assertEquals("session", getReasonFromJson(serverResponse, "none"));
+        assertEquals("failure", getStatusFromJson(serverResponse, "retrieve"));
+        assertEquals("session", getReasonFromJson(serverResponse, "retrieve"));
     }
 
     @Test
     public void serverRespondsWithFailureIfNoCategoryParameter() throws CommunicationLayerException, JSONException {
-        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete?name=categorytest", "GET");
+        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete/user?name=categorytest", "GET");
         JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=categorytest&password=password&email=categorytest@test.ch", "GET");
         JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=categorytest&password=password", "GET");
         String cookie = getCookieFromJson(loginUser);
@@ -122,12 +124,18 @@ public class ServerCategoryRequestTest {
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?cookie="+cookie+"&flag=4", "GET");
         assertEquals("failure", getStatusFromJson(serverResponse, "retrieve category"));
         assertEquals("no category", getReasonFromJson(serverResponse, "retrieve category"));
+
+        establishConnectionAndReturnJsonResponse("/delete/user?name=categorytest", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie="+cookie, "GET");
     }
 
 
     @Test
     public void serverRespondsWithFailureIfEmptyOrNonExistingCategory() throws CommunicationLayerException, JSONException {
-        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete?name=categorytest", "GET");
+        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete/user?name=categorytest", "GET");
+        //To be sure that there is no such category. Must create server part
+        //deleteSubmissionsInCategory = establishConnectionAndReturnJsonResponse("/delete/category?category=nocategory", "GET");
+
         JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=categorytest&password=password&email=categorytest@test.ch", "GET");
         JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=categorytest&password=password", "GET");
         String cookie = getCookieFromJson(loginUser);
@@ -136,12 +144,19 @@ public class ServerCategoryRequestTest {
         assertEquals("failure", getStatusFromJson(serverResponse, "retrieve category"));
         //Empty or non existing category
         assertEquals("empty category", getReasonFromJson(serverResponse, "retrieve category"));
+
+        establishConnectionAndReturnJsonResponse("/delete/user?name=categorytest", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie=" + cookie, "GET");
     }
 
-    //Test passes only if not run before, will be improved
+
     @Test
     public void serverRespondsWithJSONArrayOfLengthOne() throws CommunicationLayerException, JSONException {
-        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete?name=categorytest", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/user?name=categorytest", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/submission?name=categorytest", "GET");
+        //deleteSubmissionsInCategory = establishConnectionAndReturnJsonResponse("/delete/category?category=nocategory", "GET");
+        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete/user?name=categorytest", "GET");
+
         JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=categorytest&password=password&email=categorytest@test.ch", "GET");
         JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=categorytest&password=password", "GET");
         String cookie = getCookieFromJson(loginUser);
@@ -155,10 +170,16 @@ public class ServerCategoryRequestTest {
         assertEquals(1, serverResponse.length());
         assertEquals("categorytest", submissionRetrieved.getString("name"));
         assertEquals("image", submissionRetrieved.getString("image"));
-    }
+        assertEquals(0, submissionRetrieved.getInt("rating"));
+        //All others parameters are not returned, we only test one because we have already tested it on the web
+        assertEquals("", submissionRetrieved.getString("location"));
+
+        establishConnectionAndReturnJsonResponse("/delete/user?name=categorytest", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/submission?name=categorytest", "GET");    }
 
 
-    //Test passes only if not run before
+    //TO FIX AND IMPROVE ONCE /delete/category IMPLEMENTED
+
     @Test
     public void serverRespondsWithJSONArrayOfLengthTwo() throws CommunicationLayerException, JSONException {
         JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete?name=categorytest", "GET");

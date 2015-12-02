@@ -76,6 +76,10 @@ public class ServerAddSubmissionTest {
         return serverResponse.getJSONObject("login").getString("cookie");
     }
 
+    private String getIdFromJson(JSONObject serverResponse) throws JSONException {
+        return serverResponse.getJSONObject("submission").getString("id");
+    }
+
     @Test
     public void serverRespondsWithFailureIfMissingCookie() throws CommunicationLayerException, JSONException {
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/submission", "POST");
@@ -129,6 +133,8 @@ public class ServerAddSubmissionTest {
         String cookie = getCookieFromJson(loginUser);
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/submission?cookie="+cookie+"&name=name&category=category&location=location&image=image", "POST");
         assertEquals("ok", getStatusFromJson(serverResponse));
+        assertNotSame("", getIdFromJson(serverResponse));
+        //assertEquals(16, getIdFromJson(serverResponse).length());
 
         //Delete user, session and submission so that it is no more in db
         JSONObject deleteUserAgain = establishConnectionAndReturnJsonResponse("/delete/user?name=submissiontest", "GET");
