@@ -35,8 +35,9 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
     private static final String SERVER_URL = "http://sweng-wiinotfit.appspot.com";
     private final static int HTTP_SUCCESS_START = 200;
     private final static int HTTP_SUCCESS_END = 299;
-    private static  String cookieSession;  //"BEY4L9lVSlA0hHQQ1ClTXYVUn5xwcr0BfYSKc7sw0Y54XYzWObTAsJ6PHQWPQVzO";
+   // private static  String cookieSession ;  //"BEY4L9lVSlA0hHQQ1ClTXYVUn5xwcr0BfYSKc7sw0Y54XYzWObTAsJ6PHQWPQVzO";
 
+    private static String cookieSession = "tri5KsZsgDT4kKlbzBBQVCy2cLo0WsxeDORB0Y700qX587cOobIRcuhL26GIfENa";
     private NetworkProvider networkProvider;
 
 
