@@ -33,13 +33,16 @@ import ch.epfl.sweng.freeapp.mainScreen.Vote;
 
 public class CommunicationLayer implements  DefaultCommunicationLayer {
     private static final String SERVER_URL = "http://sweng-wiinotfit.appspot.com";
-    private NetworkProvider networkProvider;
     private final static int HTTP_SUCCESS_START = 200;
     private final static int HTTP_SUCCESS_END = 299;
-    private String cookieSession;
+   // private static  String cookieSession ;  //"BEY4L9lVSlA0hHQQ1ClTXYVUn5xwcr0BfYSKc7sw0Y54XYzWObTAsJ6PHQWPQVzO";
 
-    //FixMe:  REMEMBER TO CHANGE TO COOKIE SESSION STRING !!!!!!!
-    private final static String COOKIE_TEST = "BEY4L9lVSlA0hHQQ1ClTXYVUn5xwcr0BfYSKc7sw0Y54XYzWObTAsJ6PHQWPQVzO";
+    private static String cookieSession = "tri5KsZsgDT4kKlbzBBQVCy2cLo0WsxeDORB0Y700qX587cOobIRcuhL26GIfENa";
+    private NetworkProvider networkProvider;
+
+
+
+   // private final static String COOKIE_TEST = "BEY4L9lVSlA0hHQQ1ClTXYVUn5xwcr0BfYSKc7sw0Y54XYzWObTAsJ6PHQWPQVzO";
 
     /**
      * Creates a new CommunicationLayer instance that communicates with the
@@ -89,6 +92,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
                     throw new AssertionError();
                 }
                 this.cookieSession = logInJson.getString("cookie");
+
                 return ResponseStatus.OK;
             }
         } catch (IOException | JSONException e) {
@@ -105,7 +109,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
         String id  = submission.getId();
 
         String serverUrl= null;
-        serverUrl = SERVER_URL +"/vote?id="+id+"&cookie="+ COOKIE_TEST+"&value="+vote.getValue();
+        serverUrl = SERVER_URL +"/vote?id="+id+"&cookie="+ cookieSession+"&value="+vote.getValue();
 
         String content = null;
         try {
@@ -207,7 +211,10 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
             params.add(new BasicNameValuePair("submitted", Long.toString(param.getSubmitted())));
             params.add(new BasicNameValuePair("from", Long.toString(param.getStartOfEvent())));
             params.add(new BasicNameValuePair("to", Long.toString(param.getEndOfEvent())));
-            params.add(new BasicNameValuePair("cookie",COOKIE_TEST));
+            params.add(new BasicNameValuePair("cookie",cookieSession));
+          //  params.add(new BasicNameValuePair("latitude",Integer.toString(45)));
+            //params.add(new BasicNameValuePair("longitude",Integer.toString(45)));
+
 
             OutputStream os = conn.getOutputStream();
             BufferedWriter writer = new BufferedWriter(
@@ -236,6 +243,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
                     case "category": return ResponseStatus.CATEGORY;
                     case "cookie": return ResponseStatus.COOKIE;
                     case "session": return ResponseStatus.SESSION;
+
                     default: throw new CommunicationLayerException();
                 }
             }else {
@@ -256,7 +264,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
     public ArrayList<Submission> sendSubmissionsRequest() throws CommunicationLayerException {
 
         try{
-            String content = fetchStringFrom(SERVER_URL+"/retrieve?cookie=" + COOKIE_TEST + "&flag=2");
+            String content = fetchStringFrom(SERVER_URL+"/retrieve?cookie=" + cookieSession + "&flag=2");
             JSONArray contentArray = new JSONArray(content);
 
             return jsonArrayToArrayList(contentArray);
@@ -275,7 +283,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
         Submission submission;
 
         try{
-            String content = fetchStringFrom(SERVER_URL+"/retrieve?cookie=" + COOKIE_TEST + "&flag=1&id=" + id);
+            String content = fetchStringFrom(SERVER_URL+"/retrieve?cookie=" + cookieSession + "&flag=1&id=" + id);
             System.out.println(content);
             JSONObject jsonSubmission = new JSONObject(content);
 
@@ -309,7 +317,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
     public ArrayList<Submission> sendCategoryRequest(SubmissionCategory category) throws CommunicationLayerException {
 
         try{
-            String content = fetchStringFrom(SERVER_URL+"/retrieve?cookie=" + COOKIE_TEST + "&flag=4&category=" + category.toString().toUpperCase());
+            String content = fetchStringFrom(SERVER_URL+"/retrieve?cookie=" + cookieSession + "&flag=4&category=" + category.toString().toUpperCase());
             //if there is no submission corresponding to the category, then the server will return a failure
             if(!content.contains("failure")) {
                 JSONArray contentArray = new JSONArray(content);
@@ -327,7 +335,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
     @Override
     public ArrayList<Submission> sendAroundYouRequest(LatLng userLocation) throws JSONException, CommunicationLayerException {
         try{
-            String content = fetchStringFrom(SERVER_URL+"/retrieve?cookie=" + COOKIE_TEST + "&flag=3&longitude=" + userLocation.longitude + "&latitude=" + userLocation.latitude);
+            String content = fetchStringFrom(SERVER_URL+"/retrieve?cookie=" + cookieSession + "&flag=3&longitude=" + userLocation.longitude + "&latitude=" + userLocation.latitude);
             //if there is no submission corresponding to the category, then the server will return a failure
             if(!content.contains("failure")) {
                 JSONArray contentArray = new JSONArray(content);

@@ -66,7 +66,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
 
-            new DownloadWebPageTask().execute(submissionId); //Caution: submission MUST be retrieved from an async task (performance). Otherwise the app will crash.
+            new DownloadWebPageTask(this).execute(submissionId); //Caution: submission MUST be retrieved from an async task (performance). Otherwise the app will crash.
 
         } else {
             //Connection problem
@@ -235,6 +235,13 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
 
     private class DownloadWebPageTask extends AsyncTask<String, Void, Submission> {
 
+        private Context context;
+
+        public DownloadWebPageTask(Context context){
+
+            this.context = context;
+        }
+
         @Override
         protected Submission doInBackground(String... submissionId) {
 
@@ -281,18 +288,28 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
             descriptionTextView.setText(submission.getDescription());
 
             Bitmap image = decodeImage(submission.getImage());
-            ImageView submissionImage = (ImageView) findViewById(R.id.submissionImageView);
-            submissionImage.setImageBitmap(image);
+
+            if(image == null){
+                Toast.makeText(context, "Unknown Image ", Toast.LENGTH_SHORT ).show();
+            }else {
+                ImageView submissionImage = (ImageView) findViewById(R.id.submissionImageView);
+                submissionImage.setImageBitmap(image);
+            }
 
         }
 
     }
 
     private Bitmap decodeImage(String input){
+        try {
+            byte[] decodedByte = Base64.decode(input, 0);
+            return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
+        }catch(IllegalArgumentException e){
 
-        byte[] decodedByte = Base64.decode(input, 0);
-        return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
+            e.printStackTrace();
+            return null;
 
+        }
     }
 
     private void displayToast(){

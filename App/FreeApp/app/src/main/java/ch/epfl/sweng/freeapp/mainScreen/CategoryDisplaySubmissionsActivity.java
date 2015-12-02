@@ -94,7 +94,7 @@ public class CategoryDisplaySubmissionsActivity extends ListActivity {
         @Override
         protected void onPostExecute(ArrayList<Submission> submissions) {
 
-            if(submissions == null){
+            if(submissions == null || submissions.isEmpty()){
 
                 displayToast("No submissions in this category yet");
 
