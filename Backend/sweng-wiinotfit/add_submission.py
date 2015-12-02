@@ -103,8 +103,8 @@ class addSubmission(webapp2.RequestHandler):
                 submission = Submission(name = subName, category = subCategory, description = subDescription, location = subLocation, image = subImage, 
                                         keywords = subKeywords, rating = 0, submitter = session.user, latitude = subLatitude, longitude = subLongitude)
                 submission_key = submission.put()      
-                submission_id = submission_key.id()
-                self.response.write(json_response(0, str(submission_id)))
+                # ndb.Key.urlsafe(), generates a url safe version of the Key
+                self.response.write(json_response(0, submission.key.urlsafe()))
                 
             else:
                 self.response.write(json_response(6, 0))
