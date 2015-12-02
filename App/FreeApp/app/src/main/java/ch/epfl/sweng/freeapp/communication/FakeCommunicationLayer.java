@@ -1,19 +1,15 @@
 package ch.epfl.sweng.freeapp.communication;
 
-import android.graphics.Bitmap;
-
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONException;
 
 
-import java.util.Calendar;
-
 import java.util.ArrayList;
 
 import ch.epfl.sweng.freeapp.Submission;
 import ch.epfl.sweng.freeapp.SubmissionCategory;
-import ch.epfl.sweng.freeapp.mainScreen.Vote;
+import ch.epfl.sweng.freeapp.mainScreen.VOTE;
 
 /**
  * This communication layer is independent of the server and allows sending the app
@@ -111,7 +107,7 @@ public class FakeCommunicationLayer implements DefaultCommunicationLayer {
     }
 
     @Override
-    public ResponseStatus sendVote(Submission submission, Vote vote) throws CommunicationLayerException {
+    public ResponseStatus sendVote(Submission submission, VOTE vote) throws CommunicationLayerException {
 
         if( submission == null){
             throw new CommunicationLayerException();

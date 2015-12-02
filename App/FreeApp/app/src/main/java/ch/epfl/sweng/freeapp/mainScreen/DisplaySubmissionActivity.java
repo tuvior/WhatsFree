@@ -103,15 +103,15 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
         //Easiest when inside activity, you can return 0  1 -1
         //When starting activity, you can only send 1 -1 and based on the server response//
 
-        Vote vote = Vote.DISLIKE;
+        VOTE vote = VOTE.DISLIKE;
 
         if(dislikedClicked){
-            vote = Vote.NEUTRAL;
+            vote = VOTE.NEUTRAL;
         }
 
 
 
-        Vote buttonClicked = Vote.DISLIKE;
+        VOTE buttonClicked = VOTE.DISLIKE;
 
         SubmissionVoteWrapper submissionVoteWrapper = new SubmissionVoteWrapper();
         submissionVoteWrapper.submission = submissionDisplayed;
@@ -123,13 +123,13 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
     }
 
     public void likeButtonOnClick(View view) {
-        Vote vote = Vote.LIKE;
+        VOTE vote = VOTE.LIKE;
 
         if(likedClicked){
-            vote = Vote.NEUTRAL;
+            vote = VOTE.NEUTRAL;
         }
 
-        Vote buttonClicked = Vote.LIKE;
+        VOTE buttonClicked = VOTE.LIKE;
 
         SubmissionVoteWrapper submissionVoteWrapper = new SubmissionVoteWrapper();
         submissionVoteWrapper.submission = submissionDisplayed;
@@ -147,17 +147,17 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
     //class used to pass Multiple arguments in Async task
     private class SubmissionVoteWrapper{
         public  Submission submission;
-        public  Vote voteToServer;
+        public VOTE voteToServer;
     }
 
     private class GetVoteTask extends  AsyncTask<SubmissionVoteWrapper,Void,ResponseStatus>{
 
         private Context context;
-        private Vote typeVote;
-        private Vote buttonClicked;
+        private VOTE typeVote;
+        private VOTE buttonClicked;
 
 
-        public GetVoteTask(Context context, Vote buttonClicked){
+        public GetVoteTask(Context context, VOTE buttonClicked){
             this.context = context;
             this.buttonClicked = buttonClicked;
         }
@@ -181,7 +181,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
 
                 Toast.makeText(context,"Problem from the server side", Toast.LENGTH_SHORT ).show();
             }else if (status == ResponseStatus.OK){
-                if(typeVote == Vote.LIKE){
+                if(typeVote == VOTE.LIKE){
 
                     submissionDisplayed.setLikes(submissionDisplayed.getLikes() + 1);
                     TextView view = (TextView)(findViewById(R.id.numberOfLikes));
@@ -189,7 +189,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
                     likeButton.setColorFilter(Color.rgb(135,206,250));  //Light blue
 
 
-                }else if(typeVote == Vote.DISLIKE){
+                }else if(typeVote == VOTE.DISLIKE){
 
                     submissionDisplayed.setDislikes(submissionDisplayed.getDislikes() + 1);
                     TextView view = (TextView)(findViewById(R.id.numberOfDislikes));
@@ -199,7 +199,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
                 }else{
                     //Case when neutral ,basically we want to undo or action.
 
-                    if(buttonClicked == Vote.LIKE){
+                    if(buttonClicked == VOTE.LIKE){
 
                         submissionDisplayed.setLikes(submissionDisplayed.getLikes()-1);
                         TextView view = (TextView)(findViewById(R.id.numberOfLikes));
@@ -218,7 +218,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
                 }
             }else{
                 //Response status will be some failure indicating that it already exists
-                if(buttonClicked == Vote.LIKE){
+                if(buttonClicked == VOTE.LIKE){
 
                     likeButton.setColorFilter(Color.rgb(135,206,250));  //Light blue
                 }else{

@@ -28,7 +28,7 @@ import ch.epfl.sweng.freeapp.Submission;
 import ch.epfl.sweng.freeapp.SubmissionCategory;
 import ch.epfl.sweng.freeapp.loginAndRegistration.LogInInfo;
 import ch.epfl.sweng.freeapp.loginAndRegistration.RegistrationInfo;
-import ch.epfl.sweng.freeapp.mainScreen.Vote;
+import ch.epfl.sweng.freeapp.mainScreen.VOTE;
 
 
 public class CommunicationLayer implements  DefaultCommunicationLayer {
@@ -97,7 +97,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
     }
 
 
-    public ResponseStatus sendVote(Submission submission, Vote vote ) throws CommunicationLayerException {
+    public ResponseStatus sendVote(Submission submission, VOTE vote ) throws CommunicationLayerException {
 
         if(submission == null ){
             throw new CommunicationLayerException("No submission");

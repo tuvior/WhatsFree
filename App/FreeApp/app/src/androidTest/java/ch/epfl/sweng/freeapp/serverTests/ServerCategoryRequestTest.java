@@ -153,8 +153,7 @@ public class ServerCategoryRequestTest {
     @Test
     public void serverRespondsWithJSONArrayOfLengthOne() throws CommunicationLayerException, JSONException {
         establishConnectionAndReturnJsonResponse("/delete/user?name=categorytest", "GET");
-        establishConnectionAndReturnJsonResponse("/delete/submission?name=categorytest", "GET");
-        //deleteSubmissionsInCategory = establishConnectionAndReturnJsonResponse("/delete/category?category=nocategory", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/category?category=testcategroy", "GET");
         JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete/user?name=categorytest", "GET");
 
         JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=categorytest&password=password&email=categorytest@test.ch", "GET");
@@ -175,14 +174,19 @@ public class ServerCategoryRequestTest {
         assertEquals("", submissionRetrieved.getString("location"));
 
         establishConnectionAndReturnJsonResponse("/delete/user?name=categorytest", "GET");
-        establishConnectionAndReturnJsonResponse("/delete/submission?name=categorytest", "GET");    }
+        establishConnectionAndReturnJsonResponse("/delete/submission?name=categorytest", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie=" + cookie, "GET");
+
+    }
 
 
     //TO FIX AND IMPROVE ONCE /delete/category IMPLEMENTED
 
     @Test
     public void serverRespondsWithJSONArrayOfLengthTwo() throws CommunicationLayerException, JSONException {
-        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete?name=categorytest", "GET");
+        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete/user?name=categorytest", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/category?category=testarraylength", "GET");
+
         JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=categorytest&password=password&email=categorytest@test.ch", "GET");
         JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=categorytest&password=password", "GET");
         String cookie = getCookieFromJson(loginUser);
@@ -202,19 +206,34 @@ public class ServerCategoryRequestTest {
 
         assertEquals("image", secondSubmissionRetrieved.getString("image"));
 
+        establishConnectionAndReturnJsonResponse("/delete/user?name=categorytest", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/category?category=testarraylength", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie=" + cookie, "GET");
+
+
     }
 
     @Test
     public void serverRespondsWithJSONArrayOfLenghtTwentyIfMaxNumberOfSubmissionsReached() throws CommunicationLayerException, JSONException {
-        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete?name=categorytest", "GET");
+        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete/user?name=categorytest", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/category?category=testarraylength", "GET");
+
         JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=categorytest&password=password&email=categorytest@test.ch", "GET");
         JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=categorytest&password=password", "GET");
         String cookie = getCookieFromJson(loginUser);
 
-        // Change FOOD
-        JSONArray serverResponse = establishConnectionAndReturnJsonResponseAsArray("/retrieve?cookie=" + cookie + "&flag=4&category=FOOD", "GET");
+        for(int i= 0; i < 20; i++) {
+            establishConnectionAndReturnJsonResponse("/submission?cookie="+cookie+"&name="+i+"&category=testarraylength&location=location&image=image", "POST");
+
+        }
+        JSONArray serverResponse = establishConnectionAndReturnJsonResponseAsArray("/retrieve?cookie=" + cookie + "&flag=4&category=testarraylength", "GET");
 
         assertEquals(20, serverResponse.length());
+
+
+        establishConnectionAndReturnJsonResponse("/delete/user?name=categorytest", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/category?category=testarraylength", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie=" + cookie, "GET");
     }
 
 }
