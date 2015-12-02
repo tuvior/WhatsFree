@@ -76,14 +76,14 @@ class addSubmission(webapp2.RequestHandler):
         subTto = self.request.get('to')
         subLatitude = self.request.get('latitude')
         subLongitude = self.request.get('longitude')
-        inf = float("inf")
 
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
 
+        # (0, 0) is in the ocean so no problems
         if not subLatitude:
-            subLatitude = inf
+            subLatitude = 0
         if not subLongitude:
-            subLongitude = inf
+            subLongitude = 0
 
         # Name, Category, Location, Image and Cookie are the required fields. 
         if not cookie:
