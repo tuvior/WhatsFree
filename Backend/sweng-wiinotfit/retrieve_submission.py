@@ -46,25 +46,30 @@ class retrieveSubmission(webapp2.RequestHandler):
                 else:
                     # flag = 1 means a single request
                     if flag == '1':
-                        id = self.request.get('id');
-                        key = ndb.Key(urlsafe=id)
+                        try:
+                            id = self.request.get('id');
+                            key = ndb.Key(urlsafe=id)
 
-                        if not id:
-                            self.response.write(json.dumps(json_error('single request', 'failure', 'id')))
-
-                        else:
-                            submission = key.get()
-
-                            if not submission:
-                                error = json_error('single request', 'failure', 'no corresponding submission')
-                                self.response.write(json.dumps(error))
+                            if not id:
+                                self.response.write(json.dumps(json_error('single request', 'failure', 'id')))
 
                             else:
-                                string_submission = json_string(submission.key.urlsafe(), submission.name, submission.category, submission.description, submission.location,
-                                                                submission.image, submission.keywords, submission.submitter,
-                                                                submission.tfrom, submission.tto, submission.rating)
-                                response = json.dumps(string_submission)
-                                self.response.write(response)
+                                submission = key.get()
+
+                                if not submission:
+                                    error = json_error('single request', 'failure', 'no corresponding submission')
+                                    self.response.write(json.dumps(error))
+
+                                else:
+                                    string_submission = json_string(submission.key.urlsafe(), submission.name, submission.category, submission.description, submission.location,
+                                                                    submission.image, submission.keywords, submission.submitter,
+                                                                    submission.tfrom, submission.tto, submission.rating)
+                                    response = json.dumps(string_submission)
+                                    self.response.write(response)
+
+                        except:
+                            self.response.write(json.dumps(json_error('single request', 'failure', 'id')))
+
 
                     # flag = 2 means that we are requesting submissions to display in what's new
                     elif flag == '2':
