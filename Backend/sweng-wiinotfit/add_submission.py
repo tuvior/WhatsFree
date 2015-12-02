@@ -64,7 +64,7 @@ def json_response(status, id):
     return res
 
 class addSubmission(webapp2.RequestHandler):
-    def get(self):
+    def post(self):
         subName = self.request.get('name')
         subCategory = self.request.get('category')
         subDescription = self.request.get('description')
