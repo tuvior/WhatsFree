@@ -108,19 +108,33 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
         }
         String id  = submission.getId();
 
+        String failedCookieSession = cookieSession + "hello";
         String serverUrl= null;
-        serverUrl = SERVER_URL +"/vote?id="+id+"&cookie="+ cookieSession+"&value="+vote.getValue();
+        serverUrl = SERVER_URL +"/vote?id="+id+"&cookie="+ failedCookieSession+"&value="+vote.getValue();
 
         String content = null;
         try {
             content = fetchStringFrom(serverUrl);
             JSONObject jsonObject = new JSONObject(content);
-            JSONObject response =  jsonObject.getJSONObject("vote");
+            JSONObject serverResponseJson =  jsonObject.getJSONObject("vote");
 
-           //FixMe : figure out response
+            if (serverResponseJson.getString("status").equals("failure")) {
+                switch (serverResponseJson.getString("reason")) {
+                    case "session":
+                        return ResponseStatus.SESSION;
+                    case "value":
+                        return ResponseStatus.VALUE;
+                    case "no  submission":
+                        return ResponseStatus.NO_SUBMISSION;
+                    default:
+                        throw new CommunicationLayerException();
+                }
+            }
 
-            return null;
-
+            if (BuildConfig.DEBUG && !(serverResponseJson.getString("status").equals("ok"))){
+                throw new AssertionError();
+            }
+            return ResponseStatus.OK;
 
         } catch (IOException e) {
             e.printStackTrace();

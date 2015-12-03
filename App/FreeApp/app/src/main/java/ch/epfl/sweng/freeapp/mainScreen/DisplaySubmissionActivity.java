@@ -256,6 +256,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
             try {
 
                 submission = communicationLayer.fetchSubmission(id);
+                submissionDisplayed = submission;
 
             } catch (CommunicationLayerException e) {
                 e.printStackTrace();
