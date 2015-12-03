@@ -12,7 +12,6 @@ class deleteSubmission(webapp2.RequestHandler):
     def get(self):
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
         name = self.request.get('name')
-        # ev add submitter
 
         if not name:
             error = json_error('delete submission', 'failure', 'name')
@@ -22,7 +21,7 @@ class deleteSubmission(webapp2.RequestHandler):
             submission = Submission.query(Submission.name == name).get()
             
             if not submission:
-            	error = json_error('delete', 'failure', 'no such submission')
+            	error = json_error('delete submission', 'failure', 'no such submission')
                 self.response.write(json.dumps(error))
 
             else:
