@@ -110,7 +110,7 @@ public class ServerSingleRequestTest {
     public void serverRespondsWithFailureIfNoId() throws CommunicationLayerException, JSONException {
         establishConnectionAndReturnJsonResponse("/delete/user?name=singlerequesttest", "GET");
 
-        JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=singlerequesttest&password=password&email=singlerequesttest@test.ch", "GET");
+        establishConnectionAndReturnJsonResponse("/register?user=singlerequesttest&password=password&email=singlerequesttest@test.ch", "GET");
         JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=singlerequesttest&password=password", "GET");
         String cookie = getCookieFromJson(loginUser);
 
@@ -129,7 +129,7 @@ public class ServerSingleRequestTest {
         establishConnectionAndReturnJsonResponse("/delete/user?name=singlerequesttest", "GET");
         establishConnectionAndReturnJsonResponse("/delete/submission?name=testDoesn'tPass", "GET");
 
-        JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=singlerequesttest&password=password&email=singlerequesttest@test.ch", "GET");
+        establishConnectionAndReturnJsonResponse("/register?user=singlerequesttest&password=password&email=singlerequesttest@test.ch", "GET");
         JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=singlerequesttest&password=password", "GET");
         String cookie = getCookieFromJson(loginUser);
 
@@ -154,7 +154,7 @@ public class ServerSingleRequestTest {
         establishConnectionAndReturnJsonResponse("/delete/user?name=singlerequesttest", "GET");
         establishConnectionAndReturnJsonResponse("/delete/submission?name=testname", "GET");
 
-        JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=singlerequesttest&password=password&email=singlerequesttest@test.ch", "GET");
+        establishConnectionAndReturnJsonResponse("/register?user=singlerequesttest&password=password&email=singlerequesttest@test.ch", "GET");
         JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=singlerequesttest&password=password", "GET");
         String cookie = getCookieFromJson(loginUser);
 

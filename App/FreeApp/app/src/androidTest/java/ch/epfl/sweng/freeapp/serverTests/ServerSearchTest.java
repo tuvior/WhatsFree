@@ -81,7 +81,7 @@ public class ServerSearchTest {private static final String SERVER_URL = "http://
     public void serverRespondsWithFailureIfNoNameParameter() throws CommunicationLayerException, JSONException {
         establishConnectionAndReturnJsonResponse("/delete/user?name=searchtest", "GET");
 
-        JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=searchtest&password=password&email=searchtest@test.ch", "GET");
+        establishConnectionAndReturnJsonResponse("/register?user=searchtest&password=password&email=searchtest@test.ch", "GET");
         JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=searchtest&password=password", "GET");
         String cookie = getCookieFromJson(loginUser);
 
@@ -99,7 +99,7 @@ public class ServerSearchTest {private static final String SERVER_URL = "http://
         establishConnectionAndReturnJsonResponse("/delete/user?name=searchtest", "GET");
         establishConnectionAndReturnJsonResponse("/delete/submission?name=searchtestname", "GET");
 
-        JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=searchtest&password=password&email=searchtest@test.ch", "GET");
+        establishConnectionAndReturnJsonResponse("/register?user=searchtest&password=password&email=searchtest@test.ch", "GET");
         JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=searchtest&password=password", "GET");
         String cookie = getCookieFromJson(loginUser);
 

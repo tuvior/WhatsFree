@@ -19,7 +19,7 @@ import ch.epfl.sweng.freeapp.communication.NetworkProvider;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotSame;
 
-public class ServerDeleteUser {
+public class ServerDeleteUserTest {
     private static final String SERVER_URL = "http://sweng-wiinotfit.appspot.com";
     private NetworkProvider networkProvider = new DefaultNetworkProvider();
     private final static int HTTP_SUCCESS_START = 200;

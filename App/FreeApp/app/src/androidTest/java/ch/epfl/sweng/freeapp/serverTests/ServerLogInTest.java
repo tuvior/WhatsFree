@@ -98,7 +98,8 @@ public class ServerLogInTest {
     @Test
     public void serverRespondsWithFailureIfWrongUserName() throws CommunicationLayerException, JSONException {
         //Make sure newuser is not there
-        JSONObject deleteUserIfThere = establishConnectionAndReturnJsonResponse("/delete/user?name=newuser", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/user?name=newuser", "GET");
+
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse(("/login?user=newuser&password=somepassword"), "GET");
         assertEquals("failure", getStatusFromJson(serverResponse));
         assertEquals("user", getReasonFromJson(serverResponse));
@@ -108,20 +109,20 @@ public class ServerLogInTest {
     public void serverRespondsWithFailureIfWrongPassword() throws CommunicationLayerException, JSONException {
         //Registration won't work if there is already an existing user (example if we have already run the test)
         //but there is no problem because the login will work and will find that the password is incorrect
-        JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=user&password=password&email=abc@abc.com", "GET");
+        establishConnectionAndReturnJsonResponse("/register?user=user&password=password&email=abc@abc.com", "GET");
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse(("/login?user=user&password=wrong"), "GET");
         assertEquals("failure", getStatusFromJson(serverResponse));
         assertEquals("password", getReasonFromJson(serverResponse));
 
         //Delete user so that it is no more in db
-        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete/user?name=user", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/user?name=user", "GET");
     }
 
     @Test
     public void serverRespondsWithOkAndCookieIfLogInIsOk() throws CommunicationLayerException, JSONException {
         //Registration won't work if there is already an existing user (example if we have already run the test)
         //but there is no problem because the login will work
-        JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=a&password=b&email=c", "GET");
+        establishConnectionAndReturnJsonResponse("/register?user=a&password=b&email=c", "GET");
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/login?user=a&password=b", "GET");
         String cookie = getCookieFromJson(serverResponse);
         assertEquals("ok", getStatusFromJson(serverResponse));
@@ -129,8 +130,8 @@ public class ServerLogInTest {
         assertEquals(64, cookie.length());
 
         //Delete user and session so that it is no more in db
-        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete/user?name=user", "GET");
-        JSONObject deleteSession = establishConnectionAndReturnJsonResponse("/delete/session?cookie="+cookie, "GET");
+        establishConnectionAndReturnJsonResponse("/delete/user?name=user", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie="+cookie, "GET");
     }
 
 

@@ -108,7 +108,9 @@ public class ServerCategoryRequestTest {
 
     @Test
     public void serverRespondsWithFailureIfBadCookieParameter() throws CommunicationLayerException, JSONException {
-        JSONObject deleteCookie = establishConnectionAndReturnJsonResponse("/delete/session?cookie=cookie", "GET");
+        //Delete cookie to make sure they are not in db
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie=cookie", "GET");
+
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?cookie=cookie&flag=4", "GET");
         assertEquals("failure", getStatusFromJson(serverResponse, "retrieve"));
         assertEquals("session", getReasonFromJson(serverResponse, "retrieve"));
@@ -116,8 +118,9 @@ public class ServerCategoryRequestTest {
 
     @Test
     public void serverRespondsWithFailureIfNoCategoryParameter() throws CommunicationLayerException, JSONException {
-        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete/user?name=categorytest", "GET");
-        JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=categorytest&password=password&email=categorytest@test.ch", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/user?name=categorytest", "GET");
+
+        establishConnectionAndReturnJsonResponse("/register?user=categorytest&password=password&email=categorytest@test.ch", "GET");
         JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=categorytest&password=password", "GET");
         String cookie = getCookieFromJson(loginUser);
 
@@ -132,11 +135,11 @@ public class ServerCategoryRequestTest {
 
     @Test
     public void serverRespondsWithFailureIfEmptyOrNonExistingCategory() throws CommunicationLayerException, JSONException {
-        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete/user?name=categorytest", "GET");
-        //To be sure that there is no such category. Must create server part
-        //deleteSubmissionsInCategory = establishConnectionAndReturnJsonResponse("/delete/category?category=nocategory", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/user?name=categorytest", "GET");
+        //To be sure that there is no such category.
+        establishConnectionAndReturnJsonResponse("/delete/category?category=nocategory", "GET");
 
-        JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=categorytest&password=password&email=categorytest@test.ch", "GET");
+        establishConnectionAndReturnJsonResponse("/register?user=categorytest&password=password&email=categorytest@test.ch", "GET");
         JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=categorytest&password=password", "GET");
         String cookie = getCookieFromJson(loginUser);
 
@@ -153,14 +156,15 @@ public class ServerCategoryRequestTest {
     @Test
     public void serverRespondsWithJSONArrayOfLengthOne() throws CommunicationLayerException, JSONException {
         establishConnectionAndReturnJsonResponse("/delete/user?name=categorytest", "GET");
-        establishConnectionAndReturnJsonResponse("/delete/category?category=testcategroy", "GET");
-        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete/user?name=categorytest", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/category?category=testcategory", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/user?name=categorytest", "GET");
 
-        JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=categorytest&password=password&email=categorytest@test.ch", "GET");
+        establishConnectionAndReturnJsonResponse("/register?user=categorytest&password=password&email=categorytest@test.ch", "GET");
         JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=categorytest&password=password", "GET");
         String cookie = getCookieFromJson(loginUser);
 
-        JSONObject submission = establishConnectionAndReturnJsonResponse("/submission?cookie=" + cookie + "&name=categorytest&category=testcategory&location=location&image=image", "POST");
+        //We add the submission
+        establishConnectionAndReturnJsonResponse("/submission?cookie=" + cookie + "&name=categorytest&category=testcategory&location=location&image=image", "POST");
 
         JSONArray serverResponse = establishConnectionAndReturnJsonResponseAsArray("/retrieve?cookie=" + cookie + "&flag=4&category=testcategory", "GET");
 
@@ -184,10 +188,10 @@ public class ServerCategoryRequestTest {
 
     @Test
     public void serverRespondsWithJSONArrayOfLengthTwo() throws CommunicationLayerException, JSONException {
-        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete/user?name=categorytest", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/user?name=categorytest", "GET");
         establishConnectionAndReturnJsonResponse("/delete/category?category=testarraylength", "GET");
 
-        JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=categorytest&password=password&email=categorytest@test.ch", "GET");
+        establishConnectionAndReturnJsonResponse("/register?user=categorytest&password=password&email=categorytest@test.ch", "GET");
         JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=categorytest&password=password", "GET");
         String cookie = getCookieFromJson(loginUser);
 
@@ -201,7 +205,7 @@ public class ServerCategoryRequestTest {
         JSONObject secondSubmissionRetrieved = new JSONObject(serverResponse.get(1).toString());
 
 
-        //cannot test names because we don't know if get(0) really return the first submission or the second
+        // Cannot test names because we don't know if get(0) really return the first submission or the second
         assertEquals("image", firstSubmissionRetrieved.getString("image"));
 
         assertEquals("image", secondSubmissionRetrieved.getString("image"));
@@ -214,11 +218,11 @@ public class ServerCategoryRequestTest {
     }
 
     @Test
-    public void serverRespondsWithJSONArrayOfLenghtTwentyIfMaxNumberOfSubmissionsReached() throws CommunicationLayerException, JSONException {
-        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete/user?name=categorytest", "GET");
+    public void serverRespondsWithJSONArrayOfLengthTwentyIfMaxNumberOfSubmissionsReached() throws CommunicationLayerException, JSONException {
+        establishConnectionAndReturnJsonResponse("/delete/user?name=categorytest", "GET");
         establishConnectionAndReturnJsonResponse("/delete/category?category=testarraylength", "GET");
 
-        JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=categorytest&password=password&email=categorytest@test.ch", "GET");
+        establishConnectionAndReturnJsonResponse("/register?user=categorytest&password=password&email=categorytest@test.ch", "GET");
         JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=categorytest&password=password", "GET");
         String cookie = getCookieFromJson(loginUser);
 
