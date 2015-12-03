@@ -85,12 +85,22 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Time remaining: TODO"
-        android:id="@+id/timeRemaining"
+        android:text="Location not provided"
+        android:id="@+id/submissionLocation"
         android:textColor="#000000"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/submissionRating"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/submissionImageView"
+        android:layout_toEndOf="@+id/submissionImageView" />
 
 
 </RelativeLayout>
