@@ -317,7 +317,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
     public ArrayList<Submission> sendCategoryRequest(SubmissionCategory category) throws CommunicationLayerException {
 
         try{
-            String content = fetchStringFrom(SERVER_URL+"/retrieve?cookie=" + cookieSession + "&flag=4&category=" + category.toString().toUpperCase());
+            String content = fetchStringFrom(SERVER_URL+"/retrieve?cookie=" + cookieSession + "&flag=4&category=" + category.toString());
             //if there is no submission corresponding to the category, then the server will return a failure
             if(!content.contains("failure")) {
                 JSONArray contentArray = new JSONArray(content);
