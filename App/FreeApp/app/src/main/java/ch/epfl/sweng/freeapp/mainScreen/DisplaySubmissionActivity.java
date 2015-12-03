@@ -271,31 +271,34 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Submission submission) {
 
-            likes = submission.getLikes();
-            dislikes = submission.getDislikes();
+            if (submission != null) {
 
-            TextView numberOfLikes = (TextView)findViewById(R.id.numberOfLikes);
-            TextView numberOfDislikes = (TextView)findViewById(R.id.numberOfDislikes);
+                likes = submission.getLikes();
+                dislikes = submission.getDislikes();
+
+                TextView numberOfLikes = (TextView) findViewById(R.id.numberOfLikes);
+                TextView numberOfDislikes = (TextView) findViewById(R.id.numberOfDislikes);
 
 
-            numberOfLikes.setText(Integer.toString(likes));
-            numberOfDislikes.setText(Integer.toString(dislikes));
+                numberOfLikes.setText(Integer.toString(likes));
+                numberOfDislikes.setText(Integer.toString(dislikes));
 
-            TextView nameTextView = (TextView)findViewById(R.id.submissionName);
-            nameTextView.setText(submission.getName());
+                TextView nameTextView = (TextView) findViewById(R.id.submissionName);
+                nameTextView.setText(submission.getName());
 
-            TextView descriptionTextView = (TextView)findViewById(R.id.submissionDescription);
-            descriptionTextView.setText(submission.getDescription());
+                TextView descriptionTextView = (TextView) findViewById(R.id.submissionDescription);
+                descriptionTextView.setText(submission.getDescription());
 
-            Bitmap image = decodeImage(submission.getImage());
+                Bitmap image = decodeImage(submission.getImage());
 
-            if(image == null){
-                Toast.makeText(context, "Unknown Image ", Toast.LENGTH_SHORT ).show();
-            }else {
-                ImageView submissionImage = (ImageView) findViewById(R.id.submissionImageView);
-                submissionImage.setImageBitmap(image);
+                if (image == null) {
+                    Toast.makeText(context, "Unknown Image ", Toast.LENGTH_SHORT).show();
+                } else {
+                    ImageView submissionImage = (ImageView) findViewById(R.id.submissionImageView);
+                    submissionImage.setImageBitmap(image);
+                }
+
             }
-
         }
 
     }
