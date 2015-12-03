@@ -1,5 +1,6 @@
 package ch.epfl.sweng.freeapp.serverTests;
 
+
 import android.util.Log;
 
 import org.json.JSONException;
@@ -17,9 +18,8 @@ import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 import ch.epfl.sweng.freeapp.communication.NetworkProvider;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotSame;
 
-public class ServerDeleteUser {
+public class ServerDeleteSession {
     private static final String SERVER_URL = "http://sweng-wiinotfit.appspot.com";
     private NetworkProvider networkProvider = new DefaultNetworkProvider();
     private final static int HTTP_SUCCESS_START = 200;
@@ -80,36 +80,41 @@ public class ServerDeleteUser {
 
 
     @Test
-    public void serverRespondsWithFailureIfNoNameParamater() throws CommunicationLayerException, JSONException {
-        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/delete/user?", "GET");
+    public void serverRespondsWithFailureIfNoCookieParamater() throws CommunicationLayerException, JSONException {
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/delete/session?", "GET");
 
-        assertEquals("failure", getStatusFromJson(serverResponse, "delete user"));
-        assertEquals("name", getReasonFromJson(serverResponse, "delete user"));
+        assertEquals("failure", getStatusFromJson(serverResponse, "delete session"));
+        assertEquals("cookie", getReasonFromJson(serverResponse, "delete session"));
     }
 
     @Test
-    public void serverRespondsWithFailureIfNoSuchUser() throws CommunicationLayerException, JSONException {
-        //First time to make sure no such user in database, second to assert the failure message
-        establishConnectionAndReturnJsonResponse("/delete/user?name=deleteTest", "GET");
-        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/delete/user?name=deleteTest", "GET");
+    public void serverRespondsWithFailureIfNoSuchSession() throws CommunicationLayerException, JSONException {
+        //First time to make sure no such session in database, second to assert the failure message
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie=deleteSessionTest", "GET");
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/delete/session?cookie=deleteSessionTest", "GET");
 
 
-        assertEquals("failure", getStatusFromJson(serverResponse, "delete user"));
-        assertEquals("no such user", getReasonFromJson(serverResponse, "delete user"));
+        assertEquals("failure", getStatusFromJson(serverResponse, "delete session"));
+        assertEquals("no such session", getReasonFromJson(serverResponse, "delete session"));
     }
 
     @Test
     public void serverRespondsWithOkIfSuccess() throws CommunicationLayerException, JSONException, InterruptedException {
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie=deleteSessionTest", "GET");
         establishConnectionAndReturnJsonResponse("/delete/user?name=deleteTest", "GET");
 
         establishConnectionAndReturnJsonResponse("/register?user=deleteTest&password=password&email=deleteTestEmail", "GET");
+        JSONObject login = establishConnectionAndReturnJsonResponse("/login?user=deleteTest&password=password", "GET");
+        String cookie = getCookieFromJson(login);
 
-        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/delete/user?name=deleteTest", "GET");
-        assertEquals("ok", getStatusFromJson(serverResponse, "delete user"));
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/delete/session?cookie="+cookie, "GET");
+        assertEquals("ok", getStatusFromJson(serverResponse, "delete session"));
 
-        JSONObject tryLogin = establishConnectionAndReturnJsonResponse("/login?user=deleteTest&password=password", "GET");
-        assertEquals("failure", getStatusFromJson(tryLogin, "login"));
-        assertEquals("user", getReasonFromJson(tryLogin, "login"));
+        JSONObject tryToAddSubmission = establishConnectionAndReturnJsonResponse("/submission?cookie="+cookie+"&name=name&category=category&location=location&image=image", "POST");
+        assertEquals("failure", getStatusFromJson(tryToAddSubmission, "submission"));
+        assertEquals("session", getReasonFromJson(tryToAddSubmission, "submission"));
+
+        establishConnectionAndReturnJsonResponse("/delete/user?name=deleteTest", "GET");
     }
 
 

@@ -17,9 +17,9 @@ import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 import ch.epfl.sweng.freeapp.communication.NetworkProvider;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotSame;
 
-public class ServerDeleteUser {
+
+public class ServerDeleteSubmission {
     private static final String SERVER_URL = "http://sweng-wiinotfit.appspot.com";
     private NetworkProvider networkProvider = new DefaultNetworkProvider();
     private final static int HTTP_SUCCESS_START = 200;
@@ -78,38 +78,52 @@ public class ServerDeleteUser {
         return serverResponse.getJSONObject("login").getString("cookie");
     }
 
+    private String getIdFromJson(JSONObject serverResponse) throws JSONException {
+        return serverResponse.getJSONObject("submission").getString("id");
+    }
+
 
     @Test
     public void serverRespondsWithFailureIfNoNameParamater() throws CommunicationLayerException, JSONException {
-        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/delete/user?", "GET");
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/delete/submission?", "GET");
 
-        assertEquals("failure", getStatusFromJson(serverResponse, "delete user"));
-        assertEquals("name", getReasonFromJson(serverResponse, "delete user"));
+        assertEquals("failure", getStatusFromJson(serverResponse, "delete submission"));
+        assertEquals("name", getReasonFromJson(serverResponse, "delete submission"));
     }
 
     @Test
-    public void serverRespondsWithFailureIfNoSuchUser() throws CommunicationLayerException, JSONException {
-        //First time to make sure no such user in database, second to assert the failure message
-        establishConnectionAndReturnJsonResponse("/delete/user?name=deleteTest", "GET");
-        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/delete/user?name=deleteTest", "GET");
+    public void serverRespondsWithFailureIfNoSuchSession() throws CommunicationLayerException, JSONException {
+        //First time to make sure no such submission in database, second to assert the failure message
+        establishConnectionAndReturnJsonResponse("/delete/submission?name=deleteSubmissionTest", "GET");
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/delete/submission?name=deleteSubmissionTest", "GET");
 
 
-        assertEquals("failure", getStatusFromJson(serverResponse, "delete user"));
-        assertEquals("no such user", getReasonFromJson(serverResponse, "delete user"));
+        assertEquals("failure", getStatusFromJson(serverResponse, "delete submission"));
+        assertEquals("no such submission", getReasonFromJson(serverResponse, "delete submission"));
     }
 
     @Test
     public void serverRespondsWithOkIfSuccess() throws CommunicationLayerException, JSONException, InterruptedException {
+        // Delete user and submission if they are already in database
+        establishConnectionAndReturnJsonResponse("/delete/submission?name=deleteSubmissionTest", "GET");
         establishConnectionAndReturnJsonResponse("/delete/user?name=deleteTest", "GET");
 
         establishConnectionAndReturnJsonResponse("/register?user=deleteTest&password=password&email=deleteTestEmail", "GET");
+        JSONObject login = establishConnectionAndReturnJsonResponse("/login?user=deleteTest&password=password", "GET");
+        String cookie = getCookieFromJson(login);
 
-        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/delete/user?name=deleteTest", "GET");
-        assertEquals("ok", getStatusFromJson(serverResponse, "delete user"));
+        JSONObject addSubmission = establishConnectionAndReturnJsonResponse("/submission?cookie=" + cookie + "&name=deleteSubmissionTest&category=category&location=location&image=image", "POST");
+        String id = getIdFromJson(addSubmission);
 
-        JSONObject tryLogin = establishConnectionAndReturnJsonResponse("/login?user=deleteTest&password=password", "GET");
-        assertEquals("failure", getStatusFromJson(tryLogin, "login"));
-        assertEquals("user", getReasonFromJson(tryLogin, "login"));
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/delete/submission?name=deleteSubmissionTest", "GET");
+        assertEquals("ok", getStatusFromJson(serverResponse, "delete submission"));
+
+        JSONObject retrieveSubmission = establishConnectionAndReturnJsonResponse("/retrieve?cookie="+cookie+"&flag=1&id="+id, "GET");
+        assertEquals("failure", getStatusFromJson(retrieveSubmission, "single request"));
+        assertEquals("no corresponding submission", getReasonFromJson(retrieveSubmission, "single request"));
+
+        establishConnectionAndReturnJsonResponse("/delete/user?name=deleteTest", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie="+cookie, "GET");
     }
 
 
