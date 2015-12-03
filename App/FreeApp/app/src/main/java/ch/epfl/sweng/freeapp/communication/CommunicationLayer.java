@@ -37,7 +37,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
     private final static int HTTP_SUCCESS_END = 299;
    // private static  String cookieSession ;  //"BEY4L9lVSlA0hHQQ1ClTXYVUn5xwcr0BfYSKc7sw0Y54XYzWObTAsJ6PHQWPQVzO";
 
-    private static String cookieSession = "tri5KsZsgDT4kKlbzBBQVCy2cLo0WsxeDORB0Y700qX587cOobIRcuhL26GIfENa";
+    private static String cookieSession = "fbsGd7syDrfLhAYxy4n6CniR1CBzA20S2W5ohMkJg1KUDK4P8d3N6ca1ICFyWyHZ"; //= "tri5KsZsgDT4kKlbzBBQVCy2cLo0WsxeDORB0Y700qX587cOobIRcuhL26GIfENa";
     private NetworkProvider networkProvider;
 
 
@@ -317,7 +317,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
     public ArrayList<Submission> sendCategoryRequest(SubmissionCategory category) throws CommunicationLayerException {
 
         try{
-            String content = fetchStringFrom(SERVER_URL+"/retrieve?cookie=" + cookieSession + "&flag=4&category=" + category.toString().toUpperCase());
+            String content = fetchStringFrom(SERVER_URL+"/retrieve?cookie=" + cookieSession + "&flag=4&category=" + category.toString());
             //if there is no submission corresponding to the category, then the server will return a failure
             if(!content.contains("failure")) {
                 JSONArray contentArray = new JSONArray(content);
