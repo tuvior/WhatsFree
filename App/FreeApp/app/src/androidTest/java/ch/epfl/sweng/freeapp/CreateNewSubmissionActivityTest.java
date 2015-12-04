@@ -39,9 +39,10 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
 
     DefaultCommunicationLayer communicationLayer = new FakeCommunicationLayer();
 
-    public CreateNewSubmissionActivityTest(Class<CreateNewSubmissionActivity> activityClass) {
-        super(activityClass);
+    public CreateNewSubmissionActivityTest() {
+        super(CreateNewSubmissionActivity.class);
     }
+
 
     @Override
     public void setUp() throws Exception {

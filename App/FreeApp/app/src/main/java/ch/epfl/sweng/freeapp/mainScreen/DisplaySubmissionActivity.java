@@ -286,7 +286,6 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
                 TextView numberOfLikes = (TextView) findViewById(R.id.numberOfLikes);
                 TextView numberOfDislikes = (TextView) findViewById(R.id.numberOfDislikes);
 
-
                 numberOfLikes.setText(Integer.toString(likes));
                 numberOfDislikes.setText(Integer.toString(dislikes));
 
@@ -304,6 +303,14 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
                     ImageView submissionImage = (ImageView) findViewById(R.id.submissionImageView);
                     submissionImage.setImageBitmap(image);
                 }
+
+                if(submission.getLocation() != null) {
+                    TextView locationTextView = (TextView) findViewById(R.id.submissionLocation);
+                    locationTextView.setText("Location: " + submission.getLocation());
+                }
+
+                TextView ratingTextView = (TextView) findViewById(R.id.submissionRating);
+                ratingTextView.setText(String.valueOf(submission.getRating()));
 
             }
         }
