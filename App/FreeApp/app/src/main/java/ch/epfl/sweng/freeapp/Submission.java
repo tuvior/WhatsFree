@@ -25,6 +25,7 @@ public  class Submission  {
 
     private String latitude;
     private String longitude;
+    private int rating;
 
     public Submission(String name , String description, SubmissionCategory category, String location, String image, String id){
         this.name = name;
@@ -33,6 +34,10 @@ public  class Submission  {
         this.location = location;
         this.image = image;
         this.id = id;
+    }
+
+    public int getRating() {
+        return rating;
     }
 
     public static class Builder {
