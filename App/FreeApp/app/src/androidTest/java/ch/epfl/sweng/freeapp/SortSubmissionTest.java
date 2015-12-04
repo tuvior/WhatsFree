@@ -4,39 +4,108 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
+
+import ch.epfl.sweng.freeapp.SortingSubmissionAlgorithnms.SortSubmission;
+import ch.epfl.sweng.freeapp.SortingSubmissionAlgorithnms.SortSubmissionByEndOFEvent;
+import ch.epfl.sweng.freeapp.SortingSubmissionAlgorithnms.SortSubmissionByLikes;
+import ch.epfl.sweng.freeapp.SortingSubmissionAlgorithnms.SortSubmissionByName;
+
+import static junit.framework.Assert.assertTrue;
 
 /**
  * Created by francisdamachi on 04/12/15.
  */
 public class SortSubmissionTest {
 
-
-
-
+    private List<Submission> submissionList ;
+    //generateSubmission();
 
 
 
     @Test
     public void  testSortSubmissionByName(){
 
+        submissionList = generateSubmission();
+        SortSubmission sortSubmission = new SortSubmissionByName();
+        boolean sorted =  isSortedByName(sortSubmission.sort(submissionList));
+
+        assertTrue(sorted);
+
+        List<Submission> submissions = null;
+        boolean sort = isSortedByName(sortSubmission.sort(submissions));
+
+        assertTrue(sort);
     }
 
     @Test
     public void  testSortSubmissionByLikes(){
+        submissionList = generateSubmission();
+
+        SortSubmission sortSubmission = new SortSubmissionByLikes();
+        boolean sorted =  isSortedByLikes(sortSubmission.sort(submissionList));
+
+        assertTrue(sorted);
+
+        List<Submission> submissions = null;
+        boolean sort = isSortedByLikes(sortSubmission.sort(submissions));
+
+        assertTrue(sort);
+
+
+
 
     }
 
     @Test
     public void  testSortSubmissionByDate(){
+        submissionList = generateSubmission();
+        List<Long> list = new ArrayList<>();
+
+        for(int i = 0 ; i  < submissionList.size(); i++){
+
+            list.add(submissionList.get(i).getEndOfEvent());
+            //System.out.println();
+        }
+
+
+        System.out.println(list);
+
+        SortSubmission sortSubmission = new SortSubmissionByEndOFEvent();
+
+        submissionList = sortSubmission.sort(submissionList);
+
+        List<Long> list1 = new ArrayList<>();
+
+        for(int i = 0 ; i  < submissionList.size(); i++){
+
+
+            list1.add(submissionList.get(i).getEndOfEvent());
+            //System.out.println();
+        }
+
+
+        System.out.println(list1);
+
+        boolean sorted =  isSortedByTime(sortSubmission.sort(submissionList));
+
+        assertTrue(sorted);
+
+        List<Submission> submissions = null;
+        boolean sort = isSortedByTime(sortSubmission.sort(submissions));
+
+        assertTrue(sort);
+
 
 
     }
 
 
     private  boolean isSortedByName(List<Submission> submissionList) {
+        if(submissionList ==  null){
+            return true;
+        }
         for (int i = 0; i < submissionList.size()-1; i++) {
             if ((submissionList.get(i).getName().compareTo(submissionList.get(i+1).getName())) == -1 ) {
                 return false;
@@ -47,9 +116,13 @@ public class SortSubmissionTest {
 
     private  boolean isSortedByLikes(List<Submission> submissionList){
 
+        if(submissionList == null ){
+            return true;
+        }
+
 
         for (int i = 0; i < submissionList.size()-1; i++) {
-            if ((submissionList.get(i).getName().compareTo(submissionList.get(i+1).getName())) == -1 ) {
+            if ((submissionList.get(i).getName().toLowerCase().compareTo(submissionList.get(i+1).getName().toLowerCase())) == -1 ) {
                 return false;
             }
         }
@@ -58,8 +131,11 @@ public class SortSubmissionTest {
 
     private boolean isSortedByTime(List<Submission> submissionList){
 
+        if(submissionList == null){
+            return true;
+        }
         for (int i = 0; i < submissionList.size()-1; i++) {
-            if ((submissionList.get(i+1).getEndOfEvent() > (submissionList.get(i).getEndOfEvent()))) {
+            if ((submissionList.get(i).getEndOfEvent() > (submissionList.get(i+1).getEndOfEvent()))) {
                 return false;
             }
         }
@@ -75,24 +151,24 @@ public class SortSubmissionTest {
         int n = 7;
 
         int numberOfSubmission = random.nextInt(n);
-        int numberOfchars;
+        int numberOfChars;
         int numberOfLikes;
         List<Submission> submissions = new ArrayList<>();
 
-        Random r =new Random();
-        long unixtime;
-
         for(int i = 0; i <numberOfSubmission; i++){
-            numberOfchars = random.nextInt(n);
+            numberOfChars = random.nextInt(n);
             numberOfLikes = random.nextInt(n);
-            unixtime = (long) (1293861599+r.nextDouble()*60*60*24*365);
-
-            Calendar calendar = Cal
 
 
-            new Submission.Builder().name(generateString(numberOfchars)).likes(numberOfLikes).endOfEvent(
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_YEAR, random.nextInt(n));
+
+            Submission submission =  new Submission.Builder().name(generateString(numberOfChars)).likes(numberOfLikes).endOfEvent(calendar).build();
+            submissions.add(submission);
 
         }
+
+        return submissions;
 
 
 

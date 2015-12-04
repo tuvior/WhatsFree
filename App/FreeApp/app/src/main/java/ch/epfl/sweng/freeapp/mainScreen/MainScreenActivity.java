@@ -142,7 +142,7 @@ public class MainScreenActivity extends AppCompatActivity {
                 RadioButton radioButton = (RadioButton)dialog.findViewById(group.getCheckedRadioButtonId());
 
                 switch(radioButton.getId()){
-                    case R.id.byTime : sortSubmission[0] = new SortSubmissionByDateSubmitted();
+                    case R.id.byTime : sortSubmission[0] = new SortSubmissionByEndOFEvent();
                         break;
                     case R.id.byLikes: sortSubmission[0] = new SortSubmissionByLikes();
                         break;

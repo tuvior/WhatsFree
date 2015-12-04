@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 import ch.epfl.sweng.freeapp.R;
 import ch.epfl.sweng.freeapp.SortingSubmissionAlgorithnms.SortSubmission;
-import ch.epfl.sweng.freeapp.SortingSubmissionAlgorithnms.SortSubmissionByDateSubmitted;
+import ch.epfl.sweng.freeapp.SortingSubmissionAlgorithnms.SortSubmissionByEndOFEvent;
 import ch.epfl.sweng.freeapp.SortingSubmissionAlgorithnms.SortSubmissionByLikes;
 import ch.epfl.sweng.freeapp.SortingSubmissionAlgorithnms.SortSubmissionByName;
 import ch.epfl.sweng.freeapp.Submission;
@@ -81,14 +81,17 @@ public class WhatsNewFragment extends ListFragment {
 
                     @Override
                     public void onCheckedChanged(RadioGroup group, int checkedId) {
-                        RadioButton radioButton = (RadioButton)dialog.findViewById(group.getCheckedRadioButtonId());
+                        RadioButton radioButton = (RadioButton) dialog.findViewById(group.getCheckedRadioButtonId());
 
-                        switch(radioButton.getId()){
-                            case R.id.byTime : sortSubmissionList[0] = new SortSubmissionByDateSubmitted();
+                        switch (radioButton.getId()) {
+                            case R.id.byTime:
+                                sortSubmissionList[0] = new SortSubmissionByEndOFEvent();
                                 break;
-                            case R.id.byLikes: sortSubmissionList[0] = new SortSubmissionByLikes();
+                            case R.id.byLikes:
+                                sortSubmissionList[0] = new SortSubmissionByLikes();
                                 break;
-                            case R.id.byName: sortSubmissionList[0] = new SortSubmissionByName();
+                            case R.id.byName:
+                                sortSubmissionList[0] = new SortSubmissionByName();
                                 break;
 
                         }
@@ -106,7 +109,7 @@ public class WhatsNewFragment extends ListFragment {
 
                         sortSubmissions = sortSubmissionList[0];
 
-                        if(sortSubmissions != null ){
+                        if (sortSubmissions != null) {
                             sortSubmissions.sort(cachedSubmissions);
                         }
 
