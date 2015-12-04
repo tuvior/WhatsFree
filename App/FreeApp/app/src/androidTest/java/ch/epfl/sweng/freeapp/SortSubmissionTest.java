@@ -3,6 +3,8 @@ package ch.epfl.sweng.freeapp;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -85,8 +87,10 @@ public class SortSubmissionTest {
             numberOfLikes = random.nextInt(n);
             unixtime = (long) (1293861599+r.nextDouble()*60*60*24*365);
 
+            Calendar calendar = Cal
 
-            new Submission.Builder().name(generateString(numberOfchars)).
+
+            new Submission.Builder().name(generateString(numberOfchars)).likes(numberOfLikes).endOfEvent(
 
         }
 
