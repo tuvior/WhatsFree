@@ -13,7 +13,7 @@ public class SortSubmissionByName  implements  SortSubmission{
         Collections.sort(submissions, new Comparator<Submission>() {
             @Override
             public int compare(Submission lhs, Submission rhs) {
-                return lhs.getName().compareTo(rhs.getName());
+                return lhs.getName().toLowerCase().compareTo(rhs.getName().toLowerCase());
             }
         });
 

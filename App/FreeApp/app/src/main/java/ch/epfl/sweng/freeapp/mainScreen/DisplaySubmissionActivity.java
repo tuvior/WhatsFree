@@ -105,9 +105,14 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
 
         Vote vote = Vote.DISLIKE;
 
+
+
         if(dislikedClicked){
+
+
             vote = Vote.NEUTRAL;
         }
+
 
 
 
@@ -217,6 +222,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
 
                 }
             }else{
+
                 //Response status will be some failure indicating that it already exists
                 if(buttonClicked == Vote.LIKE){
 

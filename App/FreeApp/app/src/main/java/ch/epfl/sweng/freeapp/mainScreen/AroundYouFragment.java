@@ -30,13 +30,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-
+import ch.epfl.sweng.freeapp.R;
 import ch.epfl.sweng.freeapp.Submission;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
 import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
-
-import ch.epfl.sweng.freeapp.R;
 
 
 public class AroundYouFragment extends ListFragment implements GoogleApiClient.ConnectionCallbacks,
@@ -66,6 +64,8 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
     }
 
     @Override
@@ -177,6 +177,9 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
 
             try {
                 submissions = communicationLayer.sendSubmissionsRequest();
+
+
+
             } catch (CommunicationLayerException e) {
                 e.printStackTrace();
                 return null;

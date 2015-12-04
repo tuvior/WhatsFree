@@ -15,6 +15,7 @@ public class SortSubmissionByDateSubmitted  implements  SortSubmission{
         Collections.sort(submissions, new Comparator<Submission>() {
             @Override
             public int compare(Submission lhs, Submission rhs) {
+
                  if( lhs.getSubmitted() <  rhs.getSubmitted()){
                      return 1;
                  }else if( rhs.getSubmitted() > lhs.getSubmitted()){
