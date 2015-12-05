@@ -64,18 +64,22 @@
                 android:resource="@xml/searchable" />
 
             <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
         </activity>
         <activity
             android:name=".loginAndRegistration.RegistrationActivity"
             android:label="@string/title_activity_registration" >
-            android:name=".DisplaySubmissionsActivity"
+        </activity>
+
+        <activity
+            android:name=".mainScreen.DisplaySubmissionActivity"
             android:label="@string/title_activity_display_submissions" >
         </activity>
         <activity
@@ -96,12 +100,12 @@
             android:label="CategoryDisplaySubmissions" >
         </activity>
         <activity
-            android:name=".mainScreen.DisplaySubmissionActivity"
-            android:label="DisplaySubmissionActivity" >
-        </activity>
-        <activity
             android:name=".mainScreen.MapActivity"
             android:label="@string/title_activity_map" >
+        </activity>
+        <activity
+            android:name=".SearchActivity"
+            android:label="@string/title_activity_search" >
         </activity>
 
     </application>

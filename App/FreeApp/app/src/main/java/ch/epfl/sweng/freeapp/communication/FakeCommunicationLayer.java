@@ -56,9 +56,6 @@ public class FakeCommunicationLayer implements DefaultCommunicationLayer {
 
     public Submission fetchSubmission(String id) {
 
-
-
-
         Submission submission;
         switch (id) {
             case "id0":

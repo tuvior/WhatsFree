@@ -3,6 +3,7 @@ package ch.epfl.sweng.freeapp.mainScreen;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -33,6 +34,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 
 import java.util.ArrayList;
@@ -41,6 +43,7 @@ import java.util.List;
 public class MainScreenActivity extends AppCompatActivity {
 
     public final static String SUBMISSION_MESSAGE = "ch.epfl.sweng.freeapp.SUBMISSION";
+
 
     private Toolbar toolbar;
     private TabLayout tabLayout;
@@ -51,6 +54,7 @@ public class MainScreenActivity extends AppCompatActivity {
             R.drawable.tab_around_you
     };
 
+    private boolean visibility = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,12 +72,18 @@ public class MainScreenActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
 
         setupTabIcons();
+
+        handleIntent(getIntent());
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
 
-        handleIntent(intent);
+    private void displayToast(String message){
+        Context context = getApplicationContext();
+        CharSequence text = message;
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
+
+        toast.show();
     }
 
     private void handleIntent(Intent intent) {
@@ -82,18 +92,8 @@ public class MainScreenActivity extends AppCompatActivity {
             String query = intent.getStringExtra(SearchManager.QUERY);
             //use the query to search your data somehow
 
-            CommunicationLayer comm = new CommunicationLayer(new DefaultNetworkProvider());
-            Submission submission = null;
-            try {
-                submission = comm.fetchSubmission(query);
-
-                intent = new Intent(this, DisplaySubmissionActivity.class);
-                intent.putExtra(MainScreenActivity.SUBMISSION_MESSAGE, query);
-                startActivity(intent);
-
-            } catch (CommunicationLayerException e) {
-                e.printStackTrace();
-            }
+            Toast.makeText(this, "MainScreenActivity : The query is "+ query, Toast.LENGTH_LONG).show();
+             new DownloadSubmission(this).execute(query);
 
         }
     }
@@ -114,7 +114,7 @@ public class MainScreenActivity extends AppCompatActivity {
         SearchView searchView =
                 (SearchView) menu.findItem(R.id.action_search).getActionView();
          searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(getComponentName()));
+                 searchManager.getSearchableInfo(getComponentName()));
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -162,6 +162,23 @@ public class MainScreenActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
     }
 
+    @Override
+    public void onStart(){
+        super.onStart();
+        visibility = true;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        visibility = false;
+    }
+
+    public boolean getVisibility(){
+        return visibility;
+    }
+
+
     /**
      * A viewPagerAdapter is used for populating a viewPager's tabs
      */
@@ -195,4 +212,47 @@ public class MainScreenActivity extends AppCompatActivity {
         }
 
     }
+
+    private class DownloadSubmission extends AsyncTask<String, Void, Submission> {
+
+        Context context;
+
+        private DownloadSubmission(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected Submission doInBackground(String... params) {
+            CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
+            Submission submission = null;
+
+            try {
+                submission = communicationLayer.fetchSubmission(params[0]);
+            } catch (CommunicationLayerException e) {
+                e.printStackTrace();
+            }
+            return submission;
+        }
+
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(Submission submission) {
+
+            if(submission == null){
+                displayToast("No submission exists with this id");
+            }
+            // display submission
+            else {
+                displayToast("There exists a submission with this id");
+                Intent intent = new Intent(context, DisplaySubmissionActivity.class);
+                intent.putExtra(MainScreenActivity.SUBMISSION_MESSAGE, submission.getId());
+
+                startActivity(intent);
+            }
+
+        }
+
+    }
+
+
 }
