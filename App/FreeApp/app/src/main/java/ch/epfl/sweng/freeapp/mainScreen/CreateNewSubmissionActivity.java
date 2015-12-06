@@ -338,38 +338,46 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
         EditText keywords = (EditText)findViewById(R.id.keywords);
 
 
+
         if(isWhiteSpaces(nameOfEvent.getText().toString())){
             nameOfEvent.setError("Please fill in name");
             nameOfEvent.setText("");
+            Toast.makeText(this, "No name", Toast.LENGTH_SHORT).show();
 
         }else if(isWhiteSpaces(eventDescription.getText().toString())){
             eventDescription.setError("Please fill in description");
             eventDescription.setText("");
+
+            Toast.makeText(this, "No description", Toast.LENGTH_SHORT).show();
+
 
         }else if(isWhiteSpaces(location.getText().toString())){
 
             location.setError("Please input  location");
             location.setText("");
 
+            Toast.makeText(this, "No location", Toast.LENGTH_SHORT).show();
+
         }else if(TextUtils.isEmpty(date.getText().toString())){
 
-            Toast.makeText(this, "Select Date", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No date", Toast.LENGTH_SHORT).show();
 
         }else if(TextUtils.isEmpty(startTime.getText().toString()) ){
 
-            Toast.makeText(this,"Select Start Time", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"No start time", Toast.LENGTH_SHORT).show();
 
         }else if(TextUtils.isEmpty(endTime.getText().toString())){
 
-            Toast.makeText(this,"Select End Time ",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"No end time",Toast.LENGTH_SHORT).show();
 
         }else if(imageView.getDrawable() == null ){
 
-            Toast.makeText(this,"Please insert a picture", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"No picture", Toast.LENGTH_SHORT).show();
 
         }else if(isWhiteSpaces(keywords.getText().toString())){
             keywords.setError("Put some keywords");
             keywords.setText("");
+            Toast.makeText(this, "No keywords", Toast.LENGTH_SHORT).show();
         }else{
 
 
@@ -530,9 +538,10 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
     }
 
 
-    private boolean isWhiteSpaces(String s ){
-       return  s!=null && s.matches("\\s+");
+    private boolean isWhiteSpaces(String s) {
+        return ((s.length() == 0) || ((s != null) && s.matches("\\s+") ));
     }
+
 
     private boolean validLength(EditText field){
 
