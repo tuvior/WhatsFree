@@ -241,8 +241,14 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
     public  void onClickTakeImage(View view){
 
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, PICTURE_REQUEST);
+
+        if(image.TYPE_OF_IMAGE == ){
+
+        }else {
+
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(intent, PICTURE_REQUEST);
+        }
 
     }
 
