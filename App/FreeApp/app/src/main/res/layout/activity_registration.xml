@@ -69,7 +69,6 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="55dp"
-            android:onClick="onClickSignUp"
             android:text="Sign up" />
 
 
