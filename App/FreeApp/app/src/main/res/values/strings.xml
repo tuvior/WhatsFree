@@ -123,4 +123,6 @@
     <string name="dislike">Dislike</string>
     <string name="location_not_provided">Location not provided</string>
     <string name="map_button">Switch to Map</string>
+    <string name="row_submission_image">Submission\'s Image</string>
+    <string name="submission_thumbnail">Submission\'s thumbnail</string>
 </resources>
