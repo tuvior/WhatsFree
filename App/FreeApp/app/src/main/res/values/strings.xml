@@ -122,4 +122,5 @@
     <string name="like">Like</string>
     <string name="dislike">Dislike</string>
     <string name="location_not_provided">Location not provided</string>
+    <string name="map_button">Switch to Map</string>
 </resources>
