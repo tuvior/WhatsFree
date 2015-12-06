@@ -7,10 +7,6 @@ package ch.epfl.sweng.freeapp;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 
-import com.google.android.gms.maps.model.LatLng;
-
-import org.json.JSONException;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -20,7 +16,6 @@ import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
 import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 
-import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
 /**
@@ -38,7 +33,7 @@ import static junit.framework.Assert.assertTrue;
  **/
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-@Ignore("TEMPORARY. -Solal")
+//@Ignore("TEMPORARY. -Solal")
 public class CommunicationEndToEndTest {
 
     @Test
