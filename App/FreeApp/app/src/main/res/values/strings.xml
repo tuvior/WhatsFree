@@ -87,5 +87,6 @@
     <string name="row_submission_image">Submission\'s Image</string>
     <string name="submission_thumbnail">Submission\'s thumbnail</string>
     <string name="title_activity_login">Sign in</string>
+    <string name="action_example">Action example</string>
 
 </resources>
