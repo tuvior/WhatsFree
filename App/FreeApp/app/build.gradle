@@ -6,7 +6,7 @@ android {
     buildToolsVersion "23.0.1"
     defaultConfig {
         applicationId "ch.epfl.sweng.freeapp"
-        minSdkVersion 17
+        minSdkVersion 19
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -24,8 +24,8 @@ android {
     }
 
     lintOptions {
-       // THIS SHOULD BE TEMPORARY!!!!!!!!!!!!!!
-       abortOnError false
+        // THIS SHOULD BE TEMPORARY!!!!!!!!!!!!!!
+        abortOnError false
     }
 }
 
@@ -58,15 +58,15 @@ jacoco {
 task jacocoReport(type: JacocoReport, dependsOn: "connectedAndroidTest") {
     sourceDirectories = files(['src/main/java'])
     classDirectories = fileTree(
-        dir: 'build/intermediates/classes/debug',
-        excludes: [
-            '**/R.class',
-            '**/R$*.class',
-            '**/BuildConfig.*',
-            '**/Manifest*.*',
-            '**/*Test*.*',
-            '**/android/**/*.*'
-        ]
+            dir: 'build/intermediates/classes/debug',
+            excludes: [
+                    '**/R.class',
+                    '**/R$*.class',
+                    '**/BuildConfig.*',
+                    '**/Manifest*.*',
+                    '**/*Test*.*',
+                    '**/android/**/*.*'
+            ]
     )
 
     executionData = files('build/outputs/code-coverage/connected/coverage.ec')

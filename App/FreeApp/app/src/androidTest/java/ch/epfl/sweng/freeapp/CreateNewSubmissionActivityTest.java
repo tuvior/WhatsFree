@@ -15,7 +15,6 @@ import android.widget.TimePicker;
 
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
-import org.junit.Before;
 
 import ch.epfl.sweng.freeapp.communication.DefaultCommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.FakeCommunicationLayer;
@@ -43,59 +42,7 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
         super(CreateNewSubmissionActivity.class);
     }
 
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
-    }
-
-   // @Test
-    //TODO: complete
-    public void successfullyCreateSubmissionToServer(){
-
-        int year = 2015;
-        int month = 4;
-        int day = 5;
-
-        int startHoursOfDay = 16;
-        int startMinute = 10;
-
-        int endHoursOfDay = 17;
-        int endMinute = 10;
-   //   mActivityRule.getActivity();
-
-
-        getActivity();
-        onView(withId(R.id.NameOfEvent)).perform(typeText("Food fun and amazing"));
-        onView(withText("CREATE")).perform(scrollTo());
-
-        onView(withId(R.id.Description)).perform(typeText("Some good croissant food"));
-        onView(withId(R.id.Location)).perform(typeText("EPFl eculblens"));;
-
-        onView(withId(R.id.setDateButton)).perform(click());
-        onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(setDate(year, month, day));
-        onView(withText("OK")).perform(click());
-
-        onView(withId(R.id.startTime)).perform(click());
-        onView(withClassName(Matchers.equalTo(TimePicker.class.getName()))). perform(setTime(startHoursOfDay, startMinute));
-        onView(withText(("OK"))).perform(click());
-
-
-        onView(withId(R.id.endButton)).perform(click());
-        onView(withClassName(Matchers.equalTo(TimePicker.class.getName()))). perform(setTime(endHoursOfDay, endMinute));
-        onView(withText(("Ok"))).perform(click());
-
-        //How to stub out a camera ?
-
-
-        onView(withId(R.id.keywords)).perform(typeText("yummy food"));
-
-    }
-
-
-
-    public static ViewAction setDate(final int year, final int month, final int day){
+    public static ViewAction setDate(final int year, final int month, final int day) {
         return new ViewAction() {
             @Override
             public Matcher<View> getConstraints() {
@@ -110,16 +57,15 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
             @Override
             public void perform(UiController uiController, View view) {
 
-                DatePicker datePicker = (DatePicker)view;
-                datePicker.updateDate(year,month,day);
+                DatePicker datePicker = (DatePicker) view;
+                datePicker.updateDate(year, month, day);
 
 
             }
         };
     }
 
-
-    public static ViewAction setTime(final int hours, final int minutes ){
+    public static ViewAction setTime(final int hours, final int minutes) {
 
         return new ViewAction() {
             @Override
@@ -139,7 +85,7 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
             public void perform(UiController uiController, View view) {
 
 
-                TimePicker picker = (TimePicker)view;
+                TimePicker picker = (TimePicker) view;
                 picker.setHour(hours);
                 picker.setMinute(minutes);
 
@@ -149,24 +95,71 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
 
     }
 
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
+    }
+
+    // @Test
+    //TODO: complete
+    public void successfullyCreateSubmissionToServer() {
+
+        int year = 2015;
+        int month = 4;
+        int day = 5;
+
+        int startHoursOfDay = 16;
+        int startMinute = 10;
+
+        int endHoursOfDay = 17;
+        int endMinute = 10;
+        //   mActivityRule.getActivity();
+
+
+        getActivity();
+        onView(withId(R.id.NameOfEvent)).perform(typeText("Food fun and amazing"));
+        onView(withText("CREATE")).perform(scrollTo());
+
+        onView(withId(R.id.Description)).perform(typeText("Some good croissant food"));
+        onView(withId(R.id.Location)).perform(typeText("EPFl eculblens"));
+        ;
+
+        onView(withId(R.id.setDateButton)).perform(click());
+        onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(setDate(year, month, day));
+        onView(withText("OK")).perform(click());
+
+        onView(withId(R.id.startTime)).perform(click());
+        onView(withClassName(Matchers.equalTo(TimePicker.class.getName()))).perform(setTime(startHoursOfDay, startMinute));
+        onView(withText(("OK"))).perform(click());
+
+
+        onView(withId(R.id.endButton)).perform(click());
+        onView(withClassName(Matchers.equalTo(TimePicker.class.getName()))).perform(setTime(endHoursOfDay, endMinute));
+        onView(withText(("Ok"))).perform(click());
+
+        //How to stub out a camera ?
+
+
+        onView(withId(R.id.keywords)).perform(typeText("yummy food"));
+
+    }
 
     //@Test
-    public void testUnableToPickPastDate(){
+    public void testUnableToPickPastDate() {
 
 
     }
 
     //User should not be able to create a new submission if a Mandatory field isn't done
     //@Test
-    public void testMandatoryFieldsNotCompleted(){
-
+    public void testMandatoryFieldsNotCompleted() {
 
 
     }
 
     //@Test
-    public void testCanCreateNewSubmission(){
-
+    public void testCanCreateNewSubmission() {
 
 
     }
@@ -174,25 +167,21 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
     //If the event happens to happen on the same day, the user should only be able to pick times
     //equal or greater than the current time
     //@Test
-    public void testCannotPickTimeLessThanCurrentTime(){
-
+    public void testCannotPickTimeLessThanCurrentTime() {
 
 
     }
 
     //if the user sets the time of the event to be at midnight, the date should be increased by a day automatically
-   // @Test
-    public void testMidnightEventDateChange(){
+    // @Test
+    public void testMidnightEventDateChange() {
 
 
     }
 
 
-
-   // @Test
-    public void testStartingTimeShouldBeAlwaysLargerThanEndTime(){
-
-
+    // @Test
+    public void testStartingTimeShouldBeAlwaysLargerThanEndTime() {
 
 
     }

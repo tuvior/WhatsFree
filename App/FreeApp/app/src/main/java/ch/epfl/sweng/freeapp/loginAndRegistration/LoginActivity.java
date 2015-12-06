@@ -12,23 +12,21 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 import ch.epfl.sweng.freeapp.R;
-import ch.epfl.sweng.freeapp.communication.ResponseStatus;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
+import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
+import ch.epfl.sweng.freeapp.communication.ResponseStatus;
 import ch.epfl.sweng.freeapp.mainScreen.MainScreenActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private static final int USERNAME_MIN_LENGTH = 6;
+    private static final int USERNAME_MAX_LENGTH = 30;
+    private static final int PASSWORD_MIN_LENGTH = 8;
+    private static final int PASSWORD_MAX_LENGTH = 30;
     private LogInInfo logInInfo;
     private CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
-
-    private  static final int USERNAME_MIN_LENGTH = 6;
-    private  static final int USERNAME_MAX_LENGTH = 30;
-
-    private  static final int PASSWORD_MIN_LENGTH = 8;
-    private  static final int PASSWORD_MAX_LENGTH = 30;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,33 +58,32 @@ public class LoginActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public LogInInfo getLogin(){
+    public LogInInfo getLogin() {
 
-        return new LogInInfo(logInInfo.getUsername(),logInInfo.getPassword());
+        return new LogInInfo(logInInfo.getUsername(), logInInfo.getPassword());
 
     }
 
-    public void setCommunicationLayer(CommunicationLayer layer){
+    public void setCommunicationLayer(CommunicationLayer layer) {
         this.communicationLayer = layer;
     }
 
 
+    public void onLoginClick(View View) {
 
-    public void onLoginClick(View View){
-
-        EditText usernameField = (EditText)findViewById(R.id.username);
-        EditText passwordField = (EditText)findViewById(R.id.password);
+        EditText usernameField = (EditText) findViewById(R.id.username);
+        EditText passwordField = (EditText) findViewById(R.id.password);
 
         String username = usernameField.getText().toString();
         String password = passwordField.getText().toString();
 
-        if(TextUtils.isEmpty(username)){
+        if (TextUtils.isEmpty(username)) {
             usernameField.setError("Fill username");
-        }else if(TextUtils.isEmpty(password)) {
+        } else if (TextUtils.isEmpty(password)) {
             passwordField.setError("Fill password");
-        }else{
+        } else {
 
-            if(checkLengthOfUserNameAndPassword(usernameField,passwordField)) {
+            if (checkLengthOfUserNameAndPassword(usernameField, passwordField)) {
 
                 this.logInInfo = new LogInInfo(username, password);
                 new GetServerResponseTask(this).execute(logInInfo);
@@ -96,48 +93,47 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    public boolean checkLengthOfUserNameAndPassword(EditText  username, EditText password){
+    public boolean checkLengthOfUserNameAndPassword(EditText username, EditText password) {
         String user = username.getText().toString();
         String pass = password.getText().toString();
 
         boolean userGood = true;
         boolean passWordGood = true;
 
-        if(user.length() >= USERNAME_MIN_LENGTH ){
-            if(user.length() > USERNAME_MAX_LENGTH){
-                username.setError("Max username  characters is " +USERNAME_MAX_LENGTH);
+        if (user.length() >= USERNAME_MIN_LENGTH) {
+            if (user.length() > USERNAME_MAX_LENGTH) {
+                username.setError("Max username  characters is " + USERNAME_MAX_LENGTH);
                 userGood = false;
             }
 
-        }else{
+        } else {
             userGood = false;
-            username.setError("Username must be at least " + USERNAME_MIN_LENGTH+ " characters");
+            username.setError("Username must be at least " + USERNAME_MIN_LENGTH + " characters");
         }
 
 
-        if(pass.length() >= PASSWORD_MIN_LENGTH){
-            if(pass.length() > PASSWORD_MAX_LENGTH){
+        if (pass.length() >= PASSWORD_MIN_LENGTH) {
+            if (pass.length() > PASSWORD_MAX_LENGTH) {
                 password.setError("Password Too long  ");
                 passWordGood = false;
             }
 
-        }else{
+        } else {
 
-            password.setError("Password too short it must be at least " +PASSWORD_MIN_LENGTH + "characters");
+            password.setError("Password too short it must be at least " + PASSWORD_MIN_LENGTH + "characters");
             passWordGood = false;
-
 
 
         }
 
         //if their length is good, check if they contain spaces
-        if(userGood && passWordGood){
-            if(user.contains(" ")){
+        if (userGood && passWordGood) {
+            if (user.contains(" ")) {
                 username.setError("No spaces allowed");
                 userGood = false;
             }
 
-            if(pass.contains(" ")){
+            if (pass.contains(" ")) {
                 password.setError("No spaces allowed");
                 passWordGood = false;
             }
@@ -149,18 +145,18 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    public void onRegisterClick(View view){
-        Intent intent = new Intent(this,RegistrationActivity.class);
+    public void onRegisterClick(View view) {
+        Intent intent = new Intent(this, RegistrationActivity.class);
         startActivity(intent);
 
     }
 
 
-    private class GetServerResponseTask extends AsyncTask<LogInInfo,Void,ResponseStatus> {
+    private class GetServerResponseTask extends AsyncTask<LogInInfo, Void, ResponseStatus> {
 
         private Context context;
 
-        public GetServerResponseTask(Context context){
+        public GetServerResponseTask(Context context) {
             this.context = context;
         }
 
@@ -181,41 +177,41 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(ResponseStatus responseStatus){
+        protected void onPostExecute(ResponseStatus responseStatus) {
 
 
-            if(responseStatus == ResponseStatus.OK){
+            if (responseStatus == ResponseStatus.OK) {
 
-                Intent intent = new Intent(context,MainScreenActivity.class);
+                Intent intent = new Intent(context, MainScreenActivity.class);
 
 
                 startActivity(intent);
 
-            }else {
+            } else {
                 //Failure
-                EditText passwordField = (EditText)findViewById(R.id.password);
+                EditText passwordField = (EditText) findViewById(R.id.password);
 
-                if( responseStatus == ResponseStatus.PASSWORD){
+                if (responseStatus == ResponseStatus.PASSWORD) {
 
                     alertUser("wrong password");
                     passwordField.setText("");
 
-                }else if(responseStatus == ResponseStatus.USERNAME){
+                } else if (responseStatus == ResponseStatus.USERNAME) {
 
                     alertUser("wrong userName");
-                    EditText userField = (EditText)findViewById(R.id.username);
+                    EditText userField = (EditText) findViewById(R.id.username);
 
                     userField.setText("");
                     passwordField.setText("");
 
-                }else if(responseStatus == null ){
+                } else if (responseStatus == null) {
 
 
                     alertUser("Server unable to respond, check Internet");
 
-                }else{
+                } else {
 
-                    assert(responseStatus == ResponseStatus.EMPTY);
+                    assert (responseStatus == ResponseStatus.EMPTY);
 
                     alertUser("Empty Field(s)");
 
@@ -225,7 +221,7 @@ public class LoginActivity extends AppCompatActivity {
 
         }
 
-        private void alertUser(String message){
+        private void alertUser(String message) {
             Context context = getApplicationContext();
             Toast.makeText(context, message,
                     Toast.LENGTH_SHORT).show();

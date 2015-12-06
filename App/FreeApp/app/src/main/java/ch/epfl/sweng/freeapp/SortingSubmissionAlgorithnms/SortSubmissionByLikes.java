@@ -9,11 +9,11 @@ import ch.epfl.sweng.freeapp.Submission;
 /**
  * Created by francisdamachi on 25/11/15.
  */
-public class SortSubmissionByLikes  implements  SortSubmission{
+public class SortSubmissionByLikes implements SortSubmission {
     @Override
     public List<Submission> sort(List<Submission> submissions) {
 
-        if(submissions == null){
+        if (submissions == null) {
             return null;
         }
 
@@ -21,12 +21,12 @@ public class SortSubmissionByLikes  implements  SortSubmission{
             @Override
             public int compare(Submission lhs, Submission rhs) {
 
-               return Integer.compare(lhs.getLikes(),rhs.getLikes());
+                return Integer.compare(lhs.getLikes(), rhs.getLikes());
 
             }
         });
 
         return submissions;
     }
-    }
+}
 

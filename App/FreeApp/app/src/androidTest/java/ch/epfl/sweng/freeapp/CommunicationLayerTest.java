@@ -1,4 +1,5 @@
 package ch.epfl.sweng.freeapp;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -22,11 +23,8 @@ import ch.epfl.sweng.freeapp.loginAndRegistration.RegistrationInfo;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
+
 public class CommunicationLayerTest {
-    private CommunicationLayer communicationLayer;
-    private CommunicationLayer communicationLayerOnLine = new CommunicationLayer(new DefaultNetworkProvider());
-    private NetworkProvider networkProvider;
-    private HttpURLConnection connection;
     private static final int ASCII_SPACE = 0x20;
     private static String JSON_RESPONSE_USERNAME = buildJson("register", "user").toString();
     private static String JSON_RESPONSE_EMAIL = buildJson("register", "email").toString();
@@ -35,18 +33,68 @@ public class CommunicationLayerTest {
     private static String JSON_LOG_IN_GOOD = buildSuccessfulLogInJSON().toString();
     private static String JSON_LOG_IN_USERNAME = buildJson("login", "user").toString();
     private static String JSON_LOG_IN_PASSWORD = buildJson("login", "password").toString();
-
+    private static String JSON_CREATE_SUBMISSION_OK = buildOKSubmission().toString();
+    private CommunicationLayer communicationLayer;
+    private CommunicationLayer communicationLayerOnLine = new CommunicationLayer(new DefaultNetworkProvider());
+    private NetworkProvider networkProvider;
+    private HttpURLConnection connection;
     private Calendar startTime = Calendar.getInstance();
     private Calendar endTime = Calendar.getInstance();
     private Calendar current = Calendar.getInstance();
-
     private Submission.Builder builder = new Submission.Builder();
-    private int latitude  = 45;
-    private int longitude =  -45;
+    private int latitude = 45;
+    private int longitude = -45;
 
+    private static JSONObject buildJson(String testType, String reason) {
+        JSONObject outerObject = new JSONObject();
+        JSONObject inner = new JSONObject();
+        try {
+            inner.put("status", "failure");
+            inner.put("reason", reason);
+            outerObject.put(testType, inner);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return outerObject;
+    }
 
-    private static String JSON_CREATE_SUBMISSION_OK = buildOKSubmission().toString();
+    private static JSONObject buildOkJSON(String status) {
+        JSONObject outerObject = new JSONObject();
+        JSONObject inner = new JSONObject();
+        try {
+            inner.put("status", status);
+            outerObject.put("register", inner);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return outerObject;
+    }
 
+    private static JSONObject buildOKSubmission() {
+
+        JSONObject outerObject = new JSONObject();
+        JSONObject inner = new JSONObject();
+        try {
+            inner.put("status", "ok");
+            outerObject.put("submission", inner);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return outerObject;
+    }
+
+    private static JSONObject buildSuccessfulLogInJSON() {
+        JSONObject outerObject = new JSONObject();
+        JSONObject inner = new JSONObject();
+        try {
+            inner.put("status", "ok");
+            inner.put("cookie", "TXeh4vQVdNOccioCdM6ZweQH5QK5T1j3pIwhdZkn9dSfqHiRSXScqn0TeAq3A4CE");
+            outerObject.put("login", inner);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return outerObject;
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -73,40 +121,6 @@ public class CommunicationLayerTest {
         this.communicationLayer = new CommunicationLayer(networkProvider);
     }
 
-    private void configureCrash(int status) throws IOException {
-        InputStream dataStream = Mockito.mock(InputStream.class);
-        Mockito.when(dataStream.read())
-                .thenReturn(ASCII_SPACE, ASCII_SPACE, ASCII_SPACE, ASCII_SPACE)
-                .thenThrow(new IOException());
-        Mockito.doReturn(status).when(connection).getResponseCode();
-        Mockito.doReturn(dataStream).when(connection).getInputStream();
-    }
-
-    private void configureResponse(String content, int status) throws IOException {
-        InputStream dataStream = new ByteArrayInputStream(content.getBytes());
-        Mockito.doReturn(dataStream).when(connection).getInputStream();
-        Mockito.doReturn(status).when(connection).getResponseCode();
-    }
-    @Test
-    public void testResponseOkForCreateSubmissionOnline() throws CommunicationLayerException {
-
-
-        ResponseStatus status = communicationLayerOnLine.sendAddSubmissionRequest(builder.build());
-        assertEquals(ResponseStatus.OK, status);
-
-
-
-    }
-
-
-    @Test
-    public void testDecodeEncodeMethodInDefaultCommunicationLayer(){
-
-        //TODO after refactoring code
-    }
-
-
-
 
     //@Test
     //FIXME : this test fails due to the server not giving back correct  images in base.64
@@ -125,6 +139,37 @@ public class CommunicationLayerTest {
     }
 
     */
+
+    private void configureCrash(int status) throws IOException {
+        InputStream dataStream = Mockito.mock(InputStream.class);
+        Mockito.when(dataStream.read())
+                .thenReturn(ASCII_SPACE, ASCII_SPACE, ASCII_SPACE, ASCII_SPACE)
+                .thenThrow(new IOException());
+        Mockito.doReturn(status).when(connection).getResponseCode();
+        Mockito.doReturn(dataStream).when(connection).getInputStream();
+    }
+
+    private void configureResponse(String content, int status) throws IOException {
+        InputStream dataStream = new ByteArrayInputStream(content.getBytes());
+        Mockito.doReturn(dataStream).when(connection).getInputStream();
+        Mockito.doReturn(status).when(connection).getResponseCode();
+    }
+
+    @Test
+    public void testResponseOkForCreateSubmissionOnline() throws CommunicationLayerException {
+
+
+        ResponseStatus status = communicationLayerOnLine.sendAddSubmissionRequest(builder.build());
+        assertEquals(ResponseStatus.OK, status);
+
+
+    }
+
+    @Test
+    public void testDecodeEncodeMethodInDefaultCommunicationLayer() {
+
+        //TODO after refactoring code
+    }
 
     @Test
     public void testAllResponseLocationForCreateSubmissionOnLine() throws CommunicationLayerException {
@@ -175,7 +220,7 @@ public class CommunicationLayerTest {
     }
 
     @Test
-    public void testResponseNoImageForCreateSubmissionOnLine()throws  CommunicationLayerException{
+    public void testResponseNoImageForCreateSubmissionOnLine() throws CommunicationLayerException {
 
         builder.name("name");
         builder.description("Good Food");
@@ -194,11 +239,6 @@ public class CommunicationLayerTest {
         assertEquals(ResponseStatus.IMAGE, status);
 
     }
-
-
-
-
-
 
     @Test
     public void testCreateSubmission() throws CommunicationLayerException, IOException {
@@ -272,57 +312,6 @@ public class CommunicationLayerTest {
         } catch (CommunicationLayerException e) {
             // PERFECT
         }
-    }
-
-    private static JSONObject buildJson(String testType, String reason) {
-        JSONObject outerObject = new JSONObject();
-        JSONObject inner = new JSONObject();
-        try {
-            inner.put("status", "failure");
-            inner.put("reason", reason);
-            outerObject.put(testType, inner);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return outerObject;
-    }
-
-    private static JSONObject buildOkJSON(String status) {
-        JSONObject outerObject = new JSONObject();
-        JSONObject inner = new JSONObject();
-        try {
-            inner.put("status", status);
-            outerObject.put("register", inner);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return outerObject;
-    }
-
-    private static JSONObject buildOKSubmission() {
-
-        JSONObject outerObject = new JSONObject();
-        JSONObject inner = new JSONObject();
-        try {
-            inner.put("status", "ok");
-            outerObject.put("submission", inner);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return outerObject;
-    }
-
-    private static JSONObject buildSuccessfulLogInJSON() {
-        JSONObject outerObject = new JSONObject();
-        JSONObject inner = new JSONObject();
-        try {
-            inner.put("status", "ok");
-            inner.put("cookie", "TXeh4vQVdNOccioCdM6ZweQH5QK5T1j3pIwhdZkn9dSfqHiRSXScqn0TeAq3A4CE");
-            outerObject.put("login", inner);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return outerObject;
     }
 
 }
