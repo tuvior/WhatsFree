@@ -1,8 +1,12 @@
 package ch.epfl.sweng.freeapp.mainScreen;
 
+import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
@@ -23,7 +27,11 @@ import java.util.List;
 import java.util.Locale;
 
 import ch.epfl.sweng.freeapp.R;
+import ch.epfl.sweng.freeapp.SortingSubmissionAlgorithnms.SortSubmissionByLocation;
 import ch.epfl.sweng.freeapp.Submission;
+import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
+import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
+import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 import ch.epfl.sweng.freeapp.communication.FakeCommunicationLayer;
 
 
@@ -49,18 +57,14 @@ public class MapActivity extends AppCompatActivity {
         user_location = bundle.getParcelable(AroundYouFragment.USER_LOCATION);
 
         try {
-            // Loading map
-            initializeMap();
-
-            //Perform these actions only once the map is correctly initialized
-            //Enable myLocation button
-            googleMap.setMyLocationEnabled(true);
-
-            //Enable zoom in/ out buttons
-            googleMap.getUiSettings().setZoomControlsEnabled(true);
-
-            centerCameraUser(user_location);
-            displaySubmissionMarkers();
+            ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            if (networkInfo != null && networkInfo.isConnected()) {
+                new DownloadWebpageTask().execute(); //Caution: submission MUST be retrieved from an async task (performance). Otherwise the app will crash.
+            } else {
+                //Connection problem
+                displayToast("Connection problem");
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -99,17 +103,53 @@ public class MapActivity extends AppCompatActivity {
         }
     }
 
+    private class DownloadWebpageTask extends AsyncTask<Void, Void, ArrayList<Submission>> {
+
+        @Override
+        protected ArrayList<Submission> doInBackground(Void ... params) {
+            ArrayList<Submission> submissions;
+            CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
+
+            try {
+                submissions = communicationLayer.sendSubmissionsRequest();
+            } catch (CommunicationLayerException e) {
+                e.printStackTrace();
+                return null;
+            }
+
+            return submissions;
+
+        }
+
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(ArrayList<Submission> submissions) {
+            // Loading map
+            try {
+                initializeMap();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            //Perform these actions only once the map is correctly initialized
+            //Enable myLocation button
+            googleMap.setMyLocationEnabled(true);
+
+            //Enable zoom in/ out buttons
+            googleMap.getUiSettings().setZoomControlsEnabled(true);
+
+            centerCameraUser(user_location);
+            displaySubmissionMarkers(submissions);
+        }
+
+    }
+
     /**
      * Center the camera and places a marker on the user's location
      */
     private void centerCameraUser(LatLng userLocation) {
-        //TODO: figure out how to get the user's location
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(userLocation, 10);
         googleMap.animateCamera(cameraUpdate);
-
-        MarkerOptions marker = new MarkerOptions().position(userLocation).title("Your Location");
-        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-        googleMap.addMarker(marker);
     }
 
     /**
@@ -118,31 +158,25 @@ public class MapActivity extends AppCompatActivity {
      * Submissions for which no coordinates are found (invalid address) do not get a marker.
      *
      */
-    private void displaySubmissionMarkers() throws JSONException {
-        //TODO: use real communication layer when available
-        FakeCommunicationLayer fakeCommunicationLayer = new FakeCommunicationLayer();
-        ArrayList<Submission> shortcuts = fakeCommunicationLayer.sendSubmissionsRequest();
+    private void displaySubmissionMarkers(ArrayList<Submission> submissions) {
+        for (Submission submission : submissions) {
+            SortSubmissionByLocation sortSubmissionByLocation = new SortSubmissionByLocation(this, null);
+            LatLng submissionLatLng = sortSubmissionByLocation.getSubmissionLatLng(submission);
 
-        for (Submission shortcut : shortcuts) {
-            Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-            List<Address> addresses = new ArrayList<>();
-
-            //Get maximum 1 address
-            try {
-                addresses = geocoder.getFromLocationName(shortcut.getLocation(), 1);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            //If an address has been found
-            if (addresses.size() > 0) {
-                double latitude = addresses.get(0).getLatitude();
-                double longitude = addresses.get(0).getLongitude();
-                LatLng latLng = new LatLng(latitude, longitude);
-                MarkerOptions marker = new MarkerOptions().position(latLng).title(shortcut.getName());
+            if ( submissionLatLng != null ) {
+                MarkerOptions marker = new MarkerOptions().position(submissionLatLng).title(submission.getName());
                 googleMap.addMarker(marker);
             }
+
         }
+    }
+
+    private void displayToast(String message){
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, message, duration);
+
+        toast.show();
     }
 
 

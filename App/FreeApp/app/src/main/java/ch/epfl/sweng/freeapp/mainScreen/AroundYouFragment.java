@@ -27,10 +27,10 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.List;
 
 
+import ch.epfl.sweng.freeapp.SortingSubmissionAlgorithnms.SortSubmissionByLocation;
 import ch.epfl.sweng.freeapp.Submission;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
@@ -52,12 +52,10 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
 
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
 
-    private Location mLastLocation;
-
     // Google client to interact with Google API
     private GoogleApiClient mGoogleApiClient;
 
-    private LatLng latLng;
+    private LatLng userLatLng;
 
     public AroundYouFragment() {
         // Required empty public constructor
@@ -93,13 +91,14 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
             displayToast("Connection problem");
         }
 
+        //FIXME: Set this in xml for cleaner code???
         //Set listener for mapButton
         ImageButton mapButton = (ImageButton) rootView.findViewById(R.id.mapButton);
         mapButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), MapActivity.class);
                 Bundle args = new Bundle();
-                args.putParcelable(USER_LOCATION, latLng);
+                args.putParcelable(USER_LOCATION, userLatLng);
                 intent.putExtra(BUNDLE, args);
                 startActivity(intent);
             }
@@ -147,7 +146,7 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
     public void onConnected(Bundle arg0) {
 
         // Once connected with google api, get the location
-        latLng = getLocation();
+        userLatLng = getLocation();
     }
 
     @Override
@@ -155,24 +154,11 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
         mGoogleApiClient.connect();
     }
 
-    /**
-     * Sort submissions according to how close they are to you
-     */
-    public ArrayList<Submission> sortSubmissions(ArrayList<Submission> submissionShortcuts){
-        Collections.sort(submissionShortcuts, new Comparator<Submission>() {
-            @Override
-            public int compare(Submission lhs, Submission rhs) {
-                return lhs.getName().compareTo(rhs.getName());
-            }
-        });
-        return submissionShortcuts;
-    }
-
     private class DownloadWebpageTask extends AsyncTask<Void, Void, ArrayList<Submission>> {
 
         @Override
         protected ArrayList<Submission> doInBackground(Void ... params) {
-            ArrayList<Submission> submissions = null;
+            ArrayList<Submission> submissions;
             CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
 
             try {
@@ -205,9 +191,8 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
 
     private void displayToast(String message){
         Context context = getActivity().getApplicationContext();
-        CharSequence text = message;
         int duration = Toast.LENGTH_SHORT;
-        Toast toast = Toast.makeText(context, text, duration);
+        Toast toast = Toast.makeText(context, message, duration);
 
         toast.show();
     }
@@ -219,7 +204,7 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
 
         LatLng latLng = null;
 
-        mLastLocation = LocationServices.FusedLocationApi
+        Location mLastLocation = LocationServices.FusedLocationApi
                 .getLastLocation(mGoogleApiClient);
 
         if (mLastLocation != null) {
