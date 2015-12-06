@@ -11,13 +11,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ch.epfl.sweng.freeapp.R;
-
-
 import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
 import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
@@ -27,33 +24,20 @@ import ch.epfl.sweng.freeapp.mainScreen.MainScreenActivity;
 
 public class RegistrationActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private CommunicationLayer communicationLayer;
-
-    private EditText usernameView;
-
-    private EditText emailView;
-
-    private EditText passwordView;
-    private EditText confirmPasswordView;
-
-    private Button signUpView;
-
+    public static final int USERNAME_MIN_LENGTH = 6;
+    public static final int USERNAME_MAX_LENGTH = 30; // arbitrary
+    public static final int PASSWORD_MIN_LENGTH = 8;
+    public static final int PASSWORD_MAX_LENGTH = 30; // arbitrary
+    public static final int EMAIL_MAX_LENGTH = 64; // wikipedia
     private final String usernamePattern = "( )";
     private final String passwordPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z0-9]).+$";
     private final String EmailPattern = "^(.+)@(.+)\\.(.+)$"; // Loose local email validation
-
-    public static final int USERNAME_MIN_LENGTH = 6;
-    public static final int USERNAME_MAX_LENGTH = 30; // arbitrary
-
-    public static final int PASSWORD_MIN_LENGTH = 8;
-    public static final int PASSWORD_MAX_LENGTH = 30; // arbitrary
-
-    public static final int EMAIL_MAX_LENGTH = 64; // wikipedia
-
-
-
-
-
+    private CommunicationLayer communicationLayer;
+    private EditText usernameView;
+    private EditText emailView;
+    private EditText passwordView;
+    private EditText confirmPasswordView;
+    private Button signUpView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,12 +81,10 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
     }
 
 
-
     @Override
     public void onClick(View v) {
 
-        if(localValidityCheck())
-        {
+        if (localValidityCheck()) {
             String username = usernameView.getText().toString();
             String email = emailView.getText().toString();
             String password = passwordView.getText().toString();
@@ -114,7 +96,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
     }
 
 
-    public boolean isUsernameValid(final String username){
+    public boolean isUsernameValid(final String username) {
         Pattern pattern = Pattern.compile(usernamePattern);
         Matcher matcher = pattern.matcher(username);
         return USERNAME_MIN_LENGTH <= username.length() && username.length() <= USERNAME_MAX_LENGTH && !matcher.find();
@@ -142,36 +124,32 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
      * Preliminary check without internet access that user's
      * entered information are valid.
      *
-     *@return true if all the fields are preliminarily correct,
-     *        false otherwise
+     * @return true if all the fields are preliminarily correct,
+     * false otherwise
      */
-    private boolean localValidityCheck()
-    {
+    private boolean localValidityCheck() {
         boolean valid = true;
         String empty = "";
 
 
-
-        if(!isUsernameValid(usernameView.getText().toString())){
+        if (!isUsernameValid(usernameView.getText().toString())) {
             usernameView.setText(empty);
             valid = false;
         }
 
-        if(!isEmailValid(emailView.getText().toString())){
+        if (!isEmailValid(emailView.getText().toString())) {
             emailView.setText(empty);
             valid = false;
         }
 
 
-        if(!isPasswordValid(passwordView.getText().toString())){
+        if (!isPasswordValid(passwordView.getText().toString())) {
             valid = false;
-        }
-        else if(!passwordView.getText().toString().equals(confirmPasswordView.getText().toString())){
+        } else if (!passwordView.getText().toString().equals(confirmPasswordView.getText().toString())) {
             valid = false;
         }
 
-        if(!valid)
-        {
+        if (!valid) {
             passwordView.setText(empty);
             confirmPasswordView.setText(empty);
             //Toast.makeText(RegistrationActivity.this, "Invalid registration", Toast.LENGTH_LONG).show();
@@ -193,16 +171,14 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
     }
 
 
-
     /**
      * Async task for getting a server response
-     *
      */
-    private class RetrieveServerResponse extends AsyncTask<RegistrationInfo, RegistrationInfo, ResponseStatus>{
+    private class RetrieveServerResponse extends AsyncTask<RegistrationInfo, RegistrationInfo, ResponseStatus> {
 
         private Context context;
 
-        private RetrieveServerResponse(Context context){
+        private RetrieveServerResponse(Context context) {
             this.context = context;
         }
 
@@ -219,15 +195,12 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
         }
 
 
-
         @Override
         protected void onPostExecute(ResponseStatus responseStatus) {
-            if(responseStatus == ResponseStatus.OK){
+            if (responseStatus == ResponseStatus.OK) {
                 Intent intent = new Intent(context, MainScreenActivity.class);
                 startActivity(intent);
-            }
-            else
-            {
+            } else {
                 String empty = "";
                 usernameView.setText(empty);
                 emailView.setText(empty);

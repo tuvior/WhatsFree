@@ -1,85 +1,74 @@
-
-
-
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#eee8aa"
-    >
+    android:background="#eee8aa">
 
     <LinearLayout
 
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center"
         android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="vertical"
         tools:context="ch.epfl.sweng.freeapp.loginAndRegistration.LoginActivity">
-
-
-
-
 
 
         <EditText
             android:id="@+id/username"
-            android:hint = "@string/username"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
-            android:inputType="textPersonName"
-            />
-
+            android:layout_marginTop="15dp"
+            android:hint="@string/username"
+            android:inputType="textPersonName" />
 
 
         <EditText
-        android:id="@+id/password"
-        android:hint = "@string/password"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"
+            android:id="@+id/password"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
-            android:layout_marginTop="15dp" />
+            android:layout_marginTop="15dp"
+            android:hint="@string/password"
+            android:inputType="textPassword" />
 
 
         <Button
-        android:id="@+id/logInButton"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:onClick="onLoginClick"
-        android:text="@string/login"
-        android:layout_marginTop="15dp"
-
+            android:id="@+id/logInButton"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp" />
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="15dp"
+
+            android:onClick="onLoginClick"
+            android:text="@string/login" />
 
 
         <TextView
 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
             android:text="@string/register_question"
-            android:layout_marginTop= "15dp"
 
             />
 
-    <Button
+        <Button
 
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:onClick="onRegisterClick"
-        android:text = "@string/register"
-        android:foregroundGravity="center"
-        android:layout_marginTop="15dp"
-        android:id = "@+id/sign_up"
+            android:id="@+id/sign_up"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="15dp"
+            android:foregroundGravity="center"
 
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp" />
+            android:onClick="onRegisterClick"
+            android:text="@string/register" />
 
 
     </LinearLayout>

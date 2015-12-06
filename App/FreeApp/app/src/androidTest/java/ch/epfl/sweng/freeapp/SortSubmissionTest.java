@@ -19,17 +19,16 @@ import static junit.framework.Assert.assertTrue;
  */
 public class SortSubmissionTest {
 
-    private List<Submission> submissionList ;
+    private List<Submission> submissionList;
     //generateSubmission();
 
 
-
     @Test
-    public void  testSortSubmissionByName(){
+    public void testSortSubmissionByName() {
 
         submissionList = generateSubmission();
         SortSubmission sortSubmission = new SortSubmissionByName();
-        boolean sorted =  isSortedByName(sortSubmission.sort(submissionList));
+        boolean sorted = isSortedByName(sortSubmission.sort(submissionList));
 
         assertTrue(sorted);
 
@@ -40,11 +39,11 @@ public class SortSubmissionTest {
     }
 
     @Test
-    public void  testSortSubmissionByLikes(){
+    public void testSortSubmissionByLikes() {
         submissionList = generateSubmission();
 
         SortSubmission sortSubmission = new SortSubmissionByLikes();
-        boolean sorted =  isSortedByLikes(sortSubmission.sort(submissionList));
+        boolean sorted = isSortedByLikes(sortSubmission.sort(submissionList));
 
         assertTrue(sorted);
 
@@ -54,16 +53,14 @@ public class SortSubmissionTest {
         assertTrue(sort);
 
 
-
-
     }
 
     @Test
-    public void  testSortSubmissionByDate(){
+    public void testSortSubmissionByDate() {
         submissionList = generateSubmission();
         List<Long> list = new ArrayList<>();
 
-        for(int i = 0 ; i  < submissionList.size(); i++){
+        for (int i = 0; i < submissionList.size(); i++) {
 
             list.add(submissionList.get(i).getEndOfEvent());
             //System.out.println();
@@ -78,7 +75,7 @@ public class SortSubmissionTest {
 
         List<Long> list1 = new ArrayList<>();
 
-        for(int i = 0 ; i  < submissionList.size(); i++){
+        for (int i = 0; i < submissionList.size(); i++) {
 
 
             list1.add(submissionList.get(i).getEndOfEvent());
@@ -88,7 +85,7 @@ public class SortSubmissionTest {
 
         System.out.println(list1);
 
-        boolean sorted =  isSortedByTime(sortSubmission.sort(submissionList));
+        boolean sorted = isSortedByTime(sortSubmission.sort(submissionList));
 
         assertTrue(sorted);
 
@@ -98,44 +95,43 @@ public class SortSubmissionTest {
         assertTrue(sort);
 
 
-
     }
 
 
-    private  boolean isSortedByName(List<Submission> submissionList) {
-        if(submissionList ==  null){
+    private boolean isSortedByName(List<Submission> submissionList) {
+        if (submissionList == null) {
             return true;
         }
-        for (int i = 0; i < submissionList.size()-1; i++) {
-            if ((submissionList.get(i).getName().compareTo(submissionList.get(i+1).getName())) == -1 ) {
+        for (int i = 0; i < submissionList.size() - 1; i++) {
+            if ((submissionList.get(i).getName().compareTo(submissionList.get(i + 1).getName())) == -1) {
                 return false;
             }
         }
         return true;
     }
 
-    private  boolean isSortedByLikes(List<Submission> submissionList){
+    private boolean isSortedByLikes(List<Submission> submissionList) {
 
-        if(submissionList == null ){
+        if (submissionList == null) {
             return true;
         }
 
 
-        for (int i = 0; i < submissionList.size()-1; i++) {
-            if ((submissionList.get(i).getName().toLowerCase().compareTo(submissionList.get(i+1).getName().toLowerCase())) == -1 ) {
+        for (int i = 0; i < submissionList.size() - 1; i++) {
+            if ((submissionList.get(i).getName().toLowerCase().compareTo(submissionList.get(i + 1).getName().toLowerCase())) == -1) {
                 return false;
             }
         }
         return true;
     }
 
-    private boolean isSortedByTime(List<Submission> submissionList){
+    private boolean isSortedByTime(List<Submission> submissionList) {
 
-        if(submissionList == null){
+        if (submissionList == null) {
             return true;
         }
-        for (int i = 0; i < submissionList.size()-1; i++) {
-            if ((submissionList.get(i).getEndOfEvent() > (submissionList.get(i+1).getEndOfEvent()))) {
+        for (int i = 0; i < submissionList.size() - 1; i++) {
+            if ((submissionList.get(i).getEndOfEvent() > (submissionList.get(i + 1).getEndOfEvent()))) {
                 return false;
             }
         }
@@ -144,7 +140,7 @@ public class SortSubmissionTest {
     }
 
 
-    private  List<Submission> generateSubmission( ){
+    private List<Submission> generateSubmission() {
 
         Random random = new Random();
 
@@ -155,7 +151,7 @@ public class SortSubmissionTest {
         int numberOfLikes;
         List<Submission> submissions = new ArrayList<>();
 
-        for(int i = 0; i <numberOfSubmission; i++){
+        for (int i = 0; i < numberOfSubmission; i++) {
             numberOfChars = random.nextInt(n);
             numberOfLikes = random.nextInt(n);
 
@@ -163,13 +159,12 @@ public class SortSubmissionTest {
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_YEAR, random.nextInt(n));
 
-            Submission submission =  new Submission.Builder().name(generateString(numberOfChars)).likes(numberOfLikes).endOfEvent(calendar).build();
+            Submission submission = new Submission.Builder().name(generateString(numberOfChars)).likes(numberOfLikes).endOfEvent(calendar).build();
             submissions.add(submission);
 
         }
 
         return submissions;
-
 
 
     }
@@ -178,14 +173,12 @@ public class SortSubmissionTest {
     private String generateString(final int length) {
         Random r = new Random();
         StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < length; i++) {
-            char c = (char)(r.nextInt((int)(Character.MAX_VALUE)));
+        for (int i = 0; i < length; i++) {
+            char c = (char) (r.nextInt((int) (Character.MAX_VALUE)));
             sb.append(c);
         }
         return sb.toString();
     }
-
-
 
 
 }

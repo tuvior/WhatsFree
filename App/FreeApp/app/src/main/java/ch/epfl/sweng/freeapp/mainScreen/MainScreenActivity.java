@@ -28,12 +28,12 @@ import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 
 /**
  * Created by Lois Talagrand on 11/5
- * <p>
+ * <p/>
  * Displays the app's main screen, where the user is directed
  * after the login.
  * 3 tabs are displayed: Categories, What's new, Around you (default: What's new).
  * 2 additional features: search button and map button
- * <p>
+ * <p/>
  * Tutorial (creating tabs): http://www.androidhive.info/2015/09/android-material-design-working-with-tabs/
  */
 
@@ -86,7 +86,7 @@ public class MainScreenActivity extends AppCompatActivity {
             CommunicationLayer comm = new CommunicationLayer(new DefaultNetworkProvider());
 
             try {
-              Submission submission = comm.fetchSubmission(query);
+                Submission submission = comm.fetchSubmission(query);
 
                 intent = new Intent(this, DisplaySubmissionActivity.class);
                 intent.putExtra(MainScreenActivity.SUBMISSION_MESSAGE, query);
@@ -101,6 +101,7 @@ public class MainScreenActivity extends AppCompatActivity {
 
     /**
      * Action bar contains search, map as well as the new submission button
+     *
      * @param menu
      * @return
      */
@@ -174,7 +175,7 @@ public class MainScreenActivity extends AppCompatActivity {
  */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.action_new_submission:
                 Intent intent = new Intent(this, CreateNewSubmissionActivity.class);
                 this.startActivity(intent);
@@ -187,9 +188,10 @@ public class MainScreenActivity extends AppCompatActivity {
 
     /**
      * Used by tests to get the tabs
+     *
      * @return the viewPAger
      */
-    public ViewPager getViewPager(){
+    public ViewPager getViewPager() {
         return viewPager;
     }
 

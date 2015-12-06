@@ -31,15 +31,13 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import ch.epfl.sweng.freeapp.SortingSubmissionAlgorithnms.SortSubmissionByLocation;
 import ch.epfl.sweng.freeapp.R;
+import ch.epfl.sweng.freeapp.SortingSubmissionAlgorithnms.SortSubmissionByLocation;
 import ch.epfl.sweng.freeapp.Submission;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
 import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 import ch.epfl.sweng.freeapp.communication.FakeCommunicationLayer;
-
 
 
 public class AroundYouFragment extends ListFragment implements GoogleApiClient.ConnectionCallbacks,
@@ -113,7 +111,6 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
     }
 
     /**
-     *
      * @param l
      * @param v
      * @param position
@@ -121,7 +118,7 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
      */
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        Submission submissionShortcut = (Submission)getListAdapter().getItem(position);
+        Submission submissionShortcut = (Submission) getListAdapter().getItem(position);
 
         String submissionId = submissionShortcut.getId();
         Intent intent = new Intent(v.getContext(), DisplaySubmissionActivity.class);
@@ -131,7 +128,7 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
     }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
         if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
@@ -159,53 +156,7 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
         mGoogleApiClient.connect();
     }
 
-    private class DownloadWebpageTask extends AsyncTask<Void, Void, ArrayList<Submission>> {
-
-        @Override
-        protected ArrayList<Submission> doInBackground(Void ... params) {
-            ArrayList<Submission> submissions;
-            CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
-
-            //TODO: remove once debugged on server side
-            FakeCommunicationLayer fakeCommunicationLayer = new FakeCommunicationLayer();
-            ArrayList<Submission> fakeSubmissions = null;
-            try {
-                submissions = communicationLayer.sendSubmissionsRequest();
-                fakeSubmissions = fakeCommunicationLayer.sendSubmissionsRequest();
-
-            } catch (CommunicationLayerException e) {
-                e.printStackTrace();
-                return null;
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            //return submissions;
-            return fakeSubmissions;
-        }
-
-        // onPostExecute displays the results of the AsyncTask.
-        @Override
-        protected void onPostExecute(ArrayList<Submission> submissions) {
-
-            if(submissions == null){
-                displayToast("No submissions around you yet");
-            }else {
-
-                if(userLatLng != null) {
-                    SortSubmissionByLocation sortSubmissionByLocation = new SortSubmissionByLocation(getContext(), userLatLng);
-                    List<Submission> sortedSubmissions = sortSubmissionByLocation.sort(submissions);
-                    SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, sortedSubmissions);
-                    setListAdapter(adapter);
-                }
-
-            }
-
-        }
-
-    }
-
-    private void displayToast(String message){
+    private void displayToast(String message) {
         Context context = getActivity().getApplicationContext();
         int duration = Toast.LENGTH_SHORT;
         Toast toast = Toast.makeText(context, message, duration);
@@ -256,11 +207,57 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
                 GooglePlayServicesUtil.getErrorDialog(resultCode, getActivity(),
                         PLAY_SERVICES_RESOLUTION_REQUEST).show();
             } else {
-               displayToast("This device is not supported.");
+                displayToast("This device is not supported.");
             }
             return false;
         }
         return true;
+    }
+
+    private class DownloadWebpageTask extends AsyncTask<Void, Void, ArrayList<Submission>> {
+
+        @Override
+        protected ArrayList<Submission> doInBackground(Void... params) {
+            ArrayList<Submission> submissions;
+            CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
+
+            //TODO: remove once debugged on server side
+            FakeCommunicationLayer fakeCommunicationLayer = new FakeCommunicationLayer();
+            ArrayList<Submission> fakeSubmissions = null;
+            try {
+                submissions = communicationLayer.sendSubmissionsRequest();
+                fakeSubmissions = fakeCommunicationLayer.sendSubmissionsRequest();
+
+            } catch (CommunicationLayerException e) {
+                e.printStackTrace();
+                return null;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            //return submissions;
+            return fakeSubmissions;
+        }
+
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(ArrayList<Submission> submissions) {
+
+            if (submissions == null) {
+                displayToast("No submissions around you yet");
+            } else {
+
+                if (userLatLng != null) {
+                    SortSubmissionByLocation sortSubmissionByLocation = new SortSubmissionByLocation(getContext(), userLatLng);
+                    List<Submission> sortedSubmissions = sortSubmissionByLocation.sort(submissions);
+                    SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, sortedSubmissions);
+                    setListAdapter(adapter);
+                }
+
+            }
+
+        }
+
     }
 
 }

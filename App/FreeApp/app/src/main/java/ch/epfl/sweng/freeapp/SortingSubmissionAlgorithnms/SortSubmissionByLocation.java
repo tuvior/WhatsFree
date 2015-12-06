@@ -23,43 +23,9 @@ public class SortSubmissionByLocation implements SortSubmission {
     private LatLng userLocation;
     private Context context;
 
-    public SortSubmissionByLocation(Context context, LatLng userLocation){
+    public SortSubmissionByLocation(Context context, LatLng userLocation) {
         this.context = context;
         this.userLocation = userLocation;
-    }
-
-    @Override
-    public List<Submission> sort(List<Submission> submissions) {
-        Collections.sort(submissions, new Comparator<Submission>() {
-            @Override
-            public int compare(Submission lhs, Submission rhs) {
-                LatLng lhsLatLng = getSubmissionLatLng(lhs);
-                LatLng rhsLatLng = getSubmissionLatLng(rhs);
-
-                //Submission's whose LatLng is null will be placed together at the
-                //end of the list
-                if( (lhsLatLng == null) && (rhsLatLng != null) ){
-                    return 1;
-                } else if ((lhsLatLng != null) && (rhsLatLng == null)) {
-                    return -1;
-                } else if ((lhsLatLng == null) && (rhsLatLng == null)){
-                    return 0;
-                }
-
-                double leftDistance = distance(userLocation, lhsLatLng);
-                double rightDistance = distance(userLocation, rhsLatLng);
-
-                if(leftDistance < rightDistance){
-                    return -1;
-                } else if (leftDistance > rightDistance){
-                    return 1;
-                } else {
-                    return 0;
-                }
-            }
-        });
-
-        return submissions;
     }
 
     private static double distance(LatLng origin, LatLng submissionCoordinates) {
@@ -80,6 +46,7 @@ public class SortSubmissionByLocation implements SortSubmission {
 
     /**
      * Converts decimal degrees to radians
+     *
      * @param deg the angle in degrees
      * @return the angle in radians
      */
@@ -89,6 +56,7 @@ public class SortSubmissionByLocation implements SortSubmission {
 
     /**
      * Converts radian degrees to decimal degrees
+     *
      * @param rad the angle in radians
      * @return the angle in decimal
      */
@@ -96,17 +64,52 @@ public class SortSubmissionByLocation implements SortSubmission {
         return (rad * 180 / Math.PI);
     }
 
+    @Override
+    public List<Submission> sort(List<Submission> submissions) {
+        Collections.sort(submissions, new Comparator<Submission>() {
+            @Override
+            public int compare(Submission lhs, Submission rhs) {
+                LatLng lhsLatLng = getSubmissionLatLng(lhs);
+                LatLng rhsLatLng = getSubmissionLatLng(rhs);
+
+                //Submission's whose LatLng is null will be placed together at the
+                //end of the list
+                if ((lhsLatLng == null) && (rhsLatLng != null)) {
+                    return 1;
+                } else if ((lhsLatLng != null) && (rhsLatLng == null)) {
+                    return -1;
+                } else if ((lhsLatLng == null) && (rhsLatLng == null)) {
+                    return 0;
+                }
+
+                double leftDistance = distance(userLocation, lhsLatLng);
+                double rightDistance = distance(userLocation, rhsLatLng);
+
+                if (leftDistance < rightDistance) {
+                    return -1;
+                } else if (leftDistance > rightDistance) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        });
+
+        return submissions;
+    }
+
     /**
      * Returns the submission's LatLng, computed from its
      * address
+     *
      * @param submission The submission from which we want the LatLng
      * @return the LatLng of the given submission
      */
-    public LatLng getSubmissionLatLng(Submission submission){
+    public LatLng getSubmissionLatLng(Submission submission) {
         Geocoder geocoder = new Geocoder(context, Locale.getDefault());
         List<Address> addresses = new ArrayList<>();
 
-        if(submission.getLocation() != null) {
+        if (submission.getLocation() != null) {
             //Get maximum 1 address
             try {
                 addresses = geocoder.getFromLocationName(submission.getLocation(), 1);

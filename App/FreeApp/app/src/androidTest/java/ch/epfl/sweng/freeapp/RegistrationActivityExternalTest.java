@@ -3,7 +3,6 @@ package ch.epfl.sweng.freeapp;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
-import android.widget.EditText;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -26,16 +25,14 @@ import static junit.framework.Assert.assertNotNull;
 @LargeTest
 public class RegistrationActivityExternalTest {
 
-    private CommunicationLayer communicationLayer;
-
     @Rule
     public ActivityTestRule<RegistrationActivity> mActivityRule = new ActivityTestRule<>(
             RegistrationActivity.class);
-
+    private CommunicationLayer communicationLayer;
     private RegistrationActivity activity;
 
     @Before
-    public void setup(){
+    public void setup() {
         activity = mActivityRule.getActivity();
         this.communicationLayer = Mockito.mock(CommunicationLayer.class);
 
@@ -46,7 +43,7 @@ public class RegistrationActivityExternalTest {
     }
 
     @Test
-    public void testPrecondition(){
+    public void testPrecondition() {
         assertNotNull(activity);
         assertNotNull(communicationLayer);
     }
@@ -61,23 +58,23 @@ public class RegistrationActivityExternalTest {
     }
 
     @Test
-    public void testCannotRegisterIfEmailAlreadyAssigned(){
+    public void testCannotRegisterIfEmailAlreadyAssigned() {
 
     }
 
     @Test
-    public void testCannotRegisterIfEmailInvalid(){
+    public void testCannotRegisterIfEmailInvalid() {
 
     }
 
 
     @Test
-    public void testCannotRegisterIfExistingUsernameAndEmailDoNotMatch(){
+    public void testCannotRegisterIfExistingUsernameAndEmailDoNotMatch() {
 
     }
 
     @Test
-    public void testCannotRegisterIfResponseTimesOut(){
+    public void testCannotRegisterIfResponseTimesOut() {
 
     }
 
@@ -85,8 +82,6 @@ public class RegistrationActivityExternalTest {
     public void testCanRegisterWhenAllInformationAreGood() throws CommunicationLayerException {
         configureResponse(ResponseStatus.OK);
     }
-
-
 
 
 }
