@@ -1,8 +1,18 @@
 package ch.epfl.sweng.freeapp;
 
 
+import android.location.Address;
+import android.location.Geocoder;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by francisdamachi on 14/11/15.
@@ -23,8 +33,8 @@ public  class Submission  {
     private int dislikes;
     private String id;
 
-    private String latitude;
-    private String longitude;
+    private double latitude;
+    private double longitude;
     private int rating;
 
     public Submission(String name , String description, SubmissionCategory category, String location, String image, String id){
@@ -34,10 +44,6 @@ public  class Submission  {
         this.location = location;
         this.image = image;
         this.id = id;
-    }
-
-    public int getRating() {
-        return rating;
     }
 
     public static class Builder {
@@ -53,8 +59,8 @@ public  class Submission  {
         private Calendar calendarSubmitted;
         private Calendar calendarStartOfEvent;
         private Calendar calendarEndOfEvent;
-        private String latitude;
-        private String longitude;
+        private double latitude;
+        private double longitude;
 
         private String image; //see how to deal with it
         private int likes;
@@ -95,12 +101,12 @@ public  class Submission  {
             return this;
         }
 
-        public Builder latitude(String latitude){
+        public Builder latitude(double latitude){
             this.latitude = latitude;
             return this;
         }
 
-        public Builder longitude(String longitude){
+        public Builder longitude(double longitude){
             this.longitude = longitude;
             return this;
         }
@@ -135,7 +141,6 @@ public  class Submission  {
         this.location = builder.location;
         this.keywords = builder.keywords;
         this.id = builder.id;
-
         this.image = builder.image;
 
 
@@ -149,15 +154,18 @@ public  class Submission  {
             this.endOfEvent = builder.calendarEndOfEvent.getTime();
         }
 
-
-        if(builder.latitude != null){
+        if(builder.latitude != 0 ) {
             this.latitude = builder.latitude;
         }
 
-        if(builder.longitude != null ){
+        if(builder.longitude != 0 ){
             this.longitude = builder.longitude;
 
         }
+    }
+
+    public int getRating() {
+        return rating;
     }
 
     public String getCategory() {
@@ -196,7 +204,6 @@ public  class Submission  {
         return image;
     }
 
-
     public int getLikes (){
         return likes;
     }
@@ -205,6 +212,9 @@ public  class Submission  {
         return dislikes;
     }
 
+    public double getLatitude() { return latitude; }
+
+    public double getLongitude() { return longitude; }
 
 
     public void setLikes(int likes ){
@@ -214,17 +224,8 @@ public  class Submission  {
         this.dislikes =  dislikes;
     }
 
-
     public String getId() {
         return id;
-    }
-
-    public String getLatitude(){
-        return latitude;
-    }
-
-    public String getLongitude(){
-        return longitude;
     }
 
 }

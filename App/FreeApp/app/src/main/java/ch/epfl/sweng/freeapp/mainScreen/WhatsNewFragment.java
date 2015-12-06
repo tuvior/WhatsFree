@@ -134,9 +134,7 @@ public class WhatsNewFragment extends ListFragment {
         ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
-            //mShortcuts will contain the shortcuts retrieved by the asynchronous task
             new DownloadWebpageTask(getContext()).execute(); //Caution: submission MUST be retrieved from an async task (performance). Otherwise the app will crash.
-
         } else {
             //Connection problem
             displayToast("Connection problem");

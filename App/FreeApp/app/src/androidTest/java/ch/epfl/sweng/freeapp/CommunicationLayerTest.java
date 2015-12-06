@@ -41,10 +41,8 @@ public class CommunicationLayerTest {
     private Calendar current = Calendar.getInstance();
 
     private Submission.Builder builder = new Submission.Builder();
-    private String latitude  = "45";
-    private String longitude =  "-45";
-
-
+    private int latitude  = 45;
+    private int longitude =  -45;
 
 
     private static String JSON_CREATE_SUBMISSION_OK = buildOKSubmission().toString();
