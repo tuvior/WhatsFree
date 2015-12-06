@@ -2,8 +2,7 @@ package ch.epfl.sweng.freeapp.mainScreen;
 
 import android.content.Context;
 import android.content.Intent;
-import android.location.Address;
-import android.location.Geocoder;
+
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -15,16 +14,13 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONException;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+
 
 import ch.epfl.sweng.freeapp.R;
 import ch.epfl.sweng.freeapp.SortingSubmissionAlgorithnms.SortSubmissionByLocation;
@@ -110,15 +106,21 @@ public class MapActivity extends AppCompatActivity {
             ArrayList<Submission> submissions;
             CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
 
+            //TODO: remove once debugged
+            ArrayList<Submission> fakeSubmissions = null;
+            FakeCommunicationLayer fakeCommunicationLayer = new FakeCommunicationLayer();
             try {
+                fakeSubmissions = fakeCommunicationLayer.sendSubmissionsRequest();
                 submissions = communicationLayer.sendSubmissionsRequest();
             } catch (CommunicationLayerException e) {
                 e.printStackTrace();
                 return null;
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
-            return submissions;
-
+            return fakeSubmissions;
+            //return submissions;
         }
 
         // onPostExecute displays the results of the AsyncTask.
@@ -162,6 +164,32 @@ public class MapActivity extends AppCompatActivity {
         for (Submission submission : submissions) {
             SortSubmissionByLocation sortSubmissionByLocation = new SortSubmissionByLocation(this, null);
             LatLng submissionLatLng = sortSubmissionByLocation.getSubmissionLatLng(submission);
+
+            //TODO remove below once debugged
+            /**
+            LatLng submissionLatLng = null;
+
+            Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+            List<Address> addresses = new ArrayList<>();
+
+            if(submission.getLocation() != null) {
+                //Get maximum 1 address
+                try {
+                    addresses = geocoder.getFromLocationName(submission.getLocation(), 1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                //If an address has been found
+                if (addresses.size() > 0) {
+                    double latitude = addresses.get(0).getLatitude();
+                    double longitude = addresses.get(0).getLongitude();
+                    submissionLatLng = new LatLng(latitude, longitude);
+                }
+
+            }
+
+             **/
 
             if ( submissionLatLng != null ) {
                 MarkerOptions marker = new MarkerOptions().position(submissionLatLng).title(submission.getName());

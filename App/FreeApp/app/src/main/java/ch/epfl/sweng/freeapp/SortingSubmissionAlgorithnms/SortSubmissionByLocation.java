@@ -36,19 +36,23 @@ public class SortSubmissionByLocation implements SortSubmission {
                 LatLng lhsLatLng = getSubmissionLatLng(lhs);
                 LatLng rhsLatLng = getSubmissionLatLng(rhs);
 
-                if(lhsLatLng == null){
+                //Submission's whose LatLng is null will be placed together at the
+                //end of the list
+                if( (lhsLatLng == null) && (rhsLatLng != null) ){
                     return 1;
-                } else if (rhsLatLng == null) {
+                } else if ((lhsLatLng != null) && (rhsLatLng == null)) {
                     return -1;
+                } else if ((lhsLatLng == null) && (rhsLatLng == null)){
+                    return 0;
                 }
 
                 double leftDistance = distance(userLocation, lhsLatLng);
                 double rightDistance = distance(userLocation, rhsLatLng);
 
                 if(leftDistance < rightDistance){
-                    return 1;
-                } else if (leftDistance > rightDistance){
                     return -1;
+                } else if (leftDistance > rightDistance){
+                    return 1;
                 } else {
                     return 0;
                 }

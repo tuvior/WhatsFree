@@ -26,6 +26,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +39,7 @@ import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
 import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 
 import ch.epfl.sweng.freeapp.R;
+import ch.epfl.sweng.freeapp.communication.FakeCommunicationLayer;
 
 
 public class AroundYouFragment extends ListFragment implements GoogleApiClient.ConnectionCallbacks,
@@ -161,15 +164,21 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
             ArrayList<Submission> submissions;
             CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
 
+            //TODO: remove once debugged on server side
+            FakeCommunicationLayer fakeCommunicationLayer = new FakeCommunicationLayer();
+            ArrayList<Submission> fakeSubmissions = null;
             try {
                 submissions = communicationLayer.sendSubmissionsRequest();
+                fakeSubmissions = fakeCommunicationLayer.sendSubmissionsRequest();
             } catch (CommunicationLayerException e) {
                 e.printStackTrace();
                 return null;
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
-            return submissions;
-
+            //return submissions;
+            return fakeSubmissions;
         }
 
         // onPostExecute displays the results of the AsyncTask.
@@ -180,8 +189,12 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
                 displayToast("No submissions around you yet");
             }else {
 
-                SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, submissions);
-                setListAdapter(adapter);
+                if(userLatLng != null) {
+                    SortSubmissionByLocation sortSubmissionByLocation = new SortSubmissionByLocation(getContext(), userLatLng);
+                    List<Submission> sortedSubmissions = sortSubmissionByLocation.sort(submissions);
+                    SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, sortedSubmissions);
+                    setListAdapter(adapter);
+                }
 
             }
 
