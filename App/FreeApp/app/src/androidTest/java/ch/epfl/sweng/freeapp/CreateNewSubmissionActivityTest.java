@@ -8,17 +8,16 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.UiController;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.matcher.ViewMatchers;
-import android.test.ActivityInstrumentationTestCase2;
+import android.support.test.rule.ActivityTestRule;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
-import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 
-import ch.epfl.sweng.freeapp.communication.DefaultCommunicationLayer;
-import ch.epfl.sweng.freeapp.communication.FakeCommunicationLayer;
 import ch.epfl.sweng.freeapp.mainScreen.CreateNewSubmissionActivity;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -32,25 +31,40 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 /**
  * Created by francisdamachi on 06/11/15.
  */
-public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTestCase2<CreateNewSubmissionActivity> {
+public class CreateNewSubmissionActivityTest  {
 
     // In order to insert an image at the beginning
-    Bitmap icon = BitmapFactory.decodeResource(InstrumentationRegistry.getTargetContext().getResources(), R.mipmap.ic_launcher);
+    private Bitmap bitmapIcon = BitmapFactory.decodeResource(InstrumentationRegistry.getTargetContext().getResources(), R.mipmap.ic_launcher);
 
-    DefaultCommunicationLayer communicationLayer = new FakeCommunicationLayer();
+    //DefaultCommunicationLayer communicationLayer = new FakeCommunicationLayer();
 
-    public CreateNewSubmissionActivityTest() {
-        super(CreateNewSubmissionActivity.class);
+    @Rule
+    public ActivityTestRule<CreateNewSubmissionActivity> mActivityRule = new ActivityTestRule<>(
+            CreateNewSubmissionActivity.class);
+
+
+
+
+    @Test
+    public void testProvideImageDuringTest(){
+
+        ProvideImage provideImage = new ProvideImage();
+        provideImage.setTypeOfImage(ProvideImage.ImageType.FROM_TEST);
+        ProvideImage.setImage(bitmapIcon);
+
+        mActivityRule.getActivity();
+        onView(withText("CREATE")).perform(scrollTo());
+        onView(withId(R.id.takePictureButton)).perform(click());
+
+
+
     }
 
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
-    }
 
-   // @Test
+
+
+    // @Test
     //TODO: complete
     public void successfullyCreateSubmissionToServer(){
 
@@ -66,7 +80,7 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
    //   mActivityRule.getActivity();
 
 
-        getActivity();
+
         onView(withId(R.id.NameOfEvent)).perform(typeText("Food fun and amazing"));
         onView(withText("CREATE")).perform(scrollTo());
 

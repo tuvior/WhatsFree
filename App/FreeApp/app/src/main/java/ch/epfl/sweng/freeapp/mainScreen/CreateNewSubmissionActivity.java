@@ -49,6 +49,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
     private static final int MAX_CHARACTERS = 60;
     private static final int MIN_CHARACTERS = 4;
+    private int SCALE_FACTOR = 300;
 
     private Calendar currentCalendar = Calendar.getInstance();
     private Calendar startEventCalendar = Calendar.getInstance();
@@ -91,7 +92,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
     private int DATE_DIALOG_ID = 0;
     private Submission.Builder submission = new Submission.Builder();
 
-    private ProvideImage image = new ProvideImage();
+    private ProvideImage provideImage = new ProvideImage();
 
 
 
@@ -242,7 +243,10 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
     public  void onClickTakeImage(View view){
 
 
-        if(image.TYPE_OF_IMAGE == ){
+
+         // condition necessary in order to inject a default image
+        if(provideImage.getTypeOfImage() == ProvideImage.ImageType.FROM_TEST ){
+          imageView.setImageBitmap(ProvideImage.getImage());
 
         }else {
 
@@ -256,11 +260,31 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
     //What the camera will output
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode,resultCode,intent);
+        super.onActivityResult(requestCode, resultCode, intent);
 
+        if(resultCode == RESULT_OK) {
+            if (requestCode == PICTURE_REQUEST) {
+                bitmap = (Bitmap) intent.getExtras().get("data");
+                if(bitmap != null ) {
+                    imageView.setImageBitmap(bitmap);
+                }
+            }else if(requestCode == IMAGE_GALLERY_REQUEST ){
+                Uri imageUri = intent.getData();
 
+                //Declare an inputStream in order to read the image from the SD card
+                InputStream inputStream;
 
-        new BitmapTask(resultCode,intent).execute(requestCode);
+                try {
+                    //input stream based on Uri of the  image.
+                    inputStream = getContentResolver().openInputStream(imageUri);
+                    bitmap = BitmapFactory.decodeStream(inputStream);// Bitmap.createScaledBitmap(BitmapFactory.decodeStream(inputStream), SCALE_FACTOR, SCALE_FACTOR,false);
+                    imageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, SCALE_FACTOR, SCALE_FACTOR, false));
+                }catch(FileNotFoundException e ){
+                    e.printStackTrace();
+                }
+            }
+        }
+
 
     }
 
@@ -385,6 +409,62 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
     }
 
 
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        if(bitmap != null) {
+            outState.putParcelable("bitmap", bitmap);
+
+        }
+        outState.putString("nameOfEvent", nameOfEvent.getText().toString());
+        outState.putString("eventDescription", eventDescription.getText().toString());
+        outState.putString("location", location.getText().toString());
+        outState.putString("date", date.getText().toString());
+        outState.putString("startTime", startTime.getText().toString());
+        outState.putString("endTime", endTime.getText().toString());
+        outState.putString("keywords",keywords.getText().toString());
+        // outState.putSerializable("dateOfEvent", dateOfEvent);
+
+        outState.putSerializable("startEventCalendar", startEventCalendar);
+        outState.putSerializable("endEventCalendar",endEventCalendar);
+        // outState.putString("dateTextView", dateTextView.getText().toString());
+
+
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstance){
+
+        super.onRestoreInstanceState(savedInstance);
+
+        bitmap = savedInstance.getParcelable("bitmap");
+
+        nameOfEvent.setText((String) savedInstance.get("nameOfEvent"));
+        eventDescription.setText((String) savedInstance.get("eventDescription"));
+        location.setText((String) savedInstance.get("location"));
+        date.setText((String) savedInstance.get("date"));
+        startTime.setText((String) savedInstance.get("startTime"));
+        endTime.setText((String) savedInstance.get("endTime"));
+        keywords.setText((String) savedInstance.get("keywords"));
+
+        startEventCalendar = (Calendar)savedInstance.getSerializable("startEventCalendar");
+        endEventCalendar = (Calendar)savedInstance.getSerializable("endEventCalendar");
+
+
+
+
+        if(bitmap != null ){
+            bitmap = Bitmap.createScaledBitmap(bitmap, SCALE_FACTOR, SCALE_FACTOR,false);
+           // imageView.setImageBitmap(bitmap);
+            imageView.setImageBitmap(bitmap);
+        }
+
+
+    }
+
     private String encodeImage( Bitmap bitmapImage){
         assert(bitmapImage != null);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -394,6 +474,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
 
     }
+
 
 
     private class UploadSubmissionTask extends AsyncTask<Submission,Void ,ResponseStatus>{
@@ -452,114 +533,6 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
 
         }
-    }
-
-    private class BitmapTask extends AsyncTask<Integer,Void,Bitmap>{
-
-
-         private int requestCode;
-         private int resultCode;
-         private Intent intent;
-         private int SCALE_FACTOR = 400;
-
-
-         public BitmapTask(int resultCode,Intent intent){
-
-
-             this.resultCode = resultCode;
-             this.intent = intent;
-         }
-         @Override
-         protected Bitmap doInBackground(Integer... params) {
-             this.requestCode = params[0];
-             if(resultCode == RESULT_OK){
-                 if(requestCode == PICTURE_REQUEST){
-                      bitmap =  (Bitmap)intent.getExtras().get("data");
-
-                     return  bitmap;
-                 }else if(requestCode == IMAGE_GALLERY_REQUEST ){
-                     Uri imageUri = intent.getData();
-
-                     //Declare an inputStream in order to read the image from the SD card
-                     InputStream inputStream;
-
-                     try {
-
-                         //input stream based on Uri of the  image.
-                         inputStream = getContentResolver().openInputStream(imageUri);
-                         bitmap = BitmapFactory.decodeStream(inputStream); // Bitmap.createScaledBitmap(BitmapFactory.decodeStream(inputStream), SCALE_FACTOR, SCALE_FACTOR,false);
-
-
-                         return bitmap;
-
-
-                     }catch(FileNotFoundException e ){
-                         e.printStackTrace();
-                     }
-                 }else{
-                     return null;
-                 }
-             }
-             return null;
-         }
-
-        @Override
-        protected  void onPostExecute(Bitmap b){
-            if(b != null ){
-
-                bitmap = Bitmap.createScaledBitmap(b, SCALE_FACTOR, SCALE_FACTOR,false);
-                imageView.setImageBitmap(bitmap);
-            }
-
-        }
-     }
-
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState){
-        super.onSaveInstanceState(outState);
-        outState.putParcelable("bitmap", bitmap);
-
-        outState.putString("nameOfEvent", nameOfEvent.getText().toString());
-        outState.putString("eventDescription", eventDescription.getText().toString());
-        outState.putString("location", location.getText().toString());
-        outState.putString("date", date.getText().toString());
-        outState.putString("startTime", startTime.getText().toString());
-        outState.putString("endTime", endTime.getText().toString());
-        outState.putString("keywords",keywords.getText().toString());
-       // outState.putSerializable("dateOfEvent", dateOfEvent);
-
-        outState.putSerializable("startEventCalendar", startEventCalendar);
-        outState.putSerializable("endEventCalendar",endEventCalendar);
-       // outState.putString("dateTextView", dateTextView.getText().toString());
-
-
-
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstance){
-
-        super.onRestoreInstanceState(savedInstance);
-
-            bitmap = savedInstance.getParcelable("bitmap");
-
-            nameOfEvent.setText((String) savedInstance.get("nameOfEvent"));
-            eventDescription.setText((String) savedInstance.get("eventDescription"));
-            location.setText((String) savedInstance.get("location"));
-            date.setText((String) savedInstance.get("date"));
-            startTime.setText((String) savedInstance.get("startTime"));
-            endTime.setText((String) savedInstance.get("endTime"));
-            keywords.setText((String) savedInstance.get("keywords"));
-
-            startEventCalendar = (Calendar)savedInstance.getSerializable("startEventCalendar");
-            endEventCalendar = (Calendar)savedInstance.getSerializable("endEventCalendar");
-
-
-        if(bitmap != null ){
-            imageView.setImageBitmap(bitmap);
-        }
-
     }
 
 

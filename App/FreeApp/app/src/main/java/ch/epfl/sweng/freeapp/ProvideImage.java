@@ -15,9 +15,6 @@ public class ProvideImage {
 
     }
     public static Bitmap getImage(){
-        if(bitmap == null ){
-            throw new NullPointerException("empty image ");
-        }
 
         return bitmap;
     }
