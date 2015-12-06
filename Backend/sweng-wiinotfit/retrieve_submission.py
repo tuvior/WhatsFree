@@ -7,12 +7,13 @@ from google.appengine.ext import ndb
 from google.appengine.api import images
 from submission import Submission
 from session import Session
+from vote import Vote
 
 
-def json_string(id, name, category , description , location , image , keywords, submitter, tfrom, tto, rating, latitude, longitude):
+def json_string(id, name, category , description , location , image , keywords, submitter, tfrom, tto, rating, latitude, longitude, vote):
     json_string = {'id': id, 'name': name,'category': category, 'description': description, 'location': location, 'image': image,
                    'keywords': keywords, 'submitter': submitter, 'from': tfrom, 'to': tto, 'rating': rating, 'latitude': latitude,
-                   'longitude': longitude}
+                   'longitude': longitude, 'vote': vote}
     return json_string
 
 
@@ -62,10 +63,16 @@ class retrieveSubmission(webapp2.RequestHandler):
                                     self.response.write(json.dumps(error))
 
                                 else:
+                                    last_vote = Vote.query(ndb.AND(Vote.user == session.user, Vote.sub_id == submission.key.urlsafe())).get()
+                                    if not last_vote:
+                                        vote_val = 0     
+                                    else:
+                                        vote_val = last_vote.value
+    
                                     string_submission = json_string(submission.key.urlsafe(), submission.name, submission.category, submission.description, submission.location,
                                                                     submission.image, submission.keywords, submission.submitter,
                                                                     submission.tfrom, submission.tto, submission.rating, submission.latitude,
-                                                                    submission.longitude)
+                                                                    submission.longitude, vote_val)
                                     response = json.dumps(string_submission)
                                     self.response.write(response)
 
@@ -91,13 +98,13 @@ class retrieveSubmission(webapp2.RequestHandler):
                                 for i in range(0, submissions_number):
                                     submission = submissions[i]
                                     # use thumbnail
-                                    json_submission = json_string(submission.key.urlsafe(), submission.name, '', '', '', submission.image, '', '', '', '', submission.rating, '', '')
+                                    json_submission = json_string(submission.key.urlsafe(), submission.name, '', '', '', submission.image, '', '', '', '', submission.rating, '', '', '')
                                     submissions_array.append(json_submission)
 
                             else:
                                 for i in range(0, len(submissions)):
                                     submission = submissions[i]
-                                    json_submission = json_string(submission.key.urlsafe(), submission.name, '', '', '', submission.image, '', '', '', '', submission.rating, '', '')
+                                    json_submission = json_string(submission.key.urlsafe(), submission.name, '', '', '', submission.image, '', '', '', '', submission.rating, '', '', '')
                                     submissions_array.append(json_submission)
 
 
@@ -136,13 +143,13 @@ class retrieveSubmission(webapp2.RequestHandler):
                                 if(submissions_number <= len(submissions_array)):
                                     for i in range(0, submissions_number):
                                         submission = submissions[i]
-                                        json_submission = json_string(submission.key.urlsafe(), submission.name, '', '', '', submission.image, '', '', '', '', submission.rating)
+                                        json_submission = json_string(submission.key.urlsafe(), submission.name, '', '', '', submission.image, '', '', '', '', submission.rating, '', '', '')
                                         submissions_array.append(json_submission)
 
                                 else:
                                     for i in range(0, len(submissions)):
                                         submission = submissions[i]
-                                        json_submission = json_string(submission.key.urlsafe(), submission.name, '', '', '', submission.image, '', '', '', '', submission.rating)
+                                        json_submission = json_string(submission.key.urlsafe(), submission.name, '', '', '', submission.image, '', '', '', '', submission.rating, '', '', '')
                                         submissions_array.append(json_submission)
 
                                 response = json.dumps(submissions_array)
@@ -170,7 +177,7 @@ class retrieveSubmission(webapp2.RequestHandler):
                                 if(submissions_number <= len(submissions)):
                                     for i in range(0, submissions_number):
                                         submission = submissions[i]
-                                        json_submission = json_string(submission.key.urlsafe(), submission.name, '', '', '', submission.image, '', '', '', '', submission.rating, '', '')
+                                        json_submission = json_string(submission.key.urlsafe(), submission.name, '', '', '', submission.image, '', '', '', '', submission.rating, '', '', '')
                                         submissions_array.append(json_submission)
 
                                         # Once error fixed do
@@ -184,7 +191,7 @@ class retrieveSubmission(webapp2.RequestHandler):
                                 else:
                                     for i in range(0, len(submissions)):
                                         submission = submissions[i]
-                                        json_submission = json_string(submission.key.urlsafe(), submission.name, '', '', '', submission.image, '', '', '', '', submission.rating, '', '')
+                                        json_submission = json_string(submission.key.urlsafe(), submission.name, '', '', '', submission.image, '', '', '', '', submission.rating, '', '', '')
                                         submissions_array.append(json_submission)
 
                                 response = json.dumps(submissions_array)
@@ -206,7 +213,7 @@ class retrieveSubmission(webapp2.RequestHandler):
                                 self.response.write(json.dumps(error))
 
                             else:
-                                json_submission = json_string(submission.key.urlsafe(), submission.name, '', '', '', submission.image, '', '', '', '', submission.rating, '', '')
+                                json_submission = json_string(submission.key.urlsafe(), submission.name, '', '', '', submission.image, '', '', '', '', submission.rating, '', '', '')
                                 self.response.write(json.dumps(json_submission))
 
                     # every other flag generate an error
