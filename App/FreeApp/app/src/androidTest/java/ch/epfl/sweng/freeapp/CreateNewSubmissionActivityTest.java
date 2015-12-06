@@ -1,29 +1,33 @@
 package ch.epfl.sweng.freeapp;
 
-import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.UiController;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.matcher.ViewMatchers;
-import android.support.test.rule.ActivityTestRule;
+import android.test.ActivityInstrumentationTestCase2;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
-import org.junit.Rule;
 import org.junit.Test;
 
+import java.util.Calendar;
+import java.util.TimeZone;
+
+import ch.epfl.sweng.freeapp.communication.FakeCommunicationLayer;
+import ch.epfl.sweng.freeapp.communication.ProvideCommunicationLayer;
 import ch.epfl.sweng.freeapp.mainScreen.CreateNewSubmissionActivity;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -31,83 +35,91 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 /**
  * Created by francisdamachi on 06/11/15.
  */
-public class CreateNewSubmissionActivityTest  {
+public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTestCase2<CreateNewSubmissionActivity> {
 
     // In order to insert an image at the beginning
     private Bitmap bitmapIcon = BitmapFactory.decodeResource(InstrumentationRegistry.getTargetContext().getResources(), R.mipmap.ic_launcher);
-
+    private TimeZone timeZone = TimeZone.getTimeZone("Europe/Zurich");
     //DefaultCommunicationLayer communicationLayer = new FakeCommunicationLayer();
 
-    @Rule
-    public ActivityTestRule<CreateNewSubmissionActivity> mActivityRule = new ActivityTestRule<>(
-            CreateNewSubmissionActivity.class);
+    public  CreateNewSubmissionActivityTest(){
+
+        super(CreateNewSubmissionActivity.class);
+    }
 
 
 
 
     @Test
-    public void testProvideImageDuringTest(){
+    public void testSuccessfulSubmissionCreationOnLine(){
+
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.setTimeZone(timeZone);
+
+        int dayOfMonth  = calendar.get(Calendar.DAY_OF_MONTH);
+        int monthOfYear = calendar.get(Calendar.MONTH);
+        int year = calendar.get(Calendar.YEAR);
+
+        Calendar calendarEventHour  = Calendar.getInstance();
+        calendarEventHour.add(Calendar.HOUR_OF_DAY, 1);
+
+
+        int hour = calendarEventHour.get(Calendar.HOUR_OF_DAY);
+
+
+        int startHoursOfDay = hour; int startMinute = 10;
+        int endHoursOfDay = hour;   int endMinute = 15;
+
+
 
         ProvideImage provideImage = new ProvideImage();
         provideImage.setTypeOfImage(ProvideImage.ImageType.FROM_TEST);
         ProvideImage.setImage(bitmapIcon);
 
-        mActivityRule.getActivity();
-        onView(withText("CREATE")).perform(scrollTo());
-        onView(withId(R.id.takePictureButton)).perform(click());
+        ProvideCommunicationLayer.setCommunicationLayer(new FakeCommunicationLayer());
 
 
-
-    }
-
-
-
-
-
-    // @Test
-    //TODO: complete
-    public void successfullyCreateSubmissionToServer(){
-
-        int year = 2015;
-        int month = 4;
-        int day = 5;
-
-        int startHoursOfDay = 16;
-        int startMinute = 10;
-
-        int endHoursOfDay = 17;
-        int endMinute = 10;
-   //   mActivityRule.getActivity();
-
-
+        getActivity();
 
         onView(withId(R.id.NameOfEvent)).perform(typeText("Food fun and amazing"));
-        onView(withText("CREATE")).perform(scrollTo());
-
         onView(withId(R.id.Description)).perform(typeText("Some good croissant food"));
-        onView(withId(R.id.Location)).perform(typeText("EPFl eculblens"));;
+        onView(withId(R.id.Location)).perform(typeText("EPFl ecublens"));;
 
+
+
+        onView(withText("SET DATE")).perform(scrollTo());
         onView(withId(R.id.setDateButton)).perform(click());
-        onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))).perform(setDate(year, month, day));
-        onView(withText("OK")).perform(click());
+        onView(withClassName(Matchers.equalTo(DatePicker.class.getName()))). perform(setDate(year, monthOfYear, dayOfMonth));
+        onView(withText(("OK"))).perform(click());
 
-        onView(withId(R.id.startTime)).perform(click());
+
+
+
+        onView(withText("STARTS")).perform(scrollTo());
+        onView(withId(R.id.startButton)).perform(click());
         onView(withClassName(Matchers.equalTo(TimePicker.class.getName()))). perform(setTime(startHoursOfDay, startMinute));
         onView(withText(("OK"))).perform(click());
 
 
+        onView(withText("ENDS")).perform(scrollTo());
         onView(withId(R.id.endButton)).perform(click());
         onView(withClassName(Matchers.equalTo(TimePicker.class.getName()))). perform(setTime(endHoursOfDay, endMinute));
-        onView(withText(("Ok"))).perform(click());
-
-        //How to stub out a camera ?
+        onView(withText(("OK"))).perform(click());
 
 
-        onView(withId(R.id.keywords)).perform(typeText("yummy food"));
+        onView(withText("TAKE PHOTO")).perform(scrollTo());
+        onView(withId(R.id.takePictureButton)).perform(click());
+
+
+        onView(withText("CREATE")).perform(scrollTo());
+        onView(withId(R.id.keywords)).perform(scrollTo());
+        onView(withId(R.id.keywords)).perform(typeText("YUMMY FOOD"));
+        onView(withText("CREATE")).perform(scrollTo());
+        onView(withId(R.id.createSubmissionButton)).perform(click());
+        onView(withId(R.id.tabs)).check(matches(isDisplayed()));
 
     }
-
-
 
     public static ViewAction setDate(final int year, final int month, final int day){
         return new ViewAction() {
@@ -148,14 +160,14 @@ public class CreateNewSubmissionActivityTest  {
 
             //Because setHours and setMinute requires API level 23 if a machine
             //if a machine is running a less recent API, this code will never be called
-            @TargetApi(Build.VERSION_CODES.M)
+
             @Override
             public void perform(UiController uiController, View view) {
 
 
                 TimePicker picker = (TimePicker)view;
-                picker.setHour(hours);
-                picker.setMinute(minutes);
+                picker.setCurrentHour(hours);
+                picker.setCurrentMinute(minutes);
 
 
             }

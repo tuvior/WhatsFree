@@ -39,10 +39,9 @@ import ch.epfl.sweng.freeapp.ProvideImage;
 import ch.epfl.sweng.freeapp.R;
 import ch.epfl.sweng.freeapp.Submission;
 import ch.epfl.sweng.freeapp.SubmissionCategory;
-import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
 import ch.epfl.sweng.freeapp.communication.DefaultCommunicationLayer;
-import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
+import ch.epfl.sweng.freeapp.communication.ProvideCommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.ResponseStatus;
 
 public class CreateNewSubmissionActivity extends AppCompatActivity {
@@ -64,7 +63,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
     private int startYear  = currentCalendar.get(Calendar.YEAR);
     private int startMonth = currentCalendar.get(Calendar.MONTH);
     private int startDay   = currentCalendar.get(Calendar.DAY_OF_MONTH);
-    private DefaultCommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
+    private DefaultCommunicationLayer communicationLayer = ProvideCommunicationLayer.getCommunicationLayer();
    /// private int DATE_DIALOG_ID = 0;
 
     private final static int PICTURE_REQUEST = 200;
@@ -246,6 +245,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
          // condition necessary in order to inject a default image
         if(provideImage.getTypeOfImage() == ProvideImage.ImageType.FROM_TEST ){
+            bitmap = ProvideImage.getImage();
           imageView.setImageBitmap(ProvideImage.getImage());
 
         }else {
@@ -255,6 +255,34 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
         }
 
     }
+
+    public void onClickExistingPicture(View view){
+
+        // condition necessary in order to inject a default image
+        if(provideImage.getTypeOfImage() == ProvideImage.ImageType.FROM_TEST ){
+            imageView.setImageBitmap(ProvideImage.getImage());
+
+        }else {
+            //invoking image gallery using implicit intent
+            Intent photoGalleryIntent = new Intent(Intent.ACTION_PICK);
+
+            //just basically says where we want to find the data
+            File pictureDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+            String pictureDirectoryPath = pictureDirectory.getPath();
+
+            //Get URI representation
+            Uri data = Uri.parse(pictureDirectoryPath);
+
+            //set the data image and type. Get all images
+
+            photoGalleryIntent.setDataAndType(data, "image/*");
+
+            startActivityForResult(photoGalleryIntent, IMAGE_GALLERY_REQUEST);
+        }
+
+    }
+
+
 
 
     //What the camera will output
@@ -289,30 +317,8 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
     }
 
 
-    public void onClickExistingPicture(View view){
-        //invoking image gallery using implicit intent
-        Intent photoGalleryIntent = new Intent(Intent.ACTION_PICK);
-
-        //just basically says where we want to find the data
-        File pictureDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        String pictureDirectoryPath = pictureDirectory.getPath();
-
-        //Get URI representation
-        Uri data = Uri.parse(pictureDirectoryPath);
-
-        //set the data image and type. Get all images
-
-        photoGalleryIntent.setDataAndType(data, "image/*");
-
-        startActivityForResult(photoGalleryIntent,IMAGE_GALLERY_REQUEST);
 
 
-    }
-
-    //Setter used to Inject Dependencies so that we can test our app offline.
-    public void setCommunicationLayer(DefaultCommunicationLayer layer){
-        this.communicationLayer = layer;
-    }
 
 
     public void onClickCreateButton(View view ){
@@ -373,7 +379,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
              this.endDate = endEventCalendar.getTime();
 
 
-            if(endDate.before(dateOfEvent)|| endDate.getTime() == dateOfEvent.getTime()){
+            if(endDate.before(dateOfEvent)|| endDate.getTime() == dateOfEvent.getTime() || dateOfEvent.before(currentCalendar.getTime())){
                 date.setText("");
                 startTime.setText("");
                 endTime.setText("");
@@ -406,6 +412,11 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
             }
 
         }
+    }
+
+    //Setter used to Inject Dependencies so that we can test our app offline.
+    public void setCommunicationLayer(DefaultCommunicationLayer layer){
+        this.communicationLayer = layer;
     }
 
 
