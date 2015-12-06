@@ -11,9 +11,10 @@
 
     <ImageView
         android:id="@+id/submissionImageView"
+        android:contentDescription="@string/description_image"
         android:layout_width="250dp"
         android:layout_height="250dp"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="30dp"
         android:scaleType="centerCrop"
@@ -21,11 +22,11 @@
 
     <ImageButton
         android:id="@+id/like"
+        android:contentDescription="@string/like"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_alignTop="@+id/submissionImageView"
         android:layout_toEndOf="@+id/submissionImageView"
-        android:layout_toRightOf="@+id/submissionImageView"
         android:onClick="likeButtonOnClick"
         android:scaleType="centerInside"
         android:src="@drawable/ic_action_good" />
@@ -34,10 +35,9 @@
         android:id="@+id/dislike"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_alignLeft="@+id/like"
         android:layout_alignStart="@+id/like"
         android:layout_below="@+id/like"
-        android:contentDescription="dislike"
+        android:contentDescription="@string/dislike"
         android:onClick="dislikeButtonOnclick"
         android:scaleType="centerInside"
         android:src="@drawable/ic_action_bad" />
@@ -46,42 +46,36 @@
         android:id="@+id/numberOfLikes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
         android:layout_above="@+id/dislike"
         android:layout_marginBottom="15dp"
         android:layout_toEndOf="@+id/like"
-        android:layout_toRightOf="@+id/like"
         android:text="" />
 
     <TextView
         android:id="@+id/numberOfDislikes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
         android:layout_below="@+id/like"
         android:layout_marginTop="13dp"
         android:layout_toEndOf="@+id/dislike"
-        android:layout_toRightOf="@+id/dislike"
         android:text="" />
 
     <TextView
         android:id="@+id/submissionName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/submissionImageView"
         android:layout_marginTop="19dp"
         android:fontFamily="Arial"
         android:textColor="#000000"
-        android:textSize="30dp"
+        android:textSize="30sp"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/submissionDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/submissionName" />
 
@@ -90,9 +84,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:text="Location not provided"
+        android:text="@string/location_not_provided"
         android:textColor="#000000" />
 
     <TextView
@@ -101,9 +94,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/submissionImageView"
-        android:layout_toRightOf="@+id/submissionImageView"
-        android:ems="10"
-        android:inputType="number" />
+        android:ems="10" />
 
 
 </RelativeLayout>

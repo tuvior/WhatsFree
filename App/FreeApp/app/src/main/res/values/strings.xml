@@ -118,4 +118,8 @@
     <string name="byLikes">By Likes</string>
     <string name="byName">By Name</string>
     <string name="byLocation">By Location</string>
+    <string name="description_image">Submission\'s Image</string>
+    <string name="like">Like</string>
+    <string name="dislike">Dislike</string>
+    <string name="location_not_provided">Location not provided</string>
 </resources>
