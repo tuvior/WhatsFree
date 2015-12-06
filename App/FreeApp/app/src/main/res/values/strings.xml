@@ -113,4 +113,10 @@
     <string name="btn_get_location">GET MY LOCATION</string>
     <string name="btn_start_location_updates">START LOCATION UPDATES</string>
     <string name="btn_stop_location_updates">STOP LOCATION UPDATES</string>
+    <string name="ok">OK</string>
+    <string name="filterSubmissions">Filter</string>
+    <string name="time">By Time</string>
+    <string name="byLikes">By Likes</string>
+    <string name="byName">By Name</string>
+    <string name="byLocation">By Location</string>
 </resources>
