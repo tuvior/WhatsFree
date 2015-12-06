@@ -38,10 +38,12 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
+        android:fullBackupContent="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/FreeApp">
+        android:theme="@style/FreeApp"
+        android:supportsRtl="false">
         <activity
             android:name=".loginAndRegistration.LoginActivity"
             android:label="@string/title_activity_login"
@@ -95,13 +97,13 @@
         </activity>
         <activity
             android:name=".mainScreen.CategoryDisplaySubmissionsActivity"
-            android:label="CategoryDisplaySubmissions"></activity>
+            android:label="CategoryDisplaySubmissions"/>
         <activity
             android:name=".mainScreen.DisplaySubmissionActivity"
-            android:label="DisplaySubmissionActivity"></activity>
+            android:label="DisplaySubmissionActivity"/>
         <activity
             android:name=".mainScreen.MapActivity"
-            android:label="@string/title_activity_map"></activity>
+            android:label="@string/title_activity_map"/>
 
     </application>
 
