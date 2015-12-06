@@ -514,30 +514,13 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
                 Intent intent = new Intent(context, MainScreenActivity.class);
                 startActivity(intent);
             }
-            else if(status == ResponseStatus.IMAGE){
-
-                Toast.makeText(context,"Re-upload image",Toast.LENGTH_SHORT).show();
-
-            }else if (status == ResponseStatus.NAME){
-                Toast.makeText(context,"Problem with name of event",Toast.LENGTH_SHORT).show();
-
-            }else if (status == ResponseStatus.LOCATION) {
-                Toast.makeText(context, "Unknown location", Toast.LENGTH_SHORT).show();
-
-            }else if (status == ResponseStatus.COOKIE  ){
+            else if (status == ResponseStatus.COOKIE  ){
                 Toast.makeText(context,"Cookie session", Toast.LENGTH_SHORT).show();
 
-            }else if(status == ResponseStatus.SESSION) {
-
-                Toast.makeText(context,"Lost session", Toast.LENGTH_SHORT).show();
-            }else if(status==null){
+            }else {
 
                 Toast.makeText(context,"Problem with server", Toast.LENGTH_SHORT).show();
 
-            }else  {
-                assert(status == ResponseStatus.CATEGORY );
-
-                Toast.makeText(context, "Unknown Category", Toast.LENGTH_SHORT).show();
             }
 
 
