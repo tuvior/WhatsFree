@@ -63,6 +63,7 @@ public  class Submission  {
         private double longitude;
 
         private String image; //see how to deal with it
+        private int likes;
 
         public Builder name(String name){
             this.name = name;
@@ -120,6 +121,10 @@ public  class Submission  {
         public Builder id(String id){
             this.id = id;
             return this;
+        }
+
+        public Builder likes(int likes){
+            this.likes = likes; return this;
         }
 
 

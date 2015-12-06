@@ -33,13 +33,13 @@ import java.util.List;
 
 
 import ch.epfl.sweng.freeapp.SortingSubmissionAlgorithnms.SortSubmissionByLocation;
+import ch.epfl.sweng.freeapp.R;
 import ch.epfl.sweng.freeapp.Submission;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
 import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
-
-import ch.epfl.sweng.freeapp.R;
 import ch.epfl.sweng.freeapp.communication.FakeCommunicationLayer;
+
 
 
 public class AroundYouFragment extends ListFragment implements GoogleApiClient.ConnectionCallbacks,
@@ -67,6 +67,8 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
     }
 
     @Override
@@ -170,6 +172,7 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
             try {
                 submissions = communicationLayer.sendSubmissionsRequest();
                 fakeSubmissions = fakeCommunicationLayer.sendSubmissionsRequest();
+
             } catch (CommunicationLayerException e) {
                 e.printStackTrace();
                 return null;
