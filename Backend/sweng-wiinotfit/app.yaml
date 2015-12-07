@@ -31,6 +31,9 @@ handlers:
 
 - url: /vote
   script: submit_vote.app
+  
+- url: /search
+  script: search.app
 
 libraries:
 - name: webapp2
