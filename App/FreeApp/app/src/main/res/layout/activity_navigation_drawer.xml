@@ -26,7 +26,6 @@
         android:background="@color/wallet_highlighted_text_holo_light"
         android:choiceMode="singleChoice"
         android:clickable="true"
-        android:contextClickable="false"
         android:divider="@android:color/white"
         android:dividerHeight="1dp"
         android:listSelector="@drawable/ic_cast_light" />

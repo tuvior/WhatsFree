@@ -88,5 +88,10 @@
     <string name="submission_thumbnail">Submission\'s thumbnail</string>
     <string name="title_activity_login">Sign in</string>
     <string name="action_example">Action example</string>
+    <string name="username_hint">Username</string>
+    <string name="email">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="confirm_password_hint">Confirm password</string>
+    <string name="sign_up">Sign up</string>
 
 </resources>
