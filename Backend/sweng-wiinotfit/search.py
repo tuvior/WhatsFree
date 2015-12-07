@@ -25,8 +25,8 @@ def json_string(
     return json_string
 
 
-def json_error(option, status, reason):
-    json_string = {option: {'status': status, 'reason': reason}}
+def json_error(status, reason):
+    json_string = {'search': {'status': status, 'reason': reason}}
     return json_string
 
 
@@ -38,21 +38,21 @@ class Search(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
 
         if not cookie:
-            error = json_error('search', 'failure', 'cookie')
+            error = json_error('failure', 'cookie')
             self.response.write(json.dumps(error))
         else:
 
             session = Session.query(Session.cookie == cookie).get()
 
             if not session:
-                error = json_error('search', 'failure', 'session')
+                error = json_error('failure', 'session')
                 self.response.write(error)
             else:
 
                 name = self.request.get('name')
 
                 if not name:
-                    error = json_error('search', 'failure', 'name')
+                    error = json_error('failure', 'name')
                     self.response.write(json.dumps(error))
                 else:
 
@@ -60,7 +60,7 @@ class Search(webapp2.RequestHandler):
                     submissions = Submission.query(Submission.lowerName == name.lower()).fetch(submissions_number)
 
                     if not submissions:
-                        error = json_error('search', 'failure', 'no result')
+                        error = json_error('failure', 'no result')
                         self.response.write(json.dumps(error))
 
                     else:

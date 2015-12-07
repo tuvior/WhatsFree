@@ -2,35 +2,14 @@ import webapp2
 from google.appengine.ext import ndb
 from user import User
 
-def json_response( status ):
-    if status == 0:
-        res = """{
-    "register": {
-        "status": "ok"
-    }
-}"""
-    elif status == 1:
-        res = """{
-    "register": {
-        "status": "failure",
-        "reason": "email"
-    }
-}"""
-    elif status == 2:
-        res = """{
-    "register": {
-        "status": "failure",
-        "reason": "username"
-    }
-}"""
-    elif status == -1:
-        res = """{
-    "register": {
-        "status": "invalid"
-    }
-}"""
-    return res
+def json_error(status, reason):
+    json_string = {"register": {'status': status, 'reason': reason}}
+    return json_string
     
+def register_response(status):
+    json_string = {"register": {'status': status}}
+    return json_string
+        
 class Register(webapp2.RequestHandler):            
     
     def get(self):
@@ -42,21 +21,21 @@ class Register(webapp2.RequestHandler):
          
         if not username or not password or not email:
             # some fields were missing in the request
-            self.response.write(json_response(-1))
+            self.response.write(json_error('invalid', ''))
         else:
             query_user = User.query(User.username == username).fetch()
             query_email = User.query(User.email == email).fetch()
             if query_user:
                 # a user with this username exists already
-                self.response.write(json_response(2))
+                self.response.write(json_error('failure', 'username'))
             elif query_email:
                 # a user with this email exists already
-                self.response.write(json_response(1))
+                self.response.write(json_error('failure', 'email'))
             else: 
                 # create a new user with the data recieved
                 user = User(username = username, pswd = password, email = email)
                 db_result = user.put()
-                self.response.write(json_response(0))
+                self.response.write(register_response('ok'))
 
 app = webapp2.WSGIApplication([
     ('/register', Register),

@@ -5,35 +5,13 @@ from google.appengine.ext import ndb
 from user import User
 from session import Session
 
-def json_response( status , cookie = '' ):
-    if status == 0:
-        res = """{
-    "login": {
-        "status": "ok",
-        "cookie": \"""" + cookie + """\"
-    }
-}"""
-    elif status == 1:
-        res = """{
-    "login": {
-        "status": "failure",
-        "reason": "user"
-    }
-}"""
-    elif status == 2:
-        res = """{
-    "login": {
-        "status": "failure",
-        "reason": "password"
-    }
-}"""
-    elif status == -1:
-        res = """{
-    "login": {
-        "status": "invalid"
-    }
-}"""
-    return res
+def json_error(status, reason):
+    json_string = {"login": {'status': status, 'reason': reason}}
+    return json_string
+    
+def login_response(status , cookie):
+    json_string = {"login": {'status': status, 'cookie':cookie}}
+    return json_string
 
 class Login(webapp2.RequestHandler):
             
@@ -45,7 +23,7 @@ class Login(webapp2.RequestHandler):
         
         if not username or not password:
             # some fields were missing in the request
-            self.response.write(json_response(-1))
+            self.response.write(json_error('invalid', ''))
         else:
             # check if username exists in db
             query_user = User.query(User.username == username).fetch()
@@ -57,13 +35,13 @@ class Login(webapp2.RequestHandler):
                     cookie = ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(64))
                     session = Session(cookie = cookie, user = username)
                     session.put()
-                    self.response.write(json_response(0, cookie))   
+                    self.response.write(login_response('ok', cookie))   
                 else: 
                     # password was incorrect
-                    self.response.write(json_response(2))
+                    self.response.write(json_error('failure', 'password'))
             else:
                 # user didn't exist
-                self.response.write(json_response(1))
+                self.response.write(json_error('failure', 'user'))
 
 app = webapp2.WSGIApplication([
     ('/login', Login),
