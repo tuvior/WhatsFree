@@ -45,6 +45,7 @@ public class Submission {
         this.keywords = builder.keywords;
         this.id = builder.id;
         this.image = builder.image;
+        this.rating = builder.rating;
 
 
         if (builder.calendarSubmitted != null) {
@@ -149,6 +150,7 @@ public class Submission {
         private double longitude;
 
         private String image; //see how to deal with it
+        private int rating;
 
 
         public Builder name(String name) {
@@ -220,6 +222,11 @@ public class Submission {
             return new Submission(this);
         }
 
+        public Builder rating(int numberOfLikes) {
+
+            this.rating = numberOfLikes;
+            return this;
+        }
     }
 
 }
