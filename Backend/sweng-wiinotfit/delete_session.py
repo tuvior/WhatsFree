@@ -21,7 +21,7 @@ class deleteSession(webapp2.RequestHandler):
             session = Session.query(Session.cookie == cookie).get()
             
             if not session:
-            	error = json_error('delete', 'failure', 'no such session')
+            	error = json_error('delete session', 'failure', 'no such session')
                 self.response.write(json.dumps(error))
 
             else:
