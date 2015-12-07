@@ -15,7 +15,6 @@ import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 
 import java.util.Calendar;
-import java.util.TimeZone;
 
 import ch.epfl.sweng.freeapp.communication.FakeCommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.ProvideCommunicationLayer;
@@ -34,14 +33,11 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsNot.not;
 
-/**
- * Created by francisdamachi on 06/11/15.
- */
 public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTestCase2<CreateNewSubmissionActivity> {
 
     // In order to insert an image at the beginning
     private Bitmap bitmapIcon = BitmapFactory.decodeResource(InstrumentationRegistry.getTargetContext().getResources(), R.mipmap.ic_launcher);
-    private TimeZone timeZone = TimeZone.getTimeZone("Europe/Zurich");
+
     //DefaultCommunicationLayer communicationLayer = new FakeCommunicationLayer();
 
 
@@ -112,9 +108,6 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
         calendarEventHour.add(Calendar.HOUR_OF_DAY, 1);
         int hour = calendarEventHour.get(Calendar.HOUR_OF_DAY);
 
-        int startHoursOfDay = hour;
-        int endHoursOfDay   = hour;
-
         int startMinute = 10;
         int endMinute = 15;
 
@@ -125,7 +118,7 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
 
         int dayOfMonth = calendar2.get(Calendar.DAY_OF_MONTH);
 
-        fill(dayOfMonth,monthOfYear,year,startHoursOfDay, endHoursOfDay,startMinute,endMinute, submission);
+        fill(dayOfMonth,monthOfYear,year, hour, hour,startMinute,endMinute, submission);
         onView(withText("Event has already passed")).inRoot(withDecorView(not(is(getActivity().getWindow().getDecorView())))).check(matches(isDisplayed()));
 
         onView(withText("CREATE")).check(matches(isDisplayed()));
@@ -137,9 +130,6 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
         calendarEventHour.add(Calendar.HOUR_OF_DAY, 1);
         int hour = calendarEventHour.get(Calendar.HOUR_OF_DAY);
 
-
-        int startHoursOfDay = hour;
-        int endHoursOfDay   = hour;
 
         int startMinute = 10;
         int endMinute = 15;
@@ -156,7 +146,7 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
 
         Submission submission = new Submission.Builder().name("").location("test location").description("test description").keywords("test keywords").build();
 
-        fill(dayOfMonth,monthOfYear,year,startHoursOfDay, endHoursOfDay,startMinute,endMinute, submission);
+        fill(dayOfMonth,monthOfYear,year, hour, hour,startMinute,endMinute, submission);
 
         onView(withText("No name")).inRoot(withDecorView(not(is(getActivity().getWindow().getDecorView())))).check(matches(isDisplayed()));
 
@@ -166,9 +156,6 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
         calendarEventHour.add(Calendar.HOUR_OF_DAY, 1);
         int hour = calendarEventHour.get(Calendar.HOUR_OF_DAY);
 
-
-        int startHoursOfDay = hour;
-        int endHoursOfDay   = hour;
 
         int startMinute = 10;
         int endMinute = 15;
@@ -185,7 +172,7 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
 
         Submission submission = new Submission.Builder().name("test name").location("").description("test description").keywords("test keywords").build();
 
-        fill(dayOfMonth,monthOfYear,year,startHoursOfDay, endHoursOfDay,startMinute,endMinute, submission);
+        fill(dayOfMonth,monthOfYear,year, hour, hour,startMinute,endMinute, submission);
 
         onView(withText("No location")).inRoot(withDecorView(not(is(getActivity().getWindow().getDecorView())))).check(matches(isDisplayed()));
 
@@ -195,9 +182,6 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
 
         calendarEventHour.add(Calendar.HOUR_OF_DAY, 1);
         int hour = calendarEventHour.get(Calendar.HOUR_OF_DAY);
-
-        int startHoursOfDay = hour;
-        int endHoursOfDay   = hour;
 
         int startMinute = 10;
         int endMinute = 15;
@@ -212,7 +196,7 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
 
         Submission submission = new Submission.Builder().name("test name").location("test location").description("").keywords("test keywords").build();
 
-        fill(dayOfMonth,monthOfYear,year,startHoursOfDay, endHoursOfDay,startMinute,endMinute, submission);
+        fill(dayOfMonth,monthOfYear,year, hour, hour,startMinute,endMinute, submission);
 
         onView(withText("No description")).inRoot(withDecorView(not(is(getActivity().getWindow().getDecorView())))).check(matches(isDisplayed()));
 
@@ -271,10 +255,8 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
 
     public void testMandatoryFieldsNotCompletedNoStartTimeSet(){
 
-        int startHoursOfDay = 20;
         int endHoursOfDay   = 20;
 
-        int startMinute = 10;
         int endMinute = 15;
 
         Submission submission = new Submission.Builder().name("test name").location("location").description("test description").keywords("test keywords").build();
@@ -316,10 +298,8 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
     public void testMandatoryFieldsNotCompletedNoEndTimeSet(){
 
         int startHoursOfDay = 20;
-        int endHoursOfDay   = 20;
 
         int startMinute = 10;
-        int endMinute = 15;
 
 
         Submission submission = new Submission.Builder().name("test name").location("location").description("test description").keywords("test keywords").build();
@@ -415,9 +395,6 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
         calendarEventHour.add(Calendar.HOUR_OF_DAY, 1);
         int hour = calendarEventHour.get(Calendar.HOUR_OF_DAY);
 
-        int startHoursOfDay = hour;
-        int endHoursOfDay   = hour;
-
         int startMinute = 10;
         int endMinute = 15;
 
@@ -431,7 +408,7 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
 
         Submission submission = new Submission.Builder().name("test name").location("location").description("test description").keywords("").build();
 
-        fill(dayOfMonth,monthOfYear,year,startHoursOfDay, endHoursOfDay,startMinute,endMinute, submission);
+        fill(dayOfMonth,monthOfYear,year, hour, hour,startMinute,endMinute, submission);
 
         onView(withText("No keywords")).inRoot(withDecorView(not(is(getActivity().getWindow().getDecorView())))).check(matches(isDisplayed()));
 
@@ -451,12 +428,11 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
         int hour = calendarEventHour.get(Calendar.HOUR_OF_DAY);
 
         int startHoursOfDay = currentTime.get(Calendar.HOUR_OF_DAY);
-        int endHoursOfDay   = hour;
 
         int startMinute = 10;
         int endMinute = 15;
 
-        fill(dayOfMonth,monthOfYear,year,startHoursOfDay, endHoursOfDay,startMinute,endMinute, submission);
+        fill(dayOfMonth,monthOfYear,year,startHoursOfDay, hour,startMinute,endMinute, submission);
         onView(withText("Event has already passed")).inRoot(withDecorView(not(is(getActivity().getWindow().getDecorView())))).check(matches(isDisplayed()));
 
         //means we stayed on the same page
@@ -469,13 +445,10 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
         calendarEventHour.add(Calendar.HOUR_OF_DAY, 1);
         int hour = calendarEventHour.get(Calendar.HOUR_OF_DAY);
 
-        int startHoursOfDay = hour;
-        int endHoursOfDay   = hour;
-
         int startMinute = 10;
         int endMinute = 15;
 
-        fill(dayOfMonth,monthOfYear,year,startHoursOfDay, endHoursOfDay,endMinute,startMinute, submission);
+        fill(dayOfMonth,monthOfYear,year, hour, hour,endMinute,startMinute, submission);
 
         //means we stayed on the same page
         onView(withText("Event has already passed")).inRoot(withDecorView(not(is(getActivity().getWindow().getDecorView())))).check(matches(isDisplayed()));
