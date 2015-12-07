@@ -25,7 +25,10 @@ handlers:
 
 - url: /delete/submission
   script: delete_submission.app
-  
+
+- url: /delete/category
+  script: delete_category.app
+
 - url: /vote
   script: submit_vote.app
 
