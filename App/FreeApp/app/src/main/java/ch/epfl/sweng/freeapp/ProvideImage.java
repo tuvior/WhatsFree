@@ -7,18 +7,19 @@ import android.graphics.Bitmap;
  */
 public class ProvideImage {
 
-    private static   Bitmap bitmap;
+    private static Bitmap bitmap;
 
-    public static void setImage(Bitmap that){
-        bitmap = that;
-
-    }
-    public static Bitmap getImage(){
-        if(bitmap == null ){
+    public static Bitmap getImage() {
+        if (bitmap == null) {
             throw new NullPointerException("empty image ");
         }
 
         return bitmap;
+    }
+
+    public static void setImage(Bitmap that) {
+        bitmap = that;
+
     }
 
 }

@@ -1,15 +1,10 @@
 package ch.epfl.sweng.freeapp;
 
-import android.provider.ContactsContract;
-import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.ViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.test.UiThreadTest;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.widget.EditText;
-import android.widget.Toast;
-
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -37,23 +32,18 @@ import static junit.framework.Assert.assertTrue;
 @LargeTest
 public class RegistrationActivityLocalTest {
 
+    private final int LONG_FIELD = 300;
     @Rule
     public ActivityTestRule<RegistrationActivity> mActivityRule = new ActivityTestRule<>(
             RegistrationActivity.class);
-
     private RegistrationActivity activity;
-
     private EditText usernameView;
     private EditText emailView;
     private EditText passwordView;
     private EditText confirmPasswordView;
 
-    private final int LONG_FIELD = 300;
-
-
-
     @Before
-    public void setup(){
+    public void setup() {
         activity = mActivityRule.getActivity();
 
         usernameView = (EditText) activity.findViewById(R.id.username);
@@ -63,7 +53,7 @@ public class RegistrationActivityLocalTest {
     }
 
     @Test
-    public void testPrecondition(){
+    public void testPrecondition() {
         assertNotNull(activity);
         assertNotNull(usernameView);
         assertNotNull(emailView);
@@ -72,14 +62,14 @@ public class RegistrationActivityLocalTest {
     }
 
     @Test
-    public void testShortUsernameNotAccepted(){
+    public void testShortUsernameNotAccepted() {
         int max = activity.USERNAME_MIN_LENGTH - 1;
         int min = 1;
         assertFalse(activity.isUsernameValid(getRandomGeneratedString(min, max)));
     }
 
     @Test
-    public void testShortPasswordNotAccepted(){
+    public void testShortPasswordNotAccepted() {
         int maxLength = 7;
         int minLength = 1;
         assertFalse(activity.isPasswordValid(getRandomGeneratedString(minLength, maxLength)));
@@ -90,14 +80,14 @@ public class RegistrationActivityLocalTest {
      * are not identical.
      */
     @Test
-    public void testInvalidPasswordFieldsResetOnSignUpCLicked(){
+    public void testInvalidPasswordFieldsResetOnSignUpCLicked() {
         String password = "";
         String confirmPassword = "";
         do {
             // There is a VERY low probability for both generated passwords to be equals
             password = getRandomGeneratedString(1, 7);
             confirmPassword = getRandomGeneratedString(1, 7);
-        }while(password.equals(confirmPassword));
+        } while (password.equals(confirmPassword));
 
         onView(withId(R.id.password)).perform(typeText(password));
         onView(withId(R.id.confirmPassword)).perform(typeText(confirmPassword));
@@ -108,7 +98,7 @@ public class RegistrationActivityLocalTest {
     }
 
     @Test
-    public void testInvalidUsernameFieldResetOnSignUpClicked(){
+    public void testInvalidUsernameFieldResetOnSignUpClicked() {
         String username = getRandomGeneratedString(1, 5).concat(" .");
 
         onView(withId(R.id.username)).perform(typeText(username));
@@ -118,7 +108,7 @@ public class RegistrationActivityLocalTest {
     }
 
     @Test
-    public void testInvalidEmailFieldResetOnSignUpClicked(){
+    public void testInvalidEmailFieldResetOnSignUpClicked() {
         String validEmail = getRandomValidEmailAddress(15, activity.EMAIL_MAX_LENGTH); // valid email
         String regex = "[@]";
         String replacement = "xxx";
@@ -315,7 +305,7 @@ public class RegistrationActivityLocalTest {
     */
 
     @Test
-    public void testPasswordInvalidIfNoSpecialCharacter(){
+    public void testPasswordInvalidIfNoSpecialCharacter() {
         String password = getRandomGeneratedString(activity.PASSWORD_MIN_LENGTH, activity.PASSWORD_MAX_LENGTH);
         String specRegex = "[^(a-z)^(A-Z)^(0-9)]";
         String replacement = "a";
@@ -325,7 +315,7 @@ public class RegistrationActivityLocalTest {
     }
 
     @Test
-    public void testPasswordInvalidIfNoNumericalCharacter(){
+    public void testPasswordInvalidIfNoNumericalCharacter() {
         String password = getRandomGeneratedString(activity.PASSWORD_MIN_LENGTH, activity.PASSWORD_MAX_LENGTH);
         String digitRegex = "[0-9]";
         String replacement = "a";
@@ -335,7 +325,7 @@ public class RegistrationActivityLocalTest {
     }
 
     @Test
-    public void testPasswordInvalidIfNoUppercaseLetter(){
+    public void testPasswordInvalidIfNoUppercaseLetter() {
         String password = getRandomGeneratedString(activity.PASSWORD_MIN_LENGTH, activity.PASSWORD_MAX_LENGTH);
         String uppercaseRegex = "[A-Z]";
         String replacement = "a";
@@ -345,7 +335,7 @@ public class RegistrationActivityLocalTest {
     }
 
     @Test
-    public void testPasswordInvalidIfWhiteSpaceCharacter(){
+    public void testPasswordInvalidIfWhiteSpaceCharacter() {
         String password = getRandomGeneratedString(activity.PASSWORD_MIN_LENGTH, activity.PASSWORD_MAX_LENGTH);
 
         Random random = new Random();
@@ -357,7 +347,7 @@ public class RegistrationActivityLocalTest {
     }
 
     @Test
-    public void testUsernameInvalidIfWhiteSpaceCharacter(){
+    public void testUsernameInvalidIfWhiteSpaceCharacter() {
         String username = getRandomGeneratedString(activity.USERNAME_MIN_LENGTH, activity.USERNAME_MAX_LENGTH);
 
         username = username.concat(" ").concat(" Hej");
@@ -366,7 +356,7 @@ public class RegistrationActivityLocalTest {
     }
 
     @Test
-    public void testEmailInvalidIfWhiteSpaceCharacter(){
+    public void testEmailInvalidIfWhiteSpaceCharacter() {
         String email = getRandomValidEmailAddress(15, activity.EMAIL_MAX_LENGTH);
 
         Random random = new Random();
@@ -378,7 +368,7 @@ public class RegistrationActivityLocalTest {
     }
 
     @Test
-    public void testEmailInvalidIfNoAtCharacter(){
+    public void testEmailInvalidIfNoAtCharacter() {
         String email = getRandomValidEmailAddress(15, activity.EMAIL_MAX_LENGTH);
         String regex = "[@]";
         String replacement = "a";
@@ -388,7 +378,7 @@ public class RegistrationActivityLocalTest {
     }
 
     @Test
-    public void testEmailInvalidIfNoDotCharacter(){
+    public void testEmailInvalidIfNoDotCharacter() {
         String email = getRandomValidEmailAddress(15, activity.EMAIL_MAX_LENGTH);
         String regex = "[\\.]";
         String replacement = "a";
@@ -398,19 +388,19 @@ public class RegistrationActivityLocalTest {
     }
 
     @Test
-    public void testUsernameInvalidIfTooManyCharacter(){
+    public void testUsernameInvalidIfTooManyCharacter() {
         String username = getRandomGeneratedString(activity.USERNAME_MAX_LENGTH + 1, LONG_FIELD);
         assertFalse(activity.isUsernameValid(username));
     }
 
     @Test
-    public void testEmailInvalidIfTooManyCharacter(){
+    public void testEmailInvalidIfTooManyCharacter() {
         String email = getRandomValidEmailAddress(activity.EMAIL_MAX_LENGTH + 1, LONG_FIELD);
         assertFalse(activity.isEmailValid(email));
     }
 
     @Test
-    public void testPasswordInvalidIfTooManyCharacter(){
+    public void testPasswordInvalidIfTooManyCharacter() {
         String password = getRandomGeneratedString(activity.PASSWORD_MAX_LENGTH + 1, LONG_FIELD);
         assertFalse(activity.isPasswordValid(password));
     }
@@ -437,11 +427,12 @@ public class RegistrationActivityLocalTest {
     /*
      * Generate randomly a string whose length is at most 300(LONG_FIELD) characters
      */
-    private String getRandomGeneratedString(int minLength, int maxLength){    	String gen = null;
+    private String getRandomGeneratedString(int minLength, int maxLength) {
+        String gen = null;
         Random random = new Random();
         String uuid = UUID.randomUUID().toString();
 
-        if(minLength <= 0 || maxLength <= 0 || maxLength < minLength){
+        if (minLength <= 0 || maxLength <= 0 || maxLength < minLength) {
             throw new IllegalArgumentException();
         }
 
@@ -450,15 +441,15 @@ public class RegistrationActivityLocalTest {
             uuid = uuid.concat(UUID.randomUUID().toString());
         }
 
-        if(LONG_FIELD < maxLength){
+        if (LONG_FIELD < maxLength) {
             maxLength = LONG_FIELD;
         }
-        if(LONG_FIELD < minLength){
+        if (LONG_FIELD < minLength) {
             minLength = LONG_FIELD;
         }
 
         if (1 < maxLength && maxLength <= uuid.length() &&
-                1 <= minLength && minLength <= uuid.length()){
+                1 <= minLength && minLength <= uuid.length()) {
 
             int sMax = uuid.length() - maxLength;
 
@@ -480,11 +471,11 @@ public class RegistrationActivityLocalTest {
      * minLength and maxLength represent the username part of the email address
      * the username part is at most 300(LONG_FIELD) character
      */
-    private String getRandomValidEmailAddress(int minLength, int maxLength){
+    private String getRandomValidEmailAddress(int minLength, int maxLength) {
         Random random = new Random();
         int max = EmailDomain.domains.size();
 
-        if(minLength <= 0 || maxLength <= 0 || maxLength < minLength){
+        if (minLength <= 0 || maxLength <= 0 || maxLength < minLength) {
             throw new IllegalArgumentException();
         }
 

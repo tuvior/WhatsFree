@@ -34,7 +34,7 @@ public class CategoryDisplaySubmissionsActivity extends ListActivity {
         Intent intent = getIntent();
         String category = intent.getStringExtra(CategoriesFragment.CATEGORY_MESSAGE);
 
-        if(BuildConfig.DEBUG && (!SubmissionCategory.contains(category))){
+        if (BuildConfig.DEBUG && (!SubmissionCategory.contains(category))) {
             throw new AssertionError();
         }
 
@@ -52,7 +52,6 @@ public class CategoryDisplaySubmissionsActivity extends ListActivity {
     }
 
     /**
-     *
      * @param l
      * @param v
      * @param position
@@ -60,22 +59,46 @@ public class CategoryDisplaySubmissionsActivity extends ListActivity {
      */
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        Submission submission = (Submission)getListAdapter().getItem(position);
+        Submission submission = (Submission) getListAdapter().getItem(position);
         String submissionId = submission.getId();
         Intent intent = new Intent(v.getContext(), DisplaySubmissionActivity.class);
         intent.putExtra(MainScreenActivity.SUBMISSION_MESSAGE, submissionId);
         startActivity(intent);
     }
 
+    public ArrayList<Submission> sortSubmissions(ArrayList<Submission> submissions) {
+
+        Collections.sort(submissions, new Comparator<Submission>() {
+            @Override
+            public int compare(Submission lhs, Submission rhs) {
+                return lhs.getCategory().toString().compareTo(rhs.getCategory().toString());
+            }
+        });
+
+        return submissions;
+    }
+
+    /*
+    Just so far sorts by name
+     */
+
+    private void displayToast(String message) {
+        Context context = getApplicationContext();
+        CharSequence text = message;
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
+
+        toast.show();
+    }
 
     private class DownloadWebpageTask extends AsyncTask<SubmissionCategory, Void, ArrayList<Submission>> {
 
         @Override
-        protected ArrayList<Submission> doInBackground(SubmissionCategory ... category) {
+        protected ArrayList<Submission> doInBackground(SubmissionCategory... category) {
             ArrayList<Submission> submissions = null;
             CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
 
-            if(BuildConfig.DEBUG && (category.length != 1)){
+            if (BuildConfig.DEBUG && (category.length != 1)) {
                 throw new AssertionError();
             }
 
@@ -94,11 +117,11 @@ public class CategoryDisplaySubmissionsActivity extends ListActivity {
         @Override
         protected void onPostExecute(ArrayList<Submission> submissions) {
 
-            if(submissions == null){
+            if (submissions == null || submissions.isEmpty()) {
 
                 displayToast("No submissions in this category yet");
 
-            }else {
+            } else {
 
                 SubmissionListAdapter adapter = new SubmissionListAdapter(getApplicationContext(), R.layout.item_list_row, submissions);
                 setListAdapter(adapter);
@@ -107,33 +130,6 @@ public class CategoryDisplaySubmissionsActivity extends ListActivity {
         }
 
     }
-
-    /*
-    Just so far sorts by name
-     */
-
-    public ArrayList<Submission> sortSubmissions(ArrayList<Submission> submissions){
-
-        Collections.sort(submissions, new Comparator<Submission>() {
-            @Override
-            public int compare(Submission lhs, Submission rhs) {
-                return lhs.getCategory().toString().compareTo(rhs.getCategory().toString());
-            }
-        });
-
-        return submissions;
-    }
-
-
-    private void displayToast(String message){
-        Context context = getApplicationContext();
-        CharSequence text = message;
-        int duration = Toast.LENGTH_SHORT;
-        Toast toast = Toast.makeText(context, text, duration);
-
-        toast.show();
-    }
-
 
 
 }

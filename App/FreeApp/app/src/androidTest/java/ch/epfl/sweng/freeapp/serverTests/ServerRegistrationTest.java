@@ -20,10 +20,9 @@ import static junit.framework.Assert.assertEquals;
 
 public class ServerRegistrationTest {
     private static final String SERVER_URL = "http://sweng-wiinotfit.appspot.com";
-    private NetworkProvider networkProvider = new DefaultNetworkProvider();
     private final static int HTTP_SUCCESS_START = 200;
     private final static int HTTP_SUCCESS_END = 299;
-
+    private NetworkProvider networkProvider = new DefaultNetworkProvider();
 
     private String fetchContent(HttpURLConnection conn) throws IOException {
         StringBuilder out = new StringBuilder();
@@ -89,7 +88,7 @@ public class ServerRegistrationTest {
     @Test
     public void testRegisterServerRespondsWithInvalidStatusIfOnlyPassword() throws CommunicationLayerException, JSONException {
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/register?password=password", "GET");
-        assertEquals("invalid",getStatusFromJson(serverResponse));
+        assertEquals("invalid", getStatusFromJson(serverResponse));
     }
 
 
@@ -115,7 +114,7 @@ public class ServerRegistrationTest {
         //We create a user with the same email as the next one, in order to have the same email in the database
         establishConnectionAndReturnJsonResponse("/register?user=test1&password=password&email=failtest@email.com", "GET");
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/register?user=test2&password=test&email=failtest@email.com", "GET");
-        assertEquals("failure",getStatusFromJson(serverResponse));
+        assertEquals("failure", getStatusFromJson(serverResponse));
         assertEquals("email", getReasonFromJson(serverResponse));
 
         //Delete user so that it is no more in db
