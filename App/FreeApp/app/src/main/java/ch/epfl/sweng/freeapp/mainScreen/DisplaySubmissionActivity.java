@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -31,20 +30,23 @@ import ch.epfl.sweng.freeapp.communication.ResponseStatus;
 
 public class DisplaySubmissionActivity extends AppCompatActivity {
 
-    private int likes;
-    private int dislikes;
-    private boolean dislikedClicked = false;
-    private boolean likedClicked = false;
+
+
 
 
     private Submission submissionDisplayed;
-
     //useful for testing
     private DefaultCommunicationLayer communicationLayer = ProvideCommunicationLayer.getCommunicationLayer();
-    private int defaultColor = Color.LTGRAY;
+
 
     private ImageButton likeButton;
     private ImageButton dislikeButton;
+
+    private int defaultColor = android.R.color.transparent;
+
+    private boolean likedClicked = false;
+    private boolean dislikedClicked = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +55,14 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
 
         this.likeButton = (ImageButton) findViewById(R.id.like);
         this.dislikeButton = (ImageButton) findViewById(R.id.dislike);
-        // this.likeButton.setColorFilter(defaultColor);
-        //this.dislikeButton.setColorFilter(defaultColor);
+
+
+        likeButton.setBackgroundResource(defaultColor);
+        dislikeButton.setBackgroundResource(defaultColor);
+
+
+        // this.likeButton.setColorFilter(DEFAULT_COLOR);
+        //this.dislikeButton.setColorFilter(DEFAULT_COLOR);
 
 
         // Get the message from the intent
@@ -103,43 +111,49 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
         //Easiest when inside activity, you can return 0  1 -1
         //When starting activity, you can only send 1 -1 and based on the server response//
 
-        Vote vote = Vote.DISLIKE;
+        if(submissionDisplayed != null) {
+
+            Vote vote = Vote.DISLIKE;
 
 
-        if (dislikedClicked) {
+            if (dislikedClicked) {
 
 
-            vote = Vote.NEUTRAL;
+                vote = Vote.NEUTRAL;
+            }
+
+
+            Vote buttonClicked = Vote.DISLIKE;
+
+            SubmissionVoteWrapper submissionVoteWrapper = new SubmissionVoteWrapper();
+            submissionVoteWrapper.submission = submissionDisplayed;
+            submissionVoteWrapper.voteToServer = vote;
+
+            new GetVoteTask(this, buttonClicked).execute(submissionVoteWrapper);
+
+            dislikedClicked = true;
         }
-
-
-        Vote buttonClicked = Vote.DISLIKE;
-
-        SubmissionVoteWrapper submissionVoteWrapper = new SubmissionVoteWrapper();
-        submissionVoteWrapper.submission = submissionDisplayed;
-        submissionVoteWrapper.voteToServer = vote;
-
-        new GetVoteTask(this, buttonClicked).execute(submissionVoteWrapper);
-
-        dislikedClicked = true;
     }
 
     public void likeButtonOnClick(View view) {
-        Vote vote = Vote.LIKE;
 
-        if (likedClicked) {
-            vote = Vote.NEUTRAL;
+        if(submissionDisplayed != null) {
+            Vote vote = Vote.LIKE;
+
+            if (likedClicked) {
+                vote = Vote.NEUTRAL;
+            }
+
+            Vote buttonClicked = Vote.LIKE;
+
+            SubmissionVoteWrapper submissionVoteWrapper = new SubmissionVoteWrapper();
+            submissionVoteWrapper.submission = submissionDisplayed;
+            submissionVoteWrapper.voteToServer = vote;
+
+            new GetVoteTask(this, buttonClicked).execute(submissionVoteWrapper);
+
+
         }
-
-        Vote buttonClicked = Vote.LIKE;
-
-        SubmissionVoteWrapper submissionVoteWrapper = new SubmissionVoteWrapper();
-        submissionVoteWrapper.submission = submissionDisplayed;
-        submissionVoteWrapper.voteToServer = vote;
-
-        new GetVoteTask(this, buttonClicked).execute(submissionVoteWrapper);
-
-        likedClicked = true;
 
 
     }
@@ -203,51 +217,81 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
                 Toast.makeText(context, "Problem from the server side", Toast.LENGTH_SHORT).show();
             } else if (status == ResponseStatus.OK) {
                 if (typeVote == Vote.LIKE) {
+                    if (dislikedClicked) {  // if i clicked previously the dislike button
+                        dislikedClicked = false;
+                        //dislikeButton.setBackgroundResource(defaultColor);
 
-                    submissionDisplayed.setLikes(submissionDisplayed.getLikes() + 1);
-                    TextView view = (TextView) (findViewById(R.id.numberOfLikes));
-                    view.setText(Integer.toString(submissionDisplayed.getLikes()));
-                    likeButton.setColorFilter(Color.rgb(135, 206, 250));  //Light blue
+                        /**
+                         * Set dislike Button to default color; --done
+                         */
+
+                    dislikeButton.setBackgroundResource(defaultColor);
+                    }
+
+                    /**
+                     * Set the liked button to blue; --done
+                     * Set likedButtonClicked = true; --done
+                     */
+
+                    likedClicked = true;
+                    likeButton.setBackgroundResource(android.R.color.holo_blue_light);
 
 
                 } else if (typeVote == Vote.DISLIKE) {
 
-                    submissionDisplayed.setDislikes(submissionDisplayed.getDislikes() + 1);
-                    TextView view = (TextView) (findViewById(R.id.numberOfDislikes));
-                    view.setText(Integer.toString(submissionDisplayed.getDislikes()));
-                    dislikeButton.setColorFilter(Color.rgb(255, 0, 0));  // Red
+                    if (likedClicked) {  // if i clicked previously the like button
+                        likedClicked = false;
+                        /**
+                         * Set liked button to default color --done
+                         */
 
-                } else {
-                    //Case when neutral ,basically we want to undo or action.
-
-                    if (buttonClicked == Vote.LIKE) {
-
-                        submissionDisplayed.setLikes(submissionDisplayed.getLikes() - 1);
-                        TextView view = (TextView) (findViewById(R.id.numberOfLikes));
-                        view.setText(Integer.toString(submissionDisplayed.getLikes()));
-
-                        likeButton.setColorFilter(defaultColor);
-                    } else {
-
-                        submissionDisplayed.setLikes(submissionDisplayed.getDislikes() - 1);
-                        TextView view = (TextView) (findViewById(R.id.numberOfDislikes));
-                        view.setText(Integer.toString(submissionDisplayed.getDislikes()));
-                        dislikeButton.setColorFilter(defaultColor);
+                    likeButton.setBackgroundResource(defaultColor);
 
                     }
 
-                }
-            } else {
+                    /**
+                     * Set Disliked button color to red   --done
+                     * Set dislikedButtonClicked  = true  --done
+                     */
 
-                //Response status will be some failure indicating that it already exists
-                if (buttonClicked == Vote.LIKE) {
+                    dislikedClicked = true;
+                    dislikeButton.setBackgroundResource(android.R.color.holo_red_light);
 
-                    likeButton.setColorFilter(Color.rgb(135, 206, 250));  //Light blue
+
+
                 } else {
-                    dislikeButton.setColorFilter(Color.rgb(255, 0, 0)); //Red
+
+                    assert (typeVote == Vote.NEUTRAL);  //Undo action
+                    //Case when neutral ,basically we want to undo or action, we have already clicked before.
 
 
+                    if (buttonClicked == Vote.LIKE) {
+
+
+                        /**
+                         * Set the likeButtonClicked = false --done
+                         * set it's color to its default color as before --done
+                         */
+
+                      likedClicked = false;
+                      likeButton.setBackgroundResource(defaultColor);
+
+                    } else {
+
+                        /**
+                         * Set the dislikedButtonClicked = false --done
+                         * set it's color to its default color as before; --done
+                         */
+
+                        dislikedClicked = false;
+                        dislikeButton.setBackgroundResource(defaultColor);
+
+                    }
                 }
+
+            }else {
+
+               Toast.makeText(context, "Server problem", Toast.LENGTH_SHORT);
 
             }
         }
@@ -280,6 +324,8 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
 
             } catch (CommunicationLayerException e) {
                 e.printStackTrace();
+
+
             }
 
 
@@ -293,6 +339,8 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
 
             if (submission != null) {
 
+                /*
+
                 likes = submission.getLikes();
                 dislikes = submission.getDislikes();
 
@@ -301,12 +349,34 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
 
                 numberOfLikes.setText(Integer.toString(likes));
                 numberOfDislikes.setText(Integer.toString(dislikes));
-
+               */
                 TextView nameTextView = (TextView) findViewById(R.id.submissionName);
                 nameTextView.setText(submission.getName());
 
                 TextView descriptionTextView = (TextView) findViewById(R.id.submissionDescription);
                 descriptionTextView.setText(submission.getDescription());
+
+
+
+                Vote vote = submission.getVote();
+
+                if( vote  == Vote.LIKE){
+
+                    likeButton.setBackgroundResource(android.R.color.holo_blue_light);
+                    likedClicked = true;
+
+                }else if(vote == Vote.NEUTRAL){
+
+                     likedClicked = false;
+                     dislikedClicked = false;
+
+                }else{
+                    //dislike
+
+                    dislikeButton.setBackgroundResource(android.R.color.holo_red_light);
+                    dislikedClicked = true;
+                }
+
 
                 Bitmap image = decodeImage(submission.getImage());
 

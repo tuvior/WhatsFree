@@ -40,7 +40,7 @@ public class SubmissionTest {
         builder.submitted(calendarSubmitted);
         builder.startOfEvent(calendarStartOfEvent);
         builder.endOfEvent(calendarEndOfEvent);
-        builder.likes(likes);
+
 
         Submission submission = builder.build();
         checkSubmissionFields(submission);
@@ -49,7 +49,6 @@ public class SubmissionTest {
         assert(submission.getSubmitted() == calendarSubmitted.getTime().getTime());
         assert(submission.getStartOfEvent() == calendarStartOfEvent.getTime().getTime());
         assert(submission.getEndOfEvent() == calendarEndOfEvent.getTime().getTime());
-        assert(submission.getLikes() == likes);
 
     }
 

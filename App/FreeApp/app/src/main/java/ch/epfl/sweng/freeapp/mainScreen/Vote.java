@@ -14,8 +14,19 @@ public enum Vote {
 
     }
 
-    public int getValue() {
+    public  int getValue() {
         return value;
+    }
+
+    public static  Vote value(String vote){
+        if(vote.equals("0")){
+            return NEUTRAL;
+        }else if( vote.equals("1") ){
+            return LIKE;
+        }else{
+            assert(vote.equals("-1"));
+            return DISLIKE;
+        }
     }
 
 }
