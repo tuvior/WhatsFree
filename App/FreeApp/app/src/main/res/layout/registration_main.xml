@@ -1,12 +1,11 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <LinearLayout
         android:id="@+id/LinearLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="@dimen/activity_vertical_margin"
@@ -20,11 +19,9 @@
             android:id="@+id/username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
             android:ems="10"
-            android:hint="Username"
+            android:hint="@string/username_hint"
             android:inputType="textPersonName" />
 
 
@@ -32,11 +29,9 @@
             android:id="@+id/email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/username"
-            android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
             android:ems="10"
-            android:hint="Email"
+            android:hint="@string/email"
 
             android:inputType="textEmailAddress" />
 
@@ -44,11 +39,9 @@
             android:id="@+id/password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
             android:layout_marginTop="10dp"
             android:ems="10"
-            android:hint="Password"
+            android:hint="@string/password_hint"
 
             android:inputType="textPassword" />
 
@@ -57,11 +50,9 @@
             android:id="@+id/confirmPassword"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/password"
-            android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
             android:ems="10"
-            android:hint="Confirm password"
+            android:hint="@string/confirm_password_hint"
 
             android:inputType="textPassword" />
 
@@ -70,14 +61,12 @@
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
             android:layout_marginBottom="55dp"
             android:layout_marginTop="40dp"
             android:ems="25"
             android:onClick="onClick"
 
-            android:text="Sign up" />
+            android:text="@string/sign_up" />
 
 
     </LinearLayout>
