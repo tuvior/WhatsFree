@@ -292,7 +292,7 @@ public class CommunicationLayer implements DefaultCommunicationLayer {
 
         try {
             String content = fetchStringFrom(SERVER_URL + "/retrieve?cookie=" + cookieSession + "&flag=1&id=" + id);
-            System.out.println(content);
+
             JSONObject jsonSubmission = new JSONObject(content);
 
             //Retrieve specific submission fields
@@ -310,8 +310,13 @@ public class CommunicationLayer implements DefaultCommunicationLayer {
             String image = jsonSubmission.getString("image");
             String location = jsonSubmission.getString("location");
             String name = jsonSubmission.getString("name");
+            String retrievedVote = jsonSubmission.getString("vote");
+
+            Vote vote = Vote.value(retrievedVote);
+
 
             submission = new Submission(name, description, submissionCategory, location, image, id);
+            submission.setVote(vote);
 
         } catch (IOException | JSONException e) {
             throw new CommunicationLayerException();
@@ -319,6 +324,7 @@ public class CommunicationLayer implements DefaultCommunicationLayer {
 
         return submission;
     }
+
 
 
     @Override

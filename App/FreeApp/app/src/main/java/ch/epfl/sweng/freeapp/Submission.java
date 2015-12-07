@@ -4,6 +4,8 @@ package ch.epfl.sweng.freeapp;
 import java.util.Calendar;
 import java.util.Date;
 
+import ch.epfl.sweng.freeapp.mainScreen.Vote;
+
 /**
  * Created by francisdamachi on 14/11/15.
  */
@@ -26,6 +28,7 @@ public class Submission {
     private double latitude;
     private double longitude;
     private int rating;
+    private Vote vote;
 
     public Submission(String name, String description, SubmissionCategory category, String location, String image, String id) {
         this.name = name;
@@ -132,6 +135,13 @@ public class Submission {
 
     public String getId() {
         return id;
+    }
+
+    public Vote getVote(){
+        return this.vote;
+    }
+    public void setVote (Vote vote){
+        this.vote  = vote;
     }
 
     public static class Builder {
