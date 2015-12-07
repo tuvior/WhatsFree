@@ -51,9 +51,9 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_submission);
 
-        this.likeButton = (ImageButton)findViewById(R.id.like);
-        this.dislikeButton = (ImageButton)findViewById(R.id.dislike);
-       // this.likeButton.setColorFilter(defaultColor);
+        this.likeButton = (ImageButton) findViewById(R.id.like);
+        this.dislikeButton = (ImageButton) findViewById(R.id.dislike);
+        // this.likeButton.setColorFilter(defaultColor);
         //this.dislikeButton.setColorFilter(defaultColor);
 
 
@@ -105,10 +105,12 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
 
         Vote vote = Vote.DISLIKE;
 
-        if(dislikedClicked){
+
+        if (dislikedClicked) {
+
+
             vote = Vote.NEUTRAL;
         }
-
 
 
         Vote buttonClicked = Vote.DISLIKE;
@@ -117,7 +119,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
         submissionVoteWrapper.submission = submissionDisplayed;
         submissionVoteWrapper.voteToServer = vote;
 
-        new GetVoteTask(this,buttonClicked).execute(submissionVoteWrapper);
+        new GetVoteTask(this, buttonClicked).execute(submissionVoteWrapper);
 
         dislikedClicked = true;
     }
@@ -125,7 +127,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
     public void likeButtonOnClick(View view) {
         Vote vote = Vote.LIKE;
 
-        if(likedClicked){
+        if (likedClicked) {
             vote = Vote.NEUTRAL;
         }
 
@@ -135,29 +137,48 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
         submissionVoteWrapper.submission = submissionDisplayed;
         submissionVoteWrapper.voteToServer = vote;
 
-        new GetVoteTask(this,buttonClicked).execute(submissionVoteWrapper);
+        new GetVoteTask(this, buttonClicked).execute(submissionVoteWrapper);
 
         likedClicked = true;
 
 
     }
 
+    private Bitmap decodeImage(String input) {
+        try {
+            byte[] decodedByte = Base64.decode(input, 0);
+            return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
+        } catch (IllegalArgumentException e) {
 
+            e.printStackTrace();
+            return null;
 
-    //class used to pass Multiple arguments in Async task
-    private class SubmissionVoteWrapper{
-        public  Submission submission;
-        public  Vote voteToServer;
+        }
     }
 
-    private class GetVoteTask extends  AsyncTask<SubmissionVoteWrapper,Void,ResponseStatus>{
+    private void displayToast() {
+        Context context = getApplicationContext();
+        CharSequence text = "Error retrieving submission.";
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
+
+        toast.show();
+    }
+
+    //class used to pass Multiple arguments in Async task
+    private class SubmissionVoteWrapper {
+        public Submission submission;
+        public Vote voteToServer;
+    }
+
+    private class GetVoteTask extends AsyncTask<SubmissionVoteWrapper, Void, ResponseStatus> {
 
         private Context context;
         private Vote typeVote;
         private Vote buttonClicked;
 
 
-        public GetVoteTask(Context context, Vote buttonClicked){
+        public GetVoteTask(Context context, Vote buttonClicked) {
             this.context = context;
             this.buttonClicked = buttonClicked;
         }
@@ -166,10 +187,10 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
         protected ResponseStatus doInBackground(SubmissionVoteWrapper... params) {
             typeVote = params[0].voteToServer;
             try {
-                return  communicationLayer.sendVote(params[0].submission,params[0].voteToServer);
+                return communicationLayer.sendVote(params[0].submission, params[0].voteToServer);
             } catch (CommunicationLayerException e) {
                 e.printStackTrace();
-                return  null;
+                return null;
             }
         }
 
@@ -177,52 +198,53 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
         protected void onPostExecute(ResponseStatus status) {
 
 
-            if(status == null ){
+            if (status == null) {
 
-                Toast.makeText(context,"Problem from the server side", Toast.LENGTH_SHORT ).show();
-            }else if (status == ResponseStatus.OK){
-                if(typeVote == Vote.LIKE){
+                Toast.makeText(context, "Problem from the server side", Toast.LENGTH_SHORT).show();
+            } else if (status == ResponseStatus.OK) {
+                if (typeVote == Vote.LIKE) {
 
                     submissionDisplayed.setLikes(submissionDisplayed.getLikes() + 1);
-                    TextView view = (TextView)(findViewById(R.id.numberOfLikes));
+                    TextView view = (TextView) (findViewById(R.id.numberOfLikes));
                     view.setText(Integer.toString(submissionDisplayed.getLikes()));
-                    likeButton.setColorFilter(Color.rgb(135,206,250));  //Light blue
+                    likeButton.setColorFilter(Color.rgb(135, 206, 250));  //Light blue
 
 
-                }else if(typeVote == Vote.DISLIKE){
+                } else if (typeVote == Vote.DISLIKE) {
 
                     submissionDisplayed.setDislikes(submissionDisplayed.getDislikes() + 1);
-                    TextView view = (TextView)(findViewById(R.id.numberOfDislikes));
+                    TextView view = (TextView) (findViewById(R.id.numberOfDislikes));
                     view.setText(Integer.toString(submissionDisplayed.getDislikes()));
-                    dislikeButton.setColorFilter(Color.rgb(255,0,0));  // Red
+                    dislikeButton.setColorFilter(Color.rgb(255, 0, 0));  // Red
 
-                }else{
+                } else {
                     //Case when neutral ,basically we want to undo or action.
 
-                    if(buttonClicked == Vote.LIKE){
+                    if (buttonClicked == Vote.LIKE) {
 
-                        submissionDisplayed.setLikes(submissionDisplayed.getLikes()-1);
-                        TextView view = (TextView)(findViewById(R.id.numberOfLikes));
+                        submissionDisplayed.setLikes(submissionDisplayed.getLikes() - 1);
+                        TextView view = (TextView) (findViewById(R.id.numberOfLikes));
                         view.setText(Integer.toString(submissionDisplayed.getLikes()));
 
                         likeButton.setColorFilter(defaultColor);
-                    }else{
+                    } else {
 
-                        submissionDisplayed.setLikes(submissionDisplayed.getDislikes()-1);
-                        TextView view = (TextView)(findViewById(R.id.numberOfDislikes));
+                        submissionDisplayed.setLikes(submissionDisplayed.getDislikes() - 1);
+                        TextView view = (TextView) (findViewById(R.id.numberOfDislikes));
                         view.setText(Integer.toString(submissionDisplayed.getDislikes()));
                         dislikeButton.setColorFilter(defaultColor);
 
                     }
 
                 }
-            }else{
-                //Response status will be some failure indicating that it already exists
-                if(buttonClicked == Vote.LIKE){
+            } else {
 
-                    likeButton.setColorFilter(Color.rgb(135,206,250));  //Light blue
-                }else{
-                    dislikeButton.setColorFilter(Color.rgb(255,0,0)); //Red
+                //Response status will be some failure indicating that it already exists
+                if (buttonClicked == Vote.LIKE) {
+
+                    likeButton.setColorFilter(Color.rgb(135, 206, 250));  //Light blue
+                } else {
+                    dislikeButton.setColorFilter(Color.rgb(255, 0, 0)); //Red
 
 
                 }
@@ -231,13 +253,11 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
         }
     }
 
-
-
     private class DownloadWebPageTask extends AsyncTask<String, Void, Submission> {
 
         private Context context;
 
-        public DownloadWebPageTask(Context context){
+        public DownloadWebPageTask(Context context) {
 
             this.context = context;
         }
@@ -246,7 +266,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
         protected Submission doInBackground(String... submissionId) {
 
             //Only 1 id should be passed as parameter
-            if(BuildConfig.DEBUG && (submissionId.length != 1)){
+            if (BuildConfig.DEBUG && (submissionId.length != 1)) {
                 throw new AssertionError();
             }
             String id = submissionId[0];
@@ -256,11 +276,11 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
             try {
 
                 submission = communicationLayer.fetchSubmission(id);
+                submissionDisplayed = submission;
 
             } catch (CommunicationLayerException e) {
                 e.printStackTrace();
             }
-
 
 
             return submission;
@@ -297,7 +317,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
                     submissionImage.setImageBitmap(image);
                 }
 
-                if(submission.getLocation() != null) {
+                if (submission.getLocation() != null) {
                     TextView locationTextView = (TextView) findViewById(R.id.submissionLocation);
                     locationTextView.setText("Location: " + submission.getLocation());
                 }
@@ -308,26 +328,5 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
             }
         }
 
-    }
-
-    private Bitmap decodeImage(String input){
-        try {
-            byte[] decodedByte = Base64.decode(input, 0);
-            return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
-        }catch(IllegalArgumentException e){
-
-            e.printStackTrace();
-            return null;
-
-        }
-    }
-
-    private void displayToast(){
-        Context context = getApplicationContext();
-        CharSequence text = "Error retrieving submission.";
-        int duration = Toast.LENGTH_SHORT;
-        Toast toast = Toast.makeText(context, text, duration);
-
-        toast.show();
     }
 }

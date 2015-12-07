@@ -39,16 +39,16 @@ import ch.epfl.sweng.freeapp.ProvideImage;
 import ch.epfl.sweng.freeapp.R;
 import ch.epfl.sweng.freeapp.Submission;
 import ch.epfl.sweng.freeapp.SubmissionCategory;
-import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
 import ch.epfl.sweng.freeapp.communication.DefaultCommunicationLayer;
-import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
+import ch.epfl.sweng.freeapp.communication.ProvideCommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.ResponseStatus;
 
 public class CreateNewSubmissionActivity extends AppCompatActivity {
 
     private static final int MAX_CHARACTERS = 60;
     private static final int MIN_CHARACTERS = 4;
+    private int SCALE_FACTOR = 300;
 
     private Calendar currentCalendar = Calendar.getInstance();
     private Calendar startEventCalendar = Calendar.getInstance();
@@ -63,14 +63,14 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
     private int startYear  = currentCalendar.get(Calendar.YEAR);
     private int startMonth = currentCalendar.get(Calendar.MONTH);
     private int startDay   = currentCalendar.get(Calendar.DAY_OF_MONTH);
-    private DefaultCommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
-   /// private int DATE_DIALOG_ID = 0;
+    private DefaultCommunicationLayer communicationLayer = ProvideCommunicationLayer.getCommunicationLayer();
+    /// private int DATE_DIALOG_ID = 0;
 
     private final static int PICTURE_REQUEST = 200;
     private final static int IMAGE_GALLERY_REQUEST = 201;
     //private Uri imageUri;
-     private Bitmap bitmap;
-   // = BitmapFactory.decodeResource(InstrumentationRegistry.getTargetContext().getResources(), R.mipmap.ic_launcher);
+    private Bitmap bitmap;
+    // = BitmapFactory.decodeResource(InstrumentationRegistry.getTargetContext().getResources(), R.mipmap.ic_launcher);
 
     private EditText nameOfEvent ;
     private EditText eventDescription ;
@@ -91,7 +91,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
     private int DATE_DIALOG_ID = 0;
     private Submission.Builder submission = new Submission.Builder();
 
-    private ProvideImage image = new ProvideImage();
+    private ProvideImage provideImage = new ProvideImage();
 
 
 
@@ -151,14 +151,14 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
     public void onSetDateClicked(View view){
 
 
-         DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
+        DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 
 
 
 
-               // dateOfEvent.setYear(year); dateOfEvent.setMonth(monthOfYear);dateOfEvent.setDate(dayOfMonth);
+                // dateOfEvent.setYear(year); dateOfEvent.setMonth(monthOfYear);dateOfEvent.setDate(dayOfMonth);
                 startEventCalendar.set(Calendar.YEAR,year);
                 startEventCalendar.set(Calendar.MONTH,monthOfYear);
                 startEventCalendar.set(Calendar.DAY_OF_MONTH,dayOfMonth);
@@ -194,8 +194,8 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
     public void onClickSetTime(View view){
 
-       final Button startTimeButton = (Button)findViewById(R.id.startButton);
-       final Button startOrEnd = (Button)view;
+        final Button startTimeButton = (Button)findViewById(R.id.startButton);
+        final Button startOrEnd = (Button)view;
 
         //Process in order to get current time
         final Calendar calendar = Calendar.getInstance();
@@ -218,7 +218,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
                 }else{
 
-                   //endDate.setHours(hourOfDay);endDate.setMinutes(minute);
+                    //endDate.setHours(hourOfDay);endDate.setMinutes(minute);
                     endEventCalendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
                     endEventCalendar.set(Calendar.MINUTE,minute);
 
@@ -241,48 +241,84 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
     public  void onClickTakeImage(View view){
 
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, PICTURE_REQUEST);
+
+
+        // condition necessary in order to inject a default image
+        if(provideImage.getTypeOfImage() == ProvideImage.ImageType.FROM_TEST ){
+            bitmap = ProvideImage.getImage();
+            imageView.setImageBitmap(ProvideImage.getImage());
+
+        }else {
+
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(intent, PICTURE_REQUEST);
+        }
 
     }
+
+    public void onClickExistingPicture(View view){
+
+        // condition necessary in order to inject a default image
+        if(provideImage.getTypeOfImage() == ProvideImage.ImageType.FROM_TEST ){
+            imageView.setImageBitmap(ProvideImage.getImage());
+
+        }else {
+            //invoking image gallery using implicit intent
+            Intent photoGalleryIntent = new Intent(Intent.ACTION_PICK);
+
+            //just basically says where we want to find the data
+            File pictureDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+            String pictureDirectoryPath = pictureDirectory.getPath();
+
+            //Get URI representation
+            Uri data = Uri.parse(pictureDirectoryPath);
+
+            //set the data image and type. Get all images
+
+            photoGalleryIntent.setDataAndType(data, "image/*");
+
+            startActivityForResult(photoGalleryIntent, IMAGE_GALLERY_REQUEST);
+        }
+
+    }
+
+
 
 
     //What the camera will output
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode,resultCode,intent);
+        super.onActivityResult(requestCode, resultCode, intent);
 
+        if(resultCode == RESULT_OK) {
+            if (requestCode == PICTURE_REQUEST) {
+                bitmap = (Bitmap) intent.getExtras().get("data");
+                if(bitmap != null ) {
+                    imageView.setImageBitmap(bitmap);
+                }
+            }else if(requestCode == IMAGE_GALLERY_REQUEST ){
+                Uri imageUri = intent.getData();
 
+                //Declare an inputStream in order to read the image from the SD card
+                InputStream inputStream;
 
-        new BitmapTask(resultCode,intent).execute(requestCode);
+                try {
+                    //input stream based on Uri of the  image.
+                    inputStream = getContentResolver().openInputStream(imageUri);
+                    bitmap = BitmapFactory.decodeStream(inputStream);// Bitmap.createScaledBitmap(BitmapFactory.decodeStream(inputStream), SCALE_FACTOR, SCALE_FACTOR,false);
+                    imageView.setImageBitmap(Bitmap.createScaledBitmap(bitmap, SCALE_FACTOR, SCALE_FACTOR, false));
+                }catch(FileNotFoundException e ){
+                    e.printStackTrace();
+                }
+            }
+        }
+
 
     }
 
 
-    public void onClickExistingPicture(View view){
-        //invoking image gallery using implicit intent
-        Intent photoGalleryIntent = new Intent(Intent.ACTION_PICK);
-
-        //just basically says where we want to find the data
-        File pictureDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        String pictureDirectoryPath = pictureDirectory.getPath();
-
-        //Get URI representation
-        Uri data = Uri.parse(pictureDirectoryPath);
-
-        //set the data image and type. Get all images
-
-        photoGalleryIntent.setDataAndType(data, "image/*");
-
-        startActivityForResult(photoGalleryIntent,IMAGE_GALLERY_REQUEST);
 
 
-    }
-
-    //Setter used to Inject Dependencies so that we can test our app offline.
-    public void setCommunicationLayer(DefaultCommunicationLayer layer){
-        this.communicationLayer = layer;
-    }
 
 
     public void onClickCreateButton(View view ){
@@ -302,48 +338,56 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
         EditText keywords = (EditText)findViewById(R.id.keywords);
 
 
+
         if(isWhiteSpaces(nameOfEvent.getText().toString())){
             nameOfEvent.setError("Please fill in name");
             nameOfEvent.setText("");
+            Toast.makeText(this, "No name", Toast.LENGTH_SHORT).show();
 
         }else if(isWhiteSpaces(eventDescription.getText().toString())){
             eventDescription.setError("Please fill in description");
             eventDescription.setText("");
+
+            Toast.makeText(this, "No description", Toast.LENGTH_SHORT).show();
+
 
         }else if(isWhiteSpaces(location.getText().toString())){
 
             location.setError("Please input  location");
             location.setText("");
 
+            Toast.makeText(this, "No location", Toast.LENGTH_SHORT).show();
+
         }else if(TextUtils.isEmpty(date.getText().toString())){
 
-            Toast.makeText(this, "Select Date", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No date", Toast.LENGTH_SHORT).show();
 
         }else if(TextUtils.isEmpty(startTime.getText().toString()) ){
 
-            Toast.makeText(this,"Select Start Time", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"No start time", Toast.LENGTH_SHORT).show();
 
         }else if(TextUtils.isEmpty(endTime.getText().toString())){
 
-            Toast.makeText(this,"Select End Time ",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"No end time",Toast.LENGTH_SHORT).show();
 
         }else if(imageView.getDrawable() == null ){
 
-            Toast.makeText(this,"Please insert a picture", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"No picture", Toast.LENGTH_SHORT).show();
 
         }else if(isWhiteSpaces(keywords.getText().toString())){
             keywords.setError("Put some keywords");
             keywords.setText("");
+            Toast.makeText(this, "No keywords", Toast.LENGTH_SHORT).show();
         }else{
 
 
-             currentCalendar.setTimeZone(timeZone);
+            currentCalendar.setTimeZone(timeZone);
 
-             this.dateOfEvent = startEventCalendar.getTime();
-             this.endDate = endEventCalendar.getTime();
+            this.dateOfEvent = startEventCalendar.getTime();
+            this.endDate = endEventCalendar.getTime();
 
 
-            if(endDate.before(dateOfEvent)|| endDate.getTime() == dateOfEvent.getTime()){
+            if(endDate.before(dateOfEvent)|| endDate.getTime() == dateOfEvent.getTime() || dateOfEvent.before(currentCalendar.getTime())){
                 date.setText("");
                 startTime.setText("");
                 endTime.setText("");
@@ -378,6 +422,67 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
         }
     }
 
+    //Setter used to Inject Dependencies so that we can test our app offline.
+    public void setCommunicationLayer(DefaultCommunicationLayer layer){
+        this.communicationLayer = layer;
+    }
+
+
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        if(bitmap != null) {
+            outState.putParcelable("bitmap", bitmap);
+
+        }
+        outState.putString("nameOfEvent", nameOfEvent.getText().toString());
+        outState.putString("eventDescription", eventDescription.getText().toString());
+        outState.putString("location", location.getText().toString());
+        outState.putString("date", date.getText().toString());
+        outState.putString("startTime", startTime.getText().toString());
+        outState.putString("endTime", endTime.getText().toString());
+        outState.putString("keywords",keywords.getText().toString());
+        // outState.putSerializable("dateOfEvent", dateOfEvent);
+
+        outState.putSerializable("startEventCalendar", startEventCalendar);
+        outState.putSerializable("endEventCalendar",endEventCalendar);
+        // outState.putString("dateTextView", dateTextView.getText().toString());
+
+
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstance){
+
+        super.onRestoreInstanceState(savedInstance);
+
+        bitmap = savedInstance.getParcelable("bitmap");
+
+        nameOfEvent.setText((String) savedInstance.get("nameOfEvent"));
+        eventDescription.setText((String) savedInstance.get("eventDescription"));
+        location.setText((String) savedInstance.get("location"));
+        date.setText((String) savedInstance.get("date"));
+        startTime.setText((String) savedInstance.get("startTime"));
+        endTime.setText((String) savedInstance.get("endTime"));
+        keywords.setText((String) savedInstance.get("keywords"));
+
+        startEventCalendar = (Calendar)savedInstance.getSerializable("startEventCalendar");
+        endEventCalendar = (Calendar)savedInstance.getSerializable("endEventCalendar");
+
+
+
+
+        if(bitmap != null ){
+            bitmap = Bitmap.createScaledBitmap(bitmap, SCALE_FACTOR, SCALE_FACTOR,false);
+            // imageView.setImageBitmap(bitmap);
+            imageView.setImageBitmap(bitmap);
+        }
+
+
+    }
 
     private String encodeImage( Bitmap bitmapImage){
         assert(bitmapImage != null);
@@ -388,6 +493,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
 
     }
+
 
 
     private class UploadSubmissionTask extends AsyncTask<Submission,Void ,ResponseStatus>{
@@ -404,7 +510,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
             try {
                 return communicationLayer.sendAddSubmissionRequest(params[0]);
             } catch (CommunicationLayerException e) {
-            return null;
+                return null;
 
             }
         }
@@ -416,30 +522,13 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
                 Intent intent = new Intent(context, MainScreenActivity.class);
                 startActivity(intent);
             }
-            else if(status == ResponseStatus.IMAGE){
-
-                Toast.makeText(context,"Re-upload image",Toast.LENGTH_SHORT).show();
-
-            }else if (status == ResponseStatus.NAME){
-                Toast.makeText(context,"Problem with name of event",Toast.LENGTH_SHORT).show();
-
-            }else if (status == ResponseStatus.LOCATION) {
-                Toast.makeText(context, "Unknown location", Toast.LENGTH_SHORT).show();
-
-            }else if (status == ResponseStatus.COOKIE  ){
+            else if (status == ResponseStatus.COOKIE  ){
                 Toast.makeText(context,"Cookie session", Toast.LENGTH_SHORT).show();
 
-            }else if(status == ResponseStatus.SESSION) {
-
-                Toast.makeText(context,"Lost session", Toast.LENGTH_SHORT).show();
-            }else if(status==null){
+            }else {
 
                 Toast.makeText(context,"Problem with server", Toast.LENGTH_SHORT).show();
 
-            }else  {
-                assert(status == ResponseStatus.CATEGORY );
-
-                Toast.makeText(context, "Unknown Category", Toast.LENGTH_SHORT).show();
             }
 
 
@@ -448,118 +537,11 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
         }
     }
 
-    private class BitmapTask extends AsyncTask<Integer,Void,Bitmap>{
 
-
-         private int requestCode;
-         private int resultCode;
-         private Intent intent;
-         private int SCALE_FACTOR = 400;
-
-
-         public BitmapTask(int resultCode,Intent intent){
-
-
-             this.resultCode = resultCode;
-             this.intent = intent;
-         }
-         @Override
-         protected Bitmap doInBackground(Integer... params) {
-             this.requestCode = params[0];
-             if(resultCode == RESULT_OK){
-                 if(requestCode == PICTURE_REQUEST){
-                      bitmap =  (Bitmap)intent.getExtras().get("data");
-
-                     return  bitmap;
-                 }else if(requestCode == IMAGE_GALLERY_REQUEST ){
-                     Uri imageUri = intent.getData();
-
-                     //Declare an inputStream in order to read the image from the SD card
-                     InputStream inputStream;
-
-                     try {
-
-                         //input stream based on Uri of the  image.
-                         inputStream = getContentResolver().openInputStream(imageUri);
-                         bitmap = BitmapFactory.decodeStream(inputStream); // Bitmap.createScaledBitmap(BitmapFactory.decodeStream(inputStream), SCALE_FACTOR, SCALE_FACTOR,false);
-
-
-                         return bitmap;
-
-
-                     }catch(FileNotFoundException e ){
-                         e.printStackTrace();
-                     }
-                 }else{
-                     return null;
-                 }
-             }
-             return null;
-         }
-
-        @Override
-        protected  void onPostExecute(Bitmap b){
-            if(b != null ){
-
-                bitmap = Bitmap.createScaledBitmap(b, SCALE_FACTOR, SCALE_FACTOR,false);
-                imageView.setImageBitmap(bitmap);
-            }
-
-        }
-     }
-
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState){
-        super.onSaveInstanceState(outState);
-        outState.putParcelable("bitmap", bitmap);
-
-        outState.putString("nameOfEvent", nameOfEvent.getText().toString());
-        outState.putString("eventDescription", eventDescription.getText().toString());
-        outState.putString("location", location.getText().toString());
-        outState.putString("date", date.getText().toString());
-        outState.putString("startTime", startTime.getText().toString());
-        outState.putString("endTime", endTime.getText().toString());
-        outState.putString("keywords",keywords.getText().toString());
-       // outState.putSerializable("dateOfEvent", dateOfEvent);
-
-        outState.putSerializable("startEventCalendar", startEventCalendar);
-        outState.putSerializable("endEventCalendar",endEventCalendar);
-       // outState.putString("dateTextView", dateTextView.getText().toString());
-
-
-
+    private boolean isWhiteSpaces(String s) {
+        return ((s.length() == 0) || ((s != null) && s.matches("\\s+") ));
     }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstance){
-
-        super.onRestoreInstanceState(savedInstance);
-
-            bitmap = savedInstance.getParcelable("bitmap");
-
-            nameOfEvent.setText((String) savedInstance.get("nameOfEvent"));
-            eventDescription.setText((String) savedInstance.get("eventDescription"));
-            location.setText((String) savedInstance.get("location"));
-            date.setText((String) savedInstance.get("date"));
-            startTime.setText((String) savedInstance.get("startTime"));
-            endTime.setText((String) savedInstance.get("endTime"));
-            keywords.setText((String) savedInstance.get("keywords"));
-
-            startEventCalendar = (Calendar)savedInstance.getSerializable("startEventCalendar");
-            endEventCalendar = (Calendar)savedInstance.getSerializable("endEventCalendar");
-
-
-        if(bitmap != null ){
-            imageView.setImageBitmap(bitmap);
-        }
-
-    }
-
-
-    private boolean isWhiteSpaces(String s ){
-       return  s!=null && s.matches("\\s+");
-    }
 
     private boolean validLength(EditText field){
 
@@ -591,5 +573,3 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
 
 }
-
-

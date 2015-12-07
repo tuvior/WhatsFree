@@ -17,13 +17,12 @@ import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 import ch.epfl.sweng.freeapp.communication.NetworkProvider;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotSame;
 
 public class ServerAddSubmissionTest {
     private static final String SERVER_URL = "http://sweng-wiinotfit.appspot.com";
-    private NetworkProvider networkProvider = new DefaultNetworkProvider();
     private final static int HTTP_SUCCESS_START = 200;
     private final static int HTTP_SUCCESS_END = 299;
+    private NetworkProvider networkProvider = new DefaultNetworkProvider();
 
     private String fetchContent(HttpURLConnection conn) throws IOException {
         StringBuilder out = new StringBuilder();
@@ -127,12 +126,12 @@ public class ServerAddSubmissionTest {
         JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=submissiontest&password=password&email=submissiontest@test.ch", "GET");
         JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=submissiontest&password=password", "GET");
         String cookie = getCookieFromJson(loginUser);
-        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/submission?cookie="+cookie+"&name=name&category=category&location=location&image=image", "POST");
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/submission?cookie=" + cookie + "&name=name&category=category&location=location&image=image", "POST");
         assertEquals("ok", getStatusFromJson(serverResponse));
 
         //Delete user, session and submission so that it is no more in db
         JSONObject deleteUserAgain = establishConnectionAndReturnJsonResponse("/delete/user?name=submissiontest", "GET");
-        JSONObject deleteSession = establishConnectionAndReturnJsonResponse("/delete/session?cookie="+cookie, "GET");
+        JSONObject deleteSession = establishConnectionAndReturnJsonResponse("/delete/session?cookie=" + cookie, "GET");
         JSONObject deleteSubmission = establishConnectionAndReturnJsonResponse("/delete/submission?name=name", "GET");
     }
 }

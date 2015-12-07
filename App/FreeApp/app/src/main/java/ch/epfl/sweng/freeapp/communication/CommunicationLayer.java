@@ -31,18 +31,17 @@ import ch.epfl.sweng.freeapp.loginAndRegistration.RegistrationInfo;
 import ch.epfl.sweng.freeapp.mainScreen.Vote;
 
 
-public class CommunicationLayer implements  DefaultCommunicationLayer {
+public class CommunicationLayer implements DefaultCommunicationLayer {
     private static final String SERVER_URL = "http://sweng-wiinotfit.appspot.com";
     private final static int HTTP_SUCCESS_START = 200;
     private final static int HTTP_SUCCESS_END = 299;
-   // private static  String cookieSession ;  //"BEY4L9lVSlA0hHQQ1ClTXYVUn5xwcr0BfYSKc7sw0Y54XYzWObTAsJ6PHQWPQVzO";
+    // private static  String cookieSession ;  //"BEY4L9lVSlA0hHQQ1ClTXYVUn5xwcr0BfYSKc7sw0Y54XYzWObTAsJ6PHQWPQVzO";
 
     private static String cookieSession = "fbsGd7syDrfLhAYxy4n6CniR1CBzA20S2W5ohMkJg1KUDK4P8d3N6ca1ICFyWyHZ"; //= "tri5KsZsgDT4kKlbzBBQVCy2cLo0WsxeDORB0Y700qX587cOobIRcuhL26GIfENa";
     private NetworkProvider networkProvider;
 
 
-
-   // private final static String COOKIE_TEST = "BEY4L9lVSlA0hHQQ1ClTXYVUn5xwcr0BfYSKc7sw0Y54XYzWObTAsJ6PHQWPQVzO";
+    // private final static String COOKIE_TEST = "BEY4L9lVSlA0hHQQ1ClTXYVUn5xwcr0BfYSKc7sw0Y54XYzWObTAsJ6PHQWPQVzO";
 
     /**
      * Creates a new CommunicationLayer instance that communicates with the
@@ -66,7 +65,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
      */
     public ResponseStatus sendLogInInfo(LogInInfo logInInfo) throws CommunicationLayerException {
 
-        if(logInInfo == null ){
+        if (logInInfo == null) {
             throw new CommunicationLayerException("LogInfo null");
         }
 
@@ -88,10 +87,10 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
                 return ResponseStatus.EMPTY;
             } else {
 
-                if(BuildConfig.DEBUG && !(logInJson.get("status").equals("ok"))){
+                if (BuildConfig.DEBUG && !(logInJson.get("status").equals("ok"))) {
                     throw new AssertionError();
                 }
-                this.cookieSession = logInJson.getString("cookie");
+                cookieSession = logInJson.getString("cookie");
 
                 return ResponseStatus.OK;
             }
@@ -101,33 +100,43 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
     }
 
 
-    public ResponseStatus sendVote(Submission submission, Vote vote ) throws CommunicationLayerException {
+    public ResponseStatus sendVote(Submission submission, Vote vote) throws CommunicationLayerException {
 
-        if(submission == null ){
+        if (submission == null) {
             throw new CommunicationLayerException("No submission");
         }
-        String id  = submission.getId();
+        String id = submission.getId();
 
-        String serverUrl= null;
-        serverUrl = SERVER_URL +"/vote?id="+id+"&cookie="+ cookieSession+"&value="+vote.getValue();
+        // String failedCookieSession = cookieSession + "hello";
+        String serverUrl = SERVER_URL + "/vote?id=" + id + "&cookie=" + cookieSession + "&value=" + vote.getValue();
 
-        String content = null;
+        String content;
         try {
             content = fetchStringFrom(serverUrl);
             JSONObject jsonObject = new JSONObject(content);
-            JSONObject response =  jsonObject.getJSONObject("vote");
+            JSONObject serverResponseJson = jsonObject.getJSONObject("vote");
 
-           //FixMe : figure out response
+            if (serverResponseJson.getString("status").equals("failure")) {
+                switch (serverResponseJson.getString("reason")) {
+                    case "session":
+                        return ResponseStatus.SESSION;
+                    case "value":
+                        return ResponseStatus.VALUE;
+                    case "no  submission":
+                        return ResponseStatus.NO_SUBMISSION;
+                    default:
+                        throw new CommunicationLayerException();
+                }
+            }
 
-            return null;
+            if (BuildConfig.DEBUG && !(serverResponseJson.getString("status").equals("ok"))) {
+                throw new AssertionError();
+            }
+            return ResponseStatus.OK;
 
-
-        } catch (IOException e) {
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
 
-            throw new CommunicationLayerException();
-        } catch (JSONException e) {
-            e.printStackTrace();
             throw new CommunicationLayerException();
         }
 
@@ -169,7 +178,6 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
         return submission;
     }
 
-
     /**
      * Used by the app to
      * send user-entered registration information to the user
@@ -200,7 +208,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
                         throw new CommunicationLayerException();
                 }
             }
-            if (BuildConfig.DEBUG && !(serverResponseJson.getString("status").equals("ok"))){
+            if (BuildConfig.DEBUG && !(serverResponseJson.getString("status").equals("ok"))) {
                 throw new AssertionError();
             }
             return ResponseStatus.OK;
@@ -213,8 +221,6 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
     }
 
 
-
-
     @Override
     public ResponseStatus sendAddSubmissionRequest(Submission param) throws CommunicationLayerException {
         URL url;
@@ -223,7 +229,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
 
         try {
 
-            url = new URL(SERVER_URL+"/submission");
+            url = new URL(SERVER_URL + "/submission");
             conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(10000);
             conn.setConnectTimeout(15000);
@@ -241,8 +247,8 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
             params.add(new BasicNameValuePair("submitted", Long.toString(param.getSubmitted())));
             params.add(new BasicNameValuePair("from", Long.toString(param.getStartOfEvent())));
             params.add(new BasicNameValuePair("to", Long.toString(param.getEndOfEvent())));
-            params.add(new BasicNameValuePair("cookie",cookieSession));
-          //  params.add(new BasicNameValuePair("latitude",Integer.toString(45)));
+            params.add(new BasicNameValuePair("cookie", cookieSession));
+            //  params.add(new BasicNameValuePair("latitude",Integer.toString(45)));
             //params.add(new BasicNameValuePair("longitude",Integer.toString(45)));
 
 
@@ -265,19 +271,26 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
             String serverResponse = fetchContent(conn);
             JSONObject jsonObject = new JSONObject(serverResponse);
             JSONObject serverResponseJson = jsonObject.getJSONObject("submission");
-            if(serverResponseJson.getString("status").equals("failure")){
-                switch(serverResponseJson.getString("reason")){
-                    case "name" : return ResponseStatus.NAME;
-                    case "location"  : return ResponseStatus.LOCATION;
-                    case "image" : return ResponseStatus.IMAGE;
-                    case "category": return ResponseStatus.CATEGORY;
-                    case "cookie": return ResponseStatus.COOKIE;
-                    case "session": return ResponseStatus.SESSION;
+            if (serverResponseJson.getString("status").equals("failure")) {
+                switch (serverResponseJson.getString("reason")) {
+                    case "name":
+                        return ResponseStatus.NAME;
+                    case "location":
+                        return ResponseStatus.LOCATION;
+                    case "image":
+                        return ResponseStatus.IMAGE;
+                    case "category":
+                        return ResponseStatus.CATEGORY;
+                    case "cookie":
+                        return ResponseStatus.COOKIE;
+                    case "session":
+                        return ResponseStatus.SESSION;
 
-                    default: throw new CommunicationLayerException();
+                    default:
+                        throw new CommunicationLayerException();
                 }
-            }else {
-                if(BuildConfig.DEBUG && !(serverResponseJson.getString("status").equals("ok"))){
+            } else {
+                if (BuildConfig.DEBUG && !(serverResponseJson.getString("status").equals("ok"))) {
                     throw new AssertionError();
                 }
 
@@ -285,7 +298,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
                 return ResponseStatus.OK;
             }
 
-        }catch(IOException | JSONException e ){
+        } catch (IOException | JSONException e) {
             throw new CommunicationLayerException();
         }
     }
@@ -293,18 +306,17 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
     @Override
     public ArrayList<Submission> sendSubmissionsRequest() throws CommunicationLayerException {
 
-        try{
-            String content = fetchStringFrom(SERVER_URL+"/retrieve?cookie=" + cookieSession + "&flag=2");
+        try {
+            String content = fetchStringFrom(SERVER_URL + "/retrieve?cookie=" + cookieSession + "&flag=2");
             JSONArray contentArray = new JSONArray(content);
 
             return jsonArrayToArrayList(contentArray);
 
-        }catch(IOException | JSONException e){
+        } catch (IOException | JSONException e) {
             throw new CommunicationLayerException();
         }
 
     }
-
 
 
     @Override
@@ -312,19 +324,19 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
 
         Submission submission;
 
-        try{
-            String content = fetchStringFrom(SERVER_URL+"/retrieve?cookie=" + cookieSession + "&flag=1&id=" + id);
+        try {
+            String content = fetchStringFrom(SERVER_URL + "/retrieve?cookie=" + cookieSession + "&flag=1&id=" + id);
             System.out.println(content);
             JSONObject jsonSubmission = new JSONObject(content);
 
             //Retrieve specific submission fields
-            if(BuildConfig.DEBUG && !(id.equals(jsonSubmission.getString("id")))){
+            if (BuildConfig.DEBUG && !(id.equals(jsonSubmission.getString("id")))) {
                 throw new AssertionError();
             }
             String description = jsonSubmission.getString("description");
 
             SubmissionCategory submissionCategory;
-            if(SubmissionCategory.contains(jsonSubmission.getString("category"))) {
+            if (SubmissionCategory.contains(jsonSubmission.getString("category"))) {
                 submissionCategory = SubmissionCategory.valueOf(jsonSubmission.getString("category"));
             } else {
                 submissionCategory = SubmissionCategory.Miscellaneous;
@@ -335,7 +347,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
 
             submission = new Submission(name, description, submissionCategory, location, image, id);
 
-        }catch(IOException | JSONException e){
+        } catch (IOException | JSONException e) {
             throw new CommunicationLayerException();
         }
 
@@ -346,10 +358,10 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
     @Override
     public ArrayList<Submission> sendCategoryRequest(SubmissionCategory category) throws CommunicationLayerException {
 
-        try{
-            String content = fetchStringFrom(SERVER_URL+"/retrieve?cookie=" + cookieSession + "&flag=4&category=" + category.toString());
+        try {
+            String content = fetchStringFrom(SERVER_URL + "/retrieve?cookie=" + cookieSession + "&flag=4&category=" + category.toString());
             //if there is no submission corresponding to the category, then the server will return a failure
-            if(!content.contains("failure")) {
+            if (!content.contains("failure")) {
                 JSONArray contentArray = new JSONArray(content);
                 return jsonArrayToArrayList(contentArray);
             } else {
@@ -357,25 +369,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
                 return new ArrayList<>();
             }
 
-        }catch(IOException | JSONException e){
-            throw new CommunicationLayerException();
-        }
-    }
-
-    @Override
-    public ArrayList<Submission> sendAroundYouRequest(LatLng userLocation) throws JSONException, CommunicationLayerException {
-        try{
-            String content = fetchStringFrom(SERVER_URL+"/retrieve?cookie=" + cookieSession + "&flag=3&longitude=" + userLocation.longitude + "&latitude=" + userLocation.latitude);
-            //if there is no submission corresponding to the category, then the server will return a failure
-            if(!content.contains("failure")) {
-                JSONArray contentArray = new JSONArray(content);
-                return jsonArrayToArrayList(contentArray);
-            } else {
-                //return an empty array if no submissions corresponding to the category
-                return new ArrayList<>();
-            }
-
-        }catch(IOException | JSONException e){
+        } catch (IOException | JSONException e) {
             throw new CommunicationLayerException();
         }
     }
@@ -402,6 +396,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
 
     /**
      * Fetches the information given by the provided connection
+     *
      * @param conn A connection to a provided URL
      * @return The String given by connecting to the given URL
      * @throws IOException
@@ -430,6 +425,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
     /**
      * The server sends the submissions as a JSONArray, and the communication layer
      * conveys those to the tabs as an ArrayList
+     *
      * @param jsonSubmissions the submissions returned by the server in a JSONArray format
      * @return the same submissions but in an ArrayList
      * @throws JSONException
@@ -438,7 +434,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
 
         ArrayList<Submission> submissionsList = new ArrayList<>();
 
-        for(int i = 0; i < jsonSubmissions.length(); i++){
+        for (int i = 0; i < jsonSubmissions.length(); i++) {
 
             //Only names and images are required since those are the only
             //fields displayed in the tabs
@@ -452,7 +448,7 @@ public class CommunicationLayer implements  DefaultCommunicationLayer {
             submissionsList.add(submission);
         }
 
-        if (BuildConfig.DEBUG && (jsonSubmissions.length() != submissionsList.size())){
+        if (BuildConfig.DEBUG && (jsonSubmissions.length() != submissionsList.size())) {
             throw new AssertionError();
         }
         return submissionsList;

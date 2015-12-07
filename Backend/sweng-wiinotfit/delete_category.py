@@ -8,27 +8,29 @@ def json_error(option, status, reason):
     json_string = {option: {'status': status, 'reason': reason}}
     return json_string
 
-class deleteSubmission(webapp2.RequestHandler):
+class deleteCategory(webapp2.RequestHandler):
     def get(self):
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
-        name = self.request.get('name')
+        category = self.request.get('category')
 
-        if not name:
-            error = json_error('delete submission', 'failure', 'name')
+        if not category:
+            error = json_error('delete category', 'failure', 'category')
             self.response.write(json.dumps(error))
 
         else:
-            submission = Submission.query(Submission.name == name).get()
+            submissions = Submission.query(Submission.category == category).fetch()
             
-            if not submission:
-            	error = json_error('delete submission', 'failure', 'no such submission')
+            if not submissions:
+            	error = json_error('delete category', 'failure', 'no such submission')
                 self.response.write(json.dumps(error))
 
             else:
-            	submission.key.delete()
-            	response = {'delete submission': {'status': 'ok'}}
+                for i in range(0, len(submissions)):
+                    submissions[i].key.delete()
+
+            	response = {'delete category': {'status': 'ok'}}
             	self.response.write(json.dumps(response))
 
 app = webapp2.WSGIApplication([
-    ('/delete/submission', deleteSubmission),
+    ('/delete/category', deleteCategory),
 ], debug=True)

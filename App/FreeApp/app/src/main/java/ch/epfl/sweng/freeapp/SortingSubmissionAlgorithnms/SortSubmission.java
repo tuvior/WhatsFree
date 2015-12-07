@@ -12,10 +12,11 @@ public interface SortSubmission {
 
     /**
      * Sorts submissions based on different criteria
+     *
      * @param submissions
      * @return sorted Submissions
      */
-    List<Submission> sort( List <Submission> submissions);
+    List<Submission> sort(List<Submission> submissions);
 
 
 }

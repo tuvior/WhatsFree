@@ -6,11 +6,11 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -18,7 +18,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 public class NavigationDrawerActivity extends Activity implements AdapterView.OnItemClickListener {
@@ -50,17 +49,16 @@ public class NavigationDrawerActivity extends Activity implements AdapterView.On
 
         toolbar = (Toolbar) findViewById(R.id.home_toolbar);
         mDrawerListener = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-        {
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
             @Override
-            public void onDrawerOpened(View drawerView){
+            public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
 
                 //Toast.makeText(NavigationDrawerActivity.this, "Drawer opened", Toast.LENGTH_LONG ).show();
             }
 
             @Override
-            public void onDrawerClosed(View drawerView){
+            public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
                 //Toast.makeText(NavigationDrawerActivity.this, "Drawer closed", Toast.LENGTH_LONG ).show();
             }
@@ -69,15 +67,13 @@ public class NavigationDrawerActivity extends Activity implements AdapterView.On
         mDrawerLayout.setDrawerListener(mDrawerListener);
 
 
-
-
         mDrawerList.setOnItemClickListener(this);
 
 
     }
 
     @Override
-    public void onPostCreate(Bundle savedInstanceState){
+    public void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mDrawerListener.syncState();
     }
@@ -95,7 +91,7 @@ public class NavigationDrawerActivity extends Activity implements AdapterView.On
             return true;
         }
 
-        if(mDrawerListener.onOptionsItemSelected(item)){
+        if (mDrawerListener.onOptionsItemSelected(item)) {
             return true;
         }
 
@@ -165,17 +161,16 @@ public class NavigationDrawerActivity extends Activity implements AdapterView.On
 }
 
 
-
-class MyAdapter extends BaseAdapter{
-    private Context context;
+class MyAdapter extends BaseAdapter {
     String[] sidebarItems;
     int[] images;
+    private Context context;
 
     public MyAdapter(Context context) {
         this.sidebarItems = context.getResources().getStringArray(R.array.nav_drawer_items);
-        this.images = new int[]{ R.drawable.home, R.drawable.food, R.drawable.sport,
-                                 R.drawable.nightlife, R.drawable.culture, R.drawable.lifestyle,
-                                 R.drawable.clothes, R.drawable.logout };
+        this.images = new int[]{R.drawable.home, R.drawable.food, R.drawable.sport,
+                R.drawable.nightlife, R.drawable.culture, R.drawable.lifestyle,
+                R.drawable.clothes, R.drawable.logout};
         this.context = context;
     }
 
@@ -198,13 +193,12 @@ class MyAdapter extends BaseAdapter{
     public View getView(int position, View convertView, ViewGroup parent) {
 
         View row = null;
-        if(convertView == null){
+        if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context
-                                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             row = inflater.inflate(R.layout.custom_row, parent, false);
 
-        }
-        else{
+        } else {
             row = convertView;
         }
 
