@@ -15,13 +15,6 @@ import ch.epfl.sweng.freeapp.mainScreen.Vote;
  */
 public interface DefaultCommunicationLayer {
 
-    /**
-     * Tells the server to add a submission and gets back the response
-     *
-     * @param param the submission to be added
-     * @return the result of the request
-     * @throws CommunicationLayerException
-     */
     ResponseStatus sendAddSubmissionRequest(Submission param) throws CommunicationLayerException;
 
     /**
@@ -49,14 +42,6 @@ public interface DefaultCommunicationLayer {
      * @return The submission shortcuts corresponding to the given category
      */
     ArrayList<Submission> sendCategoryRequest(SubmissionCategory category) throws CommunicationLayerException;
-
-    /**
-     * Asks the server for the submissions which are situated in a ... perimeter
-     *
-     * @return All the submission shortcuts available (see SubmissionShortcut class)
-     * @throws JSONException
-     */
-    ArrayList<Submission> sendAroundYouRequest(LatLng userLocation) throws JSONException, CommunicationLayerException;
 
     //TODO : javadoc
     ResponseStatus sendVote(Submission submission, Vote vote) throws CommunicationLayerException;
