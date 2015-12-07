@@ -100,7 +100,6 @@ public class ServerDeleteSessionTest {
 
     @Test
     public void serverRespondsWithOkIfSuccess() throws CommunicationLayerException, JSONException, InterruptedException {
-        establishConnectionAndReturnJsonResponse("/delete/session?cookie=deleteSessionTest", "GET");
         establishConnectionAndReturnJsonResponse("/delete/user?name=deleteTest", "GET");
 
         establishConnectionAndReturnJsonResponse("/register?user=deleteTest&password=password&email=deleteTestEmail", "GET");
@@ -115,6 +114,7 @@ public class ServerDeleteSessionTest {
         assertEquals("session", getReasonFromJson(tryToAddSubmission, "submission"));
 
         establishConnectionAndReturnJsonResponse("/delete/user?name=deleteTest", "GET");
+
     }
 
 

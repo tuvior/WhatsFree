@@ -285,6 +285,264 @@ public class ServerVoteTest {
         assertEquals(-1, getRatingFromJson(retrieveSubmission));
 
         establishConnectionAndReturnJsonResponse("/delete/user?name=voteTest", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie=" + cookie, "GET");
+        establishConnectionAndReturnJsonResponse("/delete/submission?name=voteTestSub", "GET");
+
+    }
+
+
+    @Test
+    public void serverRespondsWithOkAndRatingIsMinusOneIfWeLikeAndThenDislike() throws CommunicationLayerException, JSONException {
+        establishConnectionAndReturnJsonResponse("/delete/user?name=voteTest", "GET");
+
+        establishConnectionAndReturnJsonResponse("/register?user=voteTest&password=password&email=voteTestEmail", "GET");
+        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=voteTest&password=password", "GET");
+        String cookie = getCookieFromJson(loginUser);
+
+        JSONObject addSubmission = establishConnectionAndReturnJsonResponse("/submission?cookie=" + cookie + "&name=voteTestSub&category=category&location=location&image=image", "POST");
+        String id = getIdFromJson(addSubmission);
+
+        //We like
+        establishConnectionAndReturnJsonResponse("/vote?cookie=" + cookie + "&id=" + id + "&value=1", "GET");
+
+        //We dislike
+        establishConnectionAndReturnJsonResponse("/vote?cookie="+cookie+"&id="+id+"&value=-1", "GET");
+
+        JSONObject retrieveSubmission = establishConnectionAndReturnJsonResponse("/retrieve?cookie="+cookie+"&flag=1&id="+id, "GET");
+        assertEquals(-1, getRatingFromJson(retrieveSubmission));
+
+        establishConnectionAndReturnJsonResponse("/delete/user?name=voteTest", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie="+cookie, "GET");
+        establishConnectionAndReturnJsonResponse("/delete/submission?name=voteTestSub", "GET");
+
+    }
+
+    @Test
+    public void serverRespondsWithOkAndRatingIsUnchangedIfWeVoteTwice() throws CommunicationLayerException, JSONException {
+        establishConnectionAndReturnJsonResponse("/delete/user?name=voteTest", "GET");
+
+        establishConnectionAndReturnJsonResponse("/register?user=voteTest&password=password&email=voteTestEmail", "GET");
+        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=voteTest&password=password", "GET");
+        String cookie = getCookieFromJson(loginUser);
+
+        JSONObject addSubmission = establishConnectionAndReturnJsonResponse("/submission?cookie=" + cookie + "&name=voteTestSub&category=category&location=location&image=image", "POST");
+        String id = getIdFromJson(addSubmission);
+
+        //We like
+        establishConnectionAndReturnJsonResponse("/vote?cookie=" + cookie + "&id=" + id + "&value=1", "GET");
+
+        //We like again
+        establishConnectionAndReturnJsonResponse("/vote?cookie=" + cookie + "&id=" + id + "&value=1", "GET");
+
+        JSONObject retrieveSubmission = establishConnectionAndReturnJsonResponse("/retrieve?cookie="+cookie+"&flag=1&id="+id, "GET");
+        assertEquals(1, getRatingFromJson(retrieveSubmission));
+
+        establishConnectionAndReturnJsonResponse("/delete/user?name=voteTest", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie="+cookie, "GET");
+        establishConnectionAndReturnJsonResponse("/delete/submission?name=voteTestSub", "GET");
+
+    }
+
+
+    @Test
+    public void serverRespondsWithOkAndRatingIsUnchangedIfWeDislikeTwice() throws CommunicationLayerException, JSONException {
+        establishConnectionAndReturnJsonResponse("/delete/user?name=voteTest", "GET");
+
+        establishConnectionAndReturnJsonResponse("/register?user=voteTest&password=password&email=voteTestEmail", "GET");
+        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=voteTest&password=password", "GET");
+        String cookie = getCookieFromJson(loginUser);
+
+        JSONObject addSubmission = establishConnectionAndReturnJsonResponse("/submission?cookie=" + cookie + "&name=voteTestSub&category=category&location=location&image=image", "POST");
+        String id = getIdFromJson(addSubmission);
+
+        //We like
+        establishConnectionAndReturnJsonResponse("/vote?cookie=" + cookie + "&id=" + id + "&value=-1", "GET");
+
+        //We like again
+        establishConnectionAndReturnJsonResponse("/vote?cookie="+cookie+"&id="+id+"&value=-1", "GET");
+
+        JSONObject retrieveSubmission = establishConnectionAndReturnJsonResponse("/retrieve?cookie="+cookie+"&flag=1&id="+id, "GET");
+        assertEquals(-1, getRatingFromJson(retrieveSubmission));
+
+        establishConnectionAndReturnJsonResponse("/delete/user?name=voteTest", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie="+cookie, "GET");
+        establishConnectionAndReturnJsonResponse("/delete/submission?name=voteTestSub", "GET");
+
+    }
+
+
+    @Test
+    public void serverRespondsWithOkAndRatingIsUnchangedIfWeVoteFourTime() throws CommunicationLayerException, JSONException {
+        establishConnectionAndReturnJsonResponse("/delete/user?name=voteTest", "GET");
+
+        establishConnectionAndReturnJsonResponse("/register?user=voteTest&password=password&email=voteTestEmail", "GET");
+        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=voteTest&password=password", "GET");
+        String cookie = getCookieFromJson(loginUser);
+
+        JSONObject addSubmission = establishConnectionAndReturnJsonResponse("/submission?cookie=" + cookie + "&name=voteTestSub&category=category&location=location&image=image", "POST");
+        String id = getIdFromJson(addSubmission);
+
+        //We like 4
+        establishConnectionAndReturnJsonResponse("/vote?cookie=" + cookie + "&id=" + id + "&value=1", "GET");
+        establishConnectionAndReturnJsonResponse("/vote?cookie="+cookie+"&id="+id+"&value=1", "GET");
+        establishConnectionAndReturnJsonResponse("/vote?cookie="+cookie+"&id="+id+"&value=1", "GET");
+        establishConnectionAndReturnJsonResponse("/vote?cookie=" + cookie + "&id=" + id + "&value=1", "GET");
+
+        JSONObject retrieveSubmission = establishConnectionAndReturnJsonResponse("/retrieve?cookie="+cookie+"&flag=1&id="+id, "GET");
+        assertEquals(1, getRatingFromJson(retrieveSubmission));
+
+        establishConnectionAndReturnJsonResponse("/delete/user?name=voteTest", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie="+cookie, "GET");
+        establishConnectionAndReturnJsonResponse("/delete/submission?name=voteTestSub", "GET");
+
+    }
+
+    @Test
+    public void serverRespondsWithOkAndRatingIsUnchangedIfWeDislikeThreeTime() throws CommunicationLayerException, JSONException {
+        establishConnectionAndReturnJsonResponse("/delete/user?name=voteTest", "GET");
+
+        establishConnectionAndReturnJsonResponse("/register?user=voteTest&password=password&email=voteTestEmail", "GET");
+        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=voteTest&password=password", "GET");
+        String cookie = getCookieFromJson(loginUser);
+
+        JSONObject addSubmission = establishConnectionAndReturnJsonResponse("/submission?cookie=" + cookie + "&name=voteTestSub&category=category&location=location&image=image", "POST");
+        String id = getIdFromJson(addSubmission);
+
+        //We dislike 3
+        establishConnectionAndReturnJsonResponse("/vote?cookie=" + cookie + "&id=" + id + "&value=-1", "GET");
+        establishConnectionAndReturnJsonResponse("/vote?cookie="+cookie+"&id="+id+"&value=-1", "GET");
+        establishConnectionAndReturnJsonResponse("/vote?cookie=" + cookie + "&id=" + id + "&value=-1", "GET");
+
+        JSONObject retrieveSubmission = establishConnectionAndReturnJsonResponse("/retrieve?cookie="+cookie+"&flag=1&id="+id, "GET");
+        assertEquals(-1, getRatingFromJson(retrieveSubmission));
+
+        establishConnectionAndReturnJsonResponse("/delete/user?name=voteTest", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie="+cookie, "GET");
+        establishConnectionAndReturnJsonResponse("/delete/submission?name=voteTestSub", "GET");
+
+    }
+
+    @Test
+    public void serverRespondsWithOkAndRatingIsTwoIfTwoUsersLike() throws CommunicationLayerException, JSONException {
+        establishConnectionAndReturnJsonResponse("/delete/user?name=voteTest1", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/user?name=voteTest2", "GET");
+
+        establishConnectionAndReturnJsonResponse("/register?user=voteTest1&password=password&email=voteTestEmail1", "GET");
+        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=voteTest1&password=password", "GET");
+        String cookie = getCookieFromJson(loginUser);
+
+        establishConnectionAndReturnJsonResponse("/register?user=voteTest2&password=password&email=voteTestEmail2", "GET");
+        JSONObject loginSecondUser = establishConnectionAndReturnJsonResponse("/login?user=voteTest2&password=password", "GET");
+        String cookieSecondUser = getCookieFromJson(loginSecondUser);
+
+        JSONObject addSubmission = establishConnectionAndReturnJsonResponse("/submission?cookie=" + cookie + "&name=voteTestSub&category=category&location=location&image=image", "POST");
+        String id = getIdFromJson(addSubmission);
+
+
+        establishConnectionAndReturnJsonResponse("/vote?cookie=" + cookie + "&id=" + id + "&value=1", "GET");
+        establishConnectionAndReturnJsonResponse("/vote?cookie="+cookieSecondUser+"&id="+id+"&value=1", "GET");
+
+        JSONObject retrieveSubmission = establishConnectionAndReturnJsonResponse("/retrieve?cookie="+cookie+"&flag=1&id="+id, "GET");
+        assertEquals(2, getRatingFromJson(retrieveSubmission));
+
+        establishConnectionAndReturnJsonResponse("/delete/user?name=voteTest1", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie=" + cookie, "GET");
+        establishConnectionAndReturnJsonResponse("/delete/submission?name=voteTestSub", "GET");
+
+        establishConnectionAndReturnJsonResponse("/delete/user?name=voteTest2", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie="+cookieSecondUser, "GET");
+
+    }
+
+    @Test
+    public void serverRespondsWithOkAndRatingIsZeroIfOneLikeAndOtherDislike() throws CommunicationLayerException, JSONException {
+        establishConnectionAndReturnJsonResponse("/delete/user?name=voteTest1", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/user?name=voteTest2", "GET");
+
+        establishConnectionAndReturnJsonResponse("/register?user=voteTest1&password=password&email=voteTestEmail1", "GET");
+        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=voteTest1&password=password", "GET");
+        String cookie = getCookieFromJson(loginUser);
+
+        establishConnectionAndReturnJsonResponse("/register?user=voteTest2&password=password&email=voteTestEmail2", "GET");
+        JSONObject loginSecondUser = establishConnectionAndReturnJsonResponse("/login?user=voteTest2&password=password", "GET");
+        String cookieSecondUser = getCookieFromJson(loginSecondUser);
+
+        JSONObject addSubmission = establishConnectionAndReturnJsonResponse("/submission?cookie=" + cookie + "&name=voteTestSub&category=category&location=location&image=image", "POST");
+        String id = getIdFromJson(addSubmission);
+
+
+        establishConnectionAndReturnJsonResponse("/vote?cookie=" + cookie + "&id=" + id + "&value=1", "GET");
+        establishConnectionAndReturnJsonResponse("/vote?cookie=" + cookieSecondUser + "&id=" + id + "&value=-1", "GET");
+
+        JSONObject retrieveSubmission = establishConnectionAndReturnJsonResponse("/retrieve?cookie="+cookie+"&flag=1&id="+id, "GET");
+        assertEquals(0, getRatingFromJson(retrieveSubmission));
+
+        establishConnectionAndReturnJsonResponse("/delete/user?name=voteTest1", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie=" + cookie, "GET");
+        establishConnectionAndReturnJsonResponse("/delete/submission?name=voteTestSub", "GET");
+
+        establishConnectionAndReturnJsonResponse("/delete/user?name=voteTest2", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie="+cookieSecondUser, "GET");
+
+    }
+
+    @Test
+    public void serverRespondsWithOkAndRatingIsZeroFirstLikeThreeTimesAndOtherDislikeTwice() throws CommunicationLayerException, JSONException {
+        establishConnectionAndReturnJsonResponse("/delete/user?name=voteTest1", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/user?name=voteTest2", "GET");
+
+        establishConnectionAndReturnJsonResponse("/register?user=voteTest1&password=password&email=voteTestEmail1", "GET");
+        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=voteTest1&password=password", "GET");
+        String cookie = getCookieFromJson(loginUser);
+
+        establishConnectionAndReturnJsonResponse("/register?user=voteTest2&password=password&email=voteTestEmail2", "GET");
+        JSONObject loginSecondUser = establishConnectionAndReturnJsonResponse("/login?user=voteTest2&password=password", "GET");
+        String cookieSecondUser = getCookieFromJson(loginSecondUser);
+
+        JSONObject addSubmission = establishConnectionAndReturnJsonResponse("/submission?cookie=" + cookie + "&name=voteTestSub&category=category&location=location&image=image", "POST");
+        String id = getIdFromJson(addSubmission);
+
+
+        establishConnectionAndReturnJsonResponse("/vote?cookie=" + cookie + "&id=" + id + "&value=1", "GET");
+        establishConnectionAndReturnJsonResponse("/vote?cookie="+cookieSecondUser+"&id="+id+"&value=-1", "GET");
+        establishConnectionAndReturnJsonResponse("/vote?cookie=" + cookie + "&id=" + id + "&value=1", "GET");
+        establishConnectionAndReturnJsonResponse("/vote?cookie=" + cookie + "&id=" + id + "&value=1", "GET");
+        establishConnectionAndReturnJsonResponse("/vote?cookie=" + cookieSecondUser + "&id=" + id + "&value=-1", "GET");
+
+
+        JSONObject retrieveSubmission = establishConnectionAndReturnJsonResponse("/retrieve?cookie="+cookie+"&flag=1&id="+id, "GET");
+        assertEquals(0, getRatingFromJson(retrieveSubmission));
+
+        establishConnectionAndReturnJsonResponse("/delete/user?name=voteTest1", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie=" + cookie, "GET");
+        establishConnectionAndReturnJsonResponse("/delete/submission?name=voteTestSub", "GET");
+
+        establishConnectionAndReturnJsonResponse("/delete/user?name=voteTest2", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie="+cookieSecondUser, "GET");
+
+    }
+
+    @Test
+    public void serverRespondsWithOkIfSuccessAndRatingUndoneIfValueIsZero() throws CommunicationLayerException, JSONException {
+        establishConnectionAndReturnJsonResponse("/delete/user?name=voteTest", "GET");
+
+        establishConnectionAndReturnJsonResponse("/register?user=voteTest&password=password&email=voteTestEmail", "GET");
+        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=voteTest&password=password", "GET");
+        String cookie = getCookieFromJson(loginUser);
+
+        JSONObject addSubmission = establishConnectionAndReturnJsonResponse("/submission?cookie=" + cookie + "&name=voteTestSub&category=category&location=location&image=image", "POST");
+        String id = getIdFromJson(addSubmission);
+
+        //We like
+        establishConnectionAndReturnJsonResponse("/vote?cookie=" + cookie + "&id=" + id + "&value=1", "GET");
+
+        //We remove our vote
+        establishConnectionAndReturnJsonResponse("/vote?cookie=" + cookie + "&id=" + id + "&value=0", "GET");
+
+        JSONObject retrieveSubmission = establishConnectionAndReturnJsonResponse("/retrieve?cookie="+cookie+"&flag=1&id="+id, "GET");
+        assertEquals(0, getRatingFromJson(retrieveSubmission));
+
+        establishConnectionAndReturnJsonResponse("/delete/user?name=voteTest", "GET");
         establishConnectionAndReturnJsonResponse("/delete/session?cookie="+cookie, "GET");
         establishConnectionAndReturnJsonResponse("/delete/submission?name=voteTestSub", "GET");
 

@@ -170,6 +170,7 @@ public class ServerSingleRequestTest {
         assertEquals(0, serverResponse.getInt("rating"));
         assertEquals("singlerequesttest", serverResponse.getString("submitter"));
         assertEquals("key", serverResponse.getString("keywords"));
+        assertEquals(0, serverResponse.getInt("vote"));
 
         //Delete user, session and submission
         establishConnectionAndReturnJsonResponse("/delete/user?name=singlerequesttest", "GET");
