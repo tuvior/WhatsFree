@@ -21,7 +21,9 @@ import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 import static junit.framework.Assert.assertSame;
 import static junit.framework.Assert.fail;
 
-/** Tests the DefaultNetworkProvider */
+/**
+ * Tests the DefaultNetworkProvider
+ */
 @RunWith(AndroidJUnit4.class)
 public class DefaultNetworkProviderTest {
 
@@ -50,7 +52,7 @@ public class DefaultNetworkProviderTest {
     }
 
     @Test
-    public void testInvalidUrl(){
+    public void testInvalidUrl() {
 
         try {
             DefaultNetworkProvider dnp = new DefaultNetworkProvider();

@@ -64,13 +64,13 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
     private int startMonth = currentCalendar.get(Calendar.MONTH);
     private int startDay   = currentCalendar.get(Calendar.DAY_OF_MONTH);
     private DefaultCommunicationLayer communicationLayer = ProvideCommunicationLayer.getCommunicationLayer();
-   /// private int DATE_DIALOG_ID = 0;
+    /// private int DATE_DIALOG_ID = 0;
 
     private final static int PICTURE_REQUEST = 200;
     private final static int IMAGE_GALLERY_REQUEST = 201;
     //private Uri imageUri;
-     private Bitmap bitmap;
-   // = BitmapFactory.decodeResource(InstrumentationRegistry.getTargetContext().getResources(), R.mipmap.ic_launcher);
+    private Bitmap bitmap;
+    // = BitmapFactory.decodeResource(InstrumentationRegistry.getTargetContext().getResources(), R.mipmap.ic_launcher);
 
     private EditText nameOfEvent ;
     private EditText eventDescription ;
@@ -151,14 +151,14 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
     public void onSetDateClicked(View view){
 
 
-         DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
+        DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 
 
 
 
-               // dateOfEvent.setYear(year); dateOfEvent.setMonth(monthOfYear);dateOfEvent.setDate(dayOfMonth);
+                // dateOfEvent.setYear(year); dateOfEvent.setMonth(monthOfYear);dateOfEvent.setDate(dayOfMonth);
                 startEventCalendar.set(Calendar.YEAR,year);
                 startEventCalendar.set(Calendar.MONTH,monthOfYear);
                 startEventCalendar.set(Calendar.DAY_OF_MONTH,dayOfMonth);
@@ -194,8 +194,8 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
     public void onClickSetTime(View view){
 
-       final Button startTimeButton = (Button)findViewById(R.id.startButton);
-       final Button startOrEnd = (Button)view;
+        final Button startTimeButton = (Button)findViewById(R.id.startButton);
+        final Button startOrEnd = (Button)view;
 
         //Process in order to get current time
         final Calendar calendar = Calendar.getInstance();
@@ -218,7 +218,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
                 }else{
 
-                   //endDate.setHours(hourOfDay);endDate.setMinutes(minute);
+                    //endDate.setHours(hourOfDay);endDate.setMinutes(minute);
                     endEventCalendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
                     endEventCalendar.set(Calendar.MINUTE,minute);
 
@@ -243,10 +243,10 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
 
 
-         // condition necessary in order to inject a default image
+        // condition necessary in order to inject a default image
         if(provideImage.getTypeOfImage() == ProvideImage.ImageType.FROM_TEST ){
             bitmap = ProvideImage.getImage();
-          imageView.setImageBitmap(ProvideImage.getImage());
+            imageView.setImageBitmap(ProvideImage.getImage());
 
         }else {
 
@@ -381,10 +381,10 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
         }else{
 
 
-             currentCalendar.setTimeZone(timeZone);
+            currentCalendar.setTimeZone(timeZone);
 
-             this.dateOfEvent = startEventCalendar.getTime();
-             this.endDate = endEventCalendar.getTime();
+            this.dateOfEvent = startEventCalendar.getTime();
+            this.endDate = endEventCalendar.getTime();
 
 
             if(endDate.before(dateOfEvent)|| endDate.getTime() == dateOfEvent.getTime() || dateOfEvent.before(currentCalendar.getTime())){
@@ -477,7 +477,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
         if(bitmap != null ){
             bitmap = Bitmap.createScaledBitmap(bitmap, SCALE_FACTOR, SCALE_FACTOR,false);
-           // imageView.setImageBitmap(bitmap);
+            // imageView.setImageBitmap(bitmap);
             imageView.setImageBitmap(bitmap);
         }
 
@@ -510,7 +510,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
             try {
                 return communicationLayer.sendAddSubmissionRequest(params[0]);
             } catch (CommunicationLayerException e) {
-            return null;
+                return null;
 
             }
         }
@@ -573,5 +573,3 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
 
 }
-
-

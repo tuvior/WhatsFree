@@ -34,11 +34,9 @@ import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
  */
 public class WhatsNewFragment extends ListFragment {
 
-    private   ArrayList<Submission> cachedSubmissions;
-    private  static String ID = "ID";
-    private static SortSubmission sortSubmissions ;
-
-
+    private static String ID = "ID";
+    private static SortSubmission sortSubmissions;
+    private ArrayList<Submission> cachedSubmissions;
 
 
     public WhatsNewFragment() {
@@ -60,7 +58,7 @@ public class WhatsNewFragment extends ListFragment {
         View rootView = inflater.inflate(R.layout.whats_new_fragment, container, false);
 
 
-        Button button = (Button)rootView.findViewById(R.id.filterButton);
+        Button button = (Button) rootView.findViewById(R.id.filterButton);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,7 +72,7 @@ public class WhatsNewFragment extends ListFragment {
 
                 final SortSubmission[] sortSubmissionList = new SortSubmission[1];
 
-                RadioGroup radioGroup = (RadioGroup)dialog.findViewById(R.id.radioGroupFilter);
+                RadioGroup radioGroup = (RadioGroup) dialog.findViewById(R.id.radioGroupFilter);
 
 
                 radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -100,8 +98,7 @@ public class WhatsNewFragment extends ListFragment {
                 });
 
 
-
-                final Button okButton = (Button)dialog.findViewById(R.id.dialogOkButton);
+                final Button okButton = (Button) dialog.findViewById(R.id.dialogOkButton);
 
                 okButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -123,10 +120,6 @@ public class WhatsNewFragment extends ListFragment {
                 //when i click on the dialog button i should re-fetch the submissions again and sort
 
 
-
-
-
-
             }
         });
 
@@ -134,9 +127,7 @@ public class WhatsNewFragment extends ListFragment {
         ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
-            //mShortcuts will contain the shortcuts retrieved by the asynchronous task
             new DownloadWebpageTask(getContext()).execute(); //Caution: submission MUST be retrieved from an async task (performance). Otherwise the app will crash.
-
         } else {
             //Connection problem
             displayToast("Connection problem");
@@ -147,7 +138,6 @@ public class WhatsNewFragment extends ListFragment {
 
 
     /**
-     *
      * @param l
      * @param v
      * @param position
@@ -155,7 +145,7 @@ public class WhatsNewFragment extends ListFragment {
      */
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        Submission submission = (Submission)getListAdapter().getItem(position);
+        Submission submission = (Submission) getListAdapter().getItem(position);
 
         String submissionId = submission.getId();
         Intent intent = new Intent(v.getContext(), DisplaySubmissionActivity.class);
@@ -166,23 +156,32 @@ public class WhatsNewFragment extends ListFragment {
 
     /**
      * Sorts submissions according to their submission time
+     *
      * @return the sorted list of submissions
      */
-    public ArrayList<Submission> sortSubmissions(ArrayList<Submission> submissions){
+    public ArrayList<Submission> sortSubmissions(ArrayList<Submission> submissions) {
         //TODO
         return null;
+    }
+
+    private void displayToast(String message) {
+        Context context = getActivity().getApplicationContext();
+        CharSequence text = message;
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
     }
 
     private class DownloadWebpageTask extends AsyncTask<Void, Void, ArrayList<Submission>> {
         private Context context;
 
-        public  DownloadWebpageTask(Context context){
+        public DownloadWebpageTask(Context context) {
             this.context = context;
 
         }
 
         @Override
-        protected ArrayList<Submission> doInBackground(Void ... params) {
+        protected ArrayList<Submission> doInBackground(Void... params) {
             ArrayList<Submission> submissions = null;
             CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
 
@@ -203,24 +202,23 @@ public class WhatsNewFragment extends ListFragment {
         @Override
         protected void onPostExecute(ArrayList<Submission> submissions) {
 
-            if(submissions == null){
+            if (submissions == null) {
 
-                    displayToast("No new submissions yet");
+                displayToast("No new submissions yet");
 
-            }else {
+            } else {
 
 
                 cachedSubmissions = submissions;
-                if(sortSubmissions != null){
+                if (sortSubmissions != null) {
 
                     try {
-                          sortSubmissions.sort(submissions);
-                    }catch(Exception e ){
+                        sortSubmissions.sort(submissions);
+                    } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(context, " Problem with server when sorting ", Toast.LENGTH_SHORT).show();
                     }
                 }
-
 
 
                 SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, submissions);
@@ -231,14 +229,4 @@ public class WhatsNewFragment extends ListFragment {
         }
 
     }
-
-    private void displayToast(String message){
-        Context context = getActivity().getApplicationContext();
-        CharSequence text = message;
-        int duration = Toast.LENGTH_SHORT;
-        Toast toast = Toast.makeText(context, text, duration);
-
-        toast.show();
-    }
-
 }

@@ -3,6 +3,7 @@ package ch.epfl.sweng.freeapp.mainScreen;
 /**
  * Created by lois on 11/6/15.
  */
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -25,6 +26,7 @@ public class CategoriesFragment extends ListFragment {
 
     /**
      * The categories tab presents all the categories as a list
+     *
      * @param inflater
      * @param container
      * @param savedInstanceState
@@ -37,7 +39,7 @@ public class CategoriesFragment extends ListFragment {
         View rootView = inflater.inflate(R.layout.categories_fragment, container,
                 false);
 
-        String[] values = new String[] { "Food", "Clothing", "Events", "Nightlife", "Sport", "Culture", "Goods", "Lifestyle", "Miscellaneous" };
+        String[] values = new String[]{"Food", "Clothing", "Events", "Nightlife", "Sport", "Culture", "Goods", "Lifestyle", "Miscellaneous"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1, values);
         setListAdapter(adapter);

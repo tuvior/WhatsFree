@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
  */
 public class ProvideImage {
 
+
     private static   Bitmap bitmap;
     private static ImageType TYPE_OF_IMAGE = ImageType.FROM_PHONE;
 
@@ -16,8 +17,10 @@ public class ProvideImage {
     }
     public static Bitmap getImage(){
 
+
         return bitmap;
     }
+
 
 
     public enum ImageType{
@@ -33,6 +36,7 @@ public class ProvideImage {
     public ImageType getTypeOfImage(){
         return TYPE_OF_IMAGE;
     }
+
 
 
 

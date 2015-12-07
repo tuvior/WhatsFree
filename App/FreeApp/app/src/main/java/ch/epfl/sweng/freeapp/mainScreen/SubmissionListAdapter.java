@@ -1,7 +1,6 @@
 package ch.epfl.sweng.freeapp.mainScreen;
 
 import android.content.Context;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
@@ -11,7 +10,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import java.util.List;
+
 import ch.epfl.sweng.freeapp.R;
 import ch.epfl.sweng.freeapp.Submission;
 
@@ -45,10 +46,10 @@ public class SubmissionListAdapter extends ArrayAdapter<Submission> {
                 tt1.setText(p.getName());
             }
 
-            if(imageView != null){
+            if (imageView != null) {
                 //TODO: setImage
                 String image = p.getImage();
-                if(image != null) {
+                if (image != null) {
                     if (image.length() >= 1000) {
                         imageView.setImageBitmap(decodeImage(image));
                     }
@@ -60,7 +61,7 @@ public class SubmissionListAdapter extends ArrayAdapter<Submission> {
     }
 
     //FIXME: also present in DisplaySubmissionActivity: refactor
-    private Bitmap decodeImage(String input){
+    private Bitmap decodeImage(String input) {
 
         byte[] decodedByte = Base64.decode(input, 0);
         return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);

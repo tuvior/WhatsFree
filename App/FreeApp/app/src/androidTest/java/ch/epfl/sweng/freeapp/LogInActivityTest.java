@@ -27,29 +27,27 @@ import static junit.framework.Assert.assertEquals;
 public class LogInActivityTest {
 
 
-    private LogInInfo logInfo;
-    private CommunicationLayer communicationLayer;
-    private NetworkProvider networkProvider;
     private static final int MIN_USER = 6;
-    private static final int  MIN_PASSWORD= 8;
+    private static final int MIN_PASSWORD = 8;
     private static final int MAX_LENGTH = 30;
-
     @Rule
     public ActivityTestRule<LoginActivity> mActivityRule = new ActivityTestRule<>(
             LoginActivity.class);
-
+    private LogInInfo logInfo;
+    private CommunicationLayer communicationLayer;
+    private NetworkProvider networkProvider;
 
     @Before
-    public void setUp(){
+    public void setUp() {
 
-        this.logInfo = new LogInInfo("username","password");
+        this.logInfo = new LogInInfo("username", "password");
         networkProvider = Mockito.mock(NetworkProvider.class);
         communicationLayer = Mockito.mock(CommunicationLayer.class);
 
     }
 
     @Test
-    public void testWhenLoginButtonPressedCorrectDataShouldBeUsed(){
+    public void testWhenLoginButtonPressedCorrectDataShouldBeUsed() {
         LoginActivity loginActivity = mActivityRule.getActivity();
 
         onView(withId(R.id.username)).perform(typeText("username"));
@@ -63,29 +61,29 @@ public class LogInActivityTest {
 
     //successfully goes to new Screen
     @Test
-    public void testGoToNewScreen(){
+    public void testGoToNewScreen() {
 
     }
 
 
     //I expect this test to display a message
     @Test
-    public void testPasswordShouldNotBeLeftBlank(){
+    public void testPasswordShouldNotBeLeftBlank() {
 
         LoginActivity loginActivity = mActivityRule.getActivity();
 
-        EditText password = (EditText)loginActivity.findViewById(R.id.password);
+        EditText password = (EditText) loginActivity.findViewById(R.id.password);
         onView(withId(R.id.username)).perform(typeText(generateStringOfLengthN(MIN_USER)));
         onView(withId(R.id.logInButton)).perform(click());
-        assertEquals(true,password.getError().toString().equals("Fill password"));
+        assertEquals(true, password.getError().toString().equals("Fill password"));
 
     }
 
 
     @Test
-    public void testUserNameShouldNotBeLeftBlank(){
+    public void testUserNameShouldNotBeLeftBlank() {
         LoginActivity loginActivity = mActivityRule.getActivity();
-        EditText username = (EditText)loginActivity.findViewById(R.id.username);
+        EditText username = (EditText) loginActivity.findViewById(R.id.username);
         onView(withId(R.id.password)).perform(typeText(generateStringOfLengthN(MAX_LENGTH)));
         onView(withId(R.id.logInButton)).perform(click());
         assertEquals(true, username.getError().toString().equals("Fill username"));
@@ -108,9 +106,8 @@ public class LogInActivityTest {
     }
 
 
-
     @Test
-    public void  testUserLengthPasswordMethodCornerCase1 (){
+    public void testUserLengthPasswordMethodCornerCase1() {
 
         LoginActivity loginActivity = mActivityRule.getActivity();
         EditText username = (EditText) loginActivity.findViewById(R.id.username);
@@ -126,7 +123,7 @@ public class LogInActivityTest {
     }
 
     @Test
-    public void  testUserLengthPasswordMethodCornerCase2 (){
+    public void testUserLengthPasswordMethodCornerCase2() {
 
         LoginActivity loginActivity = mActivityRule.getActivity();
         EditText username = (EditText) loginActivity.findViewById(R.id.username);
@@ -139,11 +136,10 @@ public class LogInActivityTest {
         assertEquals(true, password.getError().toString().length() > 0);
 
 
-
     }
 
     @Test
-    public void  testUserLengthPasswordMethodCornerCase3(){
+    public void testUserLengthPasswordMethodCornerCase3() {
         LoginActivity loginActivity = mActivityRule.getActivity();
         EditText username = (EditText) loginActivity.findViewById(R.id.username);
         EditText password = (EditText) loginActivity.findViewById(R.id.password);
@@ -157,7 +153,7 @@ public class LogInActivityTest {
     }
 
     @Test
-    public void  testUserLengthPasswordMethodCornerCase4(){
+    public void testUserLengthPasswordMethodCornerCase4() {
         LoginActivity loginActivity = mActivityRule.getActivity();
         EditText username = (EditText) loginActivity.findViewById(R.id.username);
         EditText password = (EditText) loginActivity.findViewById(R.id.password);
@@ -177,36 +173,34 @@ public class LogInActivityTest {
         LoginActivity loginActivity = mActivityRule.getActivity();
 
 
-        EditText username = (EditText)loginActivity.findViewById(R.id.username);
-        EditText password = (EditText)loginActivity.findViewById(R.id.password);
+        EditText username = (EditText) loginActivity.findViewById(R.id.username);
+        EditText password = (EditText) loginActivity.findViewById(R.id.password);
 
 
         onView(withId(R.id.username)).perform(typeText(generateStringOfLengthN(MIN_USER)));
         onView(withId(R.id.password)).perform(typeText(generateStringOfLengthN(MAX_LENGTH)));
         onView(withId(R.id.logInButton)).perform(click());
-        assertEquals(true, username.getError()  == null);
-        assertEquals(true, password.getError()  == null);
+        assertEquals(true, username.getError() == null);
+        assertEquals(true, password.getError() == null);
 
 
     }
 
 
-
-    private String generateStringOfLengthN(int n){
+    private String generateStringOfLengthN(int n) {
 
         StringBuilder b = new StringBuilder();
         char c = 'c';
 
-        for (int i = 0; i< n ;i++){
+        for (int i = 0; i < n; i++) {
             b.append(c);
         }
-        return  b.toString();
+        return b.toString();
     }
 
 
-
     @Test
-    public void testPasswordAndUserCantContainSpace(){
+    public void testPasswordAndUserCantContainSpace() {
 
         String userWithSpace = "My name is francis";
         String passwordWithSpace = "Password is good";
@@ -214,8 +208,8 @@ public class LogInActivityTest {
         LoginActivity loginActivity = mActivityRule.getActivity();
 
 
-        EditText username = (EditText)loginActivity.findViewById(R.id.username);
-        EditText password = (EditText)loginActivity.findViewById(R.id.password);
+        EditText username = (EditText) loginActivity.findViewById(R.id.username);
+        EditText password = (EditText) loginActivity.findViewById(R.id.password);
 
         onView(withId(R.id.username)).perform(typeText(userWithSpace));
         onView(withId(R.id.password)).perform(typeText(passwordWithSpace));
@@ -228,10 +222,10 @@ public class LogInActivityTest {
     }
 
     @Test
-    public void testGoesToRegisterActivityWhenSignUpClicked(){
+    public void testGoesToRegisterActivityWhenSignUpClicked() {
 
         onView(withId(R.id.sign_up)).perform(click());
-       // onView(withId(R.id.sign_up)).check(matches(not(isDisplayed())));
+        // onView(withId(R.id.sign_up)).check(matches(not(isDisplayed())));
 
 
     }

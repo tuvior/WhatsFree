@@ -21,10 +21,9 @@ import static junit.framework.Assert.assertNotSame;
 
 public class ServerLogInTest {
     private static final String SERVER_URL = "http://sweng-wiinotfit.appspot.com";
-    private NetworkProvider networkProvider = new DefaultNetworkProvider();
     private final static int HTTP_SUCCESS_START = 200;
     private final static int HTTP_SUCCESS_END = 299;
-
+    private NetworkProvider networkProvider = new DefaultNetworkProvider();
 
     private String fetchContent(HttpURLConnection conn) throws IOException {
         StringBuilder out = new StringBuilder();
@@ -130,7 +129,7 @@ public class ServerLogInTest {
 
         //Delete user and session so that it is no more in db
         JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete/user?name=user", "GET");
-        JSONObject deleteSession = establishConnectionAndReturnJsonResponse("/delete/session?cookie="+cookie, "GET");
+        JSONObject deleteSession = establishConnectionAndReturnJsonResponse("/delete/session?cookie=" + cookie, "GET");
     }
 
 

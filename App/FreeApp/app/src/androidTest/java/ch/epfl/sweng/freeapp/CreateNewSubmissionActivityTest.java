@@ -50,9 +50,9 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
 
     // calendar.setTimeZone(timeZone);
 
-   private int dayOfMonth  = calendar.get(Calendar.DAY_OF_MONTH);
-   private int monthOfYear = calendar.get(Calendar.MONTH);
-   private int year = calendar.get(Calendar.YEAR);
+    private int dayOfMonth  = calendar.get(Calendar.DAY_OF_MONTH);
+    private int monthOfYear = calendar.get(Calendar.MONTH);
+    private int year = calendar.get(Calendar.YEAR);
     private  Submission submission;
 
 
@@ -69,9 +69,9 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
 
         calendar3.add(Calendar.DAY_OF_MONTH, 1);
 
-         int dayOfMonth  = calendar3.get(Calendar.DAY_OF_MONTH);
-         int monthOfYear = calendar3.get(Calendar.MONTH);
-         int year =        calendar3.get(Calendar.YEAR);
+        int dayOfMonth  = calendar3.get(Calendar.DAY_OF_MONTH);
+        int monthOfYear = calendar3.get(Calendar.MONTH);
+        int year =        calendar3.get(Calendar.YEAR);
 
         int startHoursOfDay = 20;
         int endHoursOfDay   = 20;
@@ -236,7 +236,7 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
         ProvideImage.setImage(bitmapIcon);
 
         ProvideCommunicationLayer.setCommunicationLayer(new FakeCommunicationLayer());
-        
+
         getActivity();
 
         onView(withId(R.id.NameOfEvent)).perform(typeText(submission.getName()));
@@ -302,7 +302,7 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
 
         onView(withText("TAKE PHOTO")).perform(scrollTo());
         onView(withId(R.id.takePictureButton)).perform(click());
-        
+
         onView(withText("CREATE")).perform(scrollTo());
         onView(withId(R.id.keywords)).perform(scrollTo());
         onView(withId(R.id.keywords)).perform(typeText(submission.getKeywords()));
