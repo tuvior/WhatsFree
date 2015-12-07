@@ -104,9 +104,14 @@
             android:label="@string/title_activity_map" >
         </activity>
         <activity
+            android:name=".NavigationDrawerActivity"
+            android:label="@string/title_activity_navigation_drawer">
+        </activity>
+        <activity
             android:name=".SearchActivity"
             android:label="@string/title_activity_search" >
         </activity>
+
 
     </application>
 

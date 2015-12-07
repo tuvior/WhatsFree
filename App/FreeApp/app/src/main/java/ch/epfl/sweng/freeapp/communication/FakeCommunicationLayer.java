@@ -119,5 +119,10 @@ public class FakeCommunicationLayer implements DefaultCommunicationLayer {
 
     }
 
+    @Override
+    public Submission fetchSubmissionByName(String name) throws CommunicationLayerException {
+        return null;
+    }
+
 
 }

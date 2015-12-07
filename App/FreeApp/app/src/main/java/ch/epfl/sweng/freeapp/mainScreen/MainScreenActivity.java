@@ -227,7 +227,7 @@ public class MainScreenActivity extends AppCompatActivity {
             Submission submission = null;
 
             try {
-                submission = communicationLayer.fetchSubmission(params[0]);
+                submission = communicationLayer.fetchSubmissionByName(params[0]);
             } catch (CommunicationLayerException e) {
                 e.printStackTrace();
             }
@@ -239,11 +239,11 @@ public class MainScreenActivity extends AppCompatActivity {
         protected void onPostExecute(Submission submission) {
 
             if(submission == null){
-                displayToast("No submission exists with this id");
+                displayToast("No submission exists with this name");
             }
             // display submission
             else {
-                displayToast("There exists a submission with this id");
+                displayToast("There exists a submission with this name");
                 Intent intent = new Intent(context, DisplaySubmissionActivity.class);
                 intent.putExtra(MainScreenActivity.SUBMISSION_MESSAGE, submission.getId());
 
