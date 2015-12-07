@@ -51,10 +51,10 @@
     <string name="name_of_event">Whats Free </string>
     <string name="location">Location</string>
     <string name="categories">Category</string>
-    <string name="set_date">Set Date</string>
+    <string name="set_date">SET DATE</string>
 
-    <string name="start_time">Starts</string>
-    <string name="end_time">Ends</string>
+    <string name="start_time">STARTS</string>
+    <string name="end_time">ENDS</string>
     <string name="existImage">OPEN EXISTING IMAGE</string>
     <string name="takeImage">TAKE PHOTO</string>
     <string name="keyword">Key Words</string>

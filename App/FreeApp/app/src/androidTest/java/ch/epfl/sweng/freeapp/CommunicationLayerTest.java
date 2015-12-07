@@ -171,74 +171,9 @@ public class CommunicationLayerTest {
         //TODO after refactoring code
     }
 
-    @Test
-    public void testAllResponseLocationForCreateSubmissionOnLine() throws CommunicationLayerException {
 
 
-        builder.name("Croissant ");
-        builder.description("Good Food");
-        builder.category(SubmissionCategory.Food);
-        builder.location("");
 
-        builder.image("RUBBISH IMAGE");
-        builder.keywords("FOOD BREAD FREE");
-
-        builder.startOfEvent(startTime);
-        builder.endOfEvent(endTime);
-        builder.submitted(current);
-        builder.latitude(latitude);
-        builder.longitude(longitude);
-
-
-        ResponseStatus status = communicationLayerOnLine.sendAddSubmissionRequest(builder.build());
-        assertEquals(ResponseStatus.LOCATION, status);
-
-
-    }
-
-    @Test
-    public void testResponseErrorNameForCreateSubmissionOnLine() throws CommunicationLayerException {
-
-        builder.name("");
-        builder.description("Good Food");
-        builder.category(SubmissionCategory.Food);
-        builder.location("address");
-
-        builder.image("image");
-        builder.keywords("FOOD BREAD FREE");
-
-        builder.startOfEvent(startTime);
-        builder.endOfEvent(endTime);
-        builder.submitted(current);
-        builder.latitude(latitude);
-        builder.longitude(longitude);
-
-        ResponseStatus status = communicationLayerOnLine.sendAddSubmissionRequest(builder.build());
-        assertEquals(ResponseStatus.NAME, status);
-
-
-    }
-
-    @Test
-    public void testResponseNoImageForCreateSubmissionOnLine() throws CommunicationLayerException {
-
-        builder.name("name");
-        builder.description("Good Food");
-        builder.category(SubmissionCategory.Food);
-        builder.location("address");
-
-        builder.image("");
-        builder.keywords("FOOD BREAD FREE");
-
-        builder.startOfEvent(startTime);
-        builder.endOfEvent(endTime);
-        builder.submitted(current);
-        builder.latitude(latitude);
-        builder.longitude(longitude);
-        ResponseStatus status = communicationLayerOnLine.sendAddSubmissionRequest(builder.build());
-        assertEquals(ResponseStatus.IMAGE, status);
-
-    }
 
     @Test
     public void testCreateSubmission() throws CommunicationLayerException, IOException {
