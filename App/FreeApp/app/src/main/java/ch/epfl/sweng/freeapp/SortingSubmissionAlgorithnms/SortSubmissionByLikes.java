@@ -21,7 +21,7 @@ public class SortSubmissionByLikes implements SortSubmission {
             @Override
             public int compare(Submission lhs, Submission rhs) {
 
-                return Integer.compare(lhs.getLikes(), rhs.getLikes());
+                return Integer.compare(lhs.getRating(), rhs.getRating());
 
             }
         });

@@ -21,8 +21,6 @@ public class Submission {
     private Date startOfEvent;
     private Date endOfEvent;
 
-    private int likes;
-    private int dislikes;
     private String id;
 
     private double latitude;
@@ -69,6 +67,9 @@ public class Submission {
         }
     }
 
+    public void setRating(int rating){
+        this.rating =  rating;
+    }
     public int getRating() {
         return rating;
     }
@@ -109,21 +110,8 @@ public class Submission {
         return image;
     }
 
-    public int getLikes() {
-        return likes;
-    }
 
-    public void setLikes(int likes) {
-        this.likes = likes;
-    }
 
-    public int getDislikes() {
-        return dislikes;
-    }
-
-    public void setDislikes(int dislikes) {
-        this.dislikes = dislikes;
-    }
 
     public double getLatitude() {
         return latitude;
@@ -161,7 +149,7 @@ public class Submission {
         private double longitude;
 
         private String image; //see how to deal with it
-        private int likes;
+
 
         public Builder name(String name) {
             this.name = name;
@@ -225,10 +213,7 @@ public class Submission {
             return this;
         }
 
-        public Builder likes(int likes) {
-            this.likes = likes;
-            return this;
-        }
+
 
 
         public Submission build() {

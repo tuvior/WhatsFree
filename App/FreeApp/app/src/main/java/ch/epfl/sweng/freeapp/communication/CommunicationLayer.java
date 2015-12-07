@@ -100,6 +100,8 @@ public class CommunicationLayer implements DefaultCommunicationLayer {
     }
 
 
+
+
     public ResponseStatus sendVote(Submission submission, Vote vote) throws CommunicationLayerException {
 
         if (submission == null) {
@@ -111,36 +113,48 @@ public class CommunicationLayer implements DefaultCommunicationLayer {
         String serverUrl = SERVER_URL + "/vote?id=" + id + "&cookie=" + cookieSession + "&value=" + vote.getValue();
 
         String content;
+        JSONObject jsonObject = null;
         try {
             content = fetchStringFrom(serverUrl);
-            JSONObject jsonObject = new JSONObject(content);
+            jsonObject = new JSONObject(content);
             JSONObject serverResponseJson = jsonObject.getJSONObject("vote");
 
-            if (serverResponseJson.getString("status").equals("failure")) {
-                switch (serverResponseJson.getString("reason")) {
-                    case "session":
-                        return ResponseStatus.SESSION;
-                    case "value":
-                        return ResponseStatus.VALUE;
-                    case "no  submission":
-                        return ResponseStatus.NO_SUBMISSION;
-                    default:
-                        throw new CommunicationLayerException();
-                }
-            }
+            if (serverResponseJson.getString("result").equals("ok")) {
 
-            if (BuildConfig.DEBUG && !(serverResponseJson.getString("status").equals("ok"))) {
-                throw new AssertionError();
+                return ResponseStatus.OK;
+
             }
-            return ResponseStatus.OK;
 
         } catch (IOException | JSONException e) {
             e.printStackTrace();
 
-            throw new CommunicationLayerException();
+
+            JSONObject serverResponseJson = null;
+            try {
+                serverResponseJson = jsonObject.getJSONObject("vote");
+
+                if (serverResponseJson.getString("status").equals("failure")) {
+
+                    switch (serverResponseJson.getString("reason")) {
+                        case "session":
+                            return ResponseStatus.SESSION;
+                        case "value":
+                            return ResponseStatus.VALUE;
+                        case "no  submission":
+                            return ResponseStatus.NO_SUBMISSION;
+                        default:
+                            throw new CommunicationLayerException();
+                    }
+                }
+
+            } catch (JSONException e1) {
+                e1.printStackTrace();
+                throw new CommunicationLayerException();
+            }
+
         }
 
-
+        return null;
     }
 
 
@@ -311,12 +325,14 @@ public class CommunicationLayer implements DefaultCommunicationLayer {
             String location = jsonSubmission.getString("location");
             String name = jsonSubmission.getString("name");
             String retrievedVote = jsonSubmission.getString("vote");
+            String rating = jsonSubmission.getString("rating");
 
             Vote vote = Vote.value(retrievedVote);
 
 
             submission = new Submission(name, description, submissionCategory, location, image, id);
             submission.setVote(vote);
+            submission.setRating(Integer.parseInt(rating));
 
         } catch (IOException | JSONException e) {
             throw new CommunicationLayerException();

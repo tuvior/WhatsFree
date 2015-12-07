@@ -42,7 +42,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
     private ImageButton likeButton;
     private ImageButton dislikeButton;
 
-    private int defaultColor;
+    private int defaultColor = android.R.color.transparent;
 
     private boolean likedClicked = false;
     private boolean dislikedClicked = false;
@@ -55,6 +55,10 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
 
         this.likeButton = (ImageButton) findViewById(R.id.like);
         this.dislikeButton = (ImageButton) findViewById(R.id.dislike);
+
+
+        likeButton.setBackgroundResource(defaultColor);
+        dislikeButton.setBackgroundResource(defaultColor);
 
 
         // this.likeButton.setColorFilter(DEFAULT_COLOR);
@@ -213,33 +217,46 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
                 Toast.makeText(context, "Problem from the server side", Toast.LENGTH_SHORT).show();
             } else if (status == ResponseStatus.OK) {
                 if (typeVote == Vote.LIKE) {
-                    if (buttonClicked == Vote.DISLIKE) {  // if i clicked previously the dislike button
+                    if (dislikedClicked) {  // if i clicked previously the dislike button
                         dislikedClicked = false;
+                        //dislikeButton.setBackgroundResource(defaultColor);
 
                         /**
-                         * Set dislike Button to default color;
+                         * Set dislike Button to default color; --done
                          */
+
+                    dislikeButton.setBackgroundResource(defaultColor);
                     }
 
                     /**
-                     * Set the liked button to blue;
-                     * Set likedButtonClicked = true;
+                     * Set the liked button to blue; --done
+                     * Set likedButtonClicked = true; --done
                      */
+
+                    likedClicked = true;
+                    likeButton.setBackgroundResource(android.R.color.holo_blue_light);
 
 
                 } else if (typeVote == Vote.DISLIKE) {
 
-                    if (buttonClicked == Vote.LIKE) {  // if i clicked previously the like button
+                    if (likedClicked) {  // if i clicked previously the like button
                         likedClicked = false;
                         /**
-                         * Set liked button to default color
+                         * Set liked button to default color --done
                          */
+
+                    likeButton.setBackgroundResource(defaultColor);
+
                     }
 
                     /**
-                     * Set Disliked button color to red
-                     * Set dislikedButtonClicked  = true;
+                     * Set Disliked button color to red   --done
+                     * Set dislikedButtonClicked  = true  --done
                      */
+
+                    dislikedClicked = true;
+                    dislikeButton.setBackgroundResource(android.R.color.holo_red_light);
+
 
 
                 } else {
@@ -252,20 +269,22 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
 
 
                         /**
-                         * Set the likeButtonClicked
-                         * likedButtonclicked = false;
-                         * set it's color to its default color as before
+                         * Set the likeButtonClicked = false --done
+                         * set it's color to its default color as before --done
                          */
 
+                      likedClicked = false;
+                      likeButton.setBackgroundResource(defaultColor);
 
                     } else {
 
                         /**
-                         * Set the dislikedButtonClicked
-                         * dislikedButtonClicked = false
-                         * set it's color to its default color as before;
+                         * Set the dislikedButtonClicked = false --done
+                         * set it's color to its default color as before; --done
                          */
 
+                        dislikedClicked = false;
+                        dislikeButton.setBackgroundResource(defaultColor);
 
                     }
                 }
@@ -336,6 +355,8 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
 
                 TextView descriptionTextView = (TextView) findViewById(R.id.submissionDescription);
                 descriptionTextView.setText(submission.getDescription());
+
+
 
                 Vote vote = submission.getVote();
 

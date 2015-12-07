@@ -43,6 +43,50 @@ public class ApplicationDisplaySubmissionActivityTest {
         onView(withId(R.id.submissionDescription)).check(matches(withText("example")));
     }
 
+
+    @Test
+    public void testLikeIsClickable(){
+
+        launchExampleSubmissionActivity();
+
+    }
+
+    @Test
+    public void testDislikeIsClickable(){
+        launchExampleSubmissionActivity();
+
+
+    }
+
+    @Test
+    public void testWhenSubmissionAlreadyLikedButtonIsHighlighted(){
+
+        launchExampleSubmissionActivity();
+
+    }
+    @Test
+    public void testWhenSubmissionAlreadyDislikedButtonHighlighted(){
+
+        launchExampleSubmissionActivity();
+
+
+    }
+
+    @Test
+    public void testRatingSubmissionVisible(){
+
+        launchExampleSubmissionActivity();
+
+
+    }
+    @Test
+    public void testProblemWithServerToastDisplayedWhenBadInternet(){
+        launchExampleSubmissionActivity();
+
+
+
+    }
+
     /**
      * Launches the DisplaySubmissionActivity with a predefined Intent
      */
