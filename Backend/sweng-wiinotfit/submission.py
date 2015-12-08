@@ -3,6 +3,7 @@ from google.appengine.ext import ndb
 
 class Submission(ndb.Model):
     name = ndb.StringProperty()
+    lowerName = ndb.StringProperty()
     category = ndb.StringProperty()
     description = ndb.StringProperty()
     location = ndb.StringProperty()

@@ -51,10 +51,10 @@
     <string name="name_of_event">Whats Free </string>
     <string name="location">Location</string>
     <string name="categories">Category</string>
-    <string name="set_date">Set Date</string>
+    <string name="set_date">SET DATE</string>
 
-    <string name="start_time">Starts</string>
-    <string name="end_time">Ends</string>
+    <string name="start_time">STARTS</string>
+    <string name="end_time">ENDS</string>
     <string name="existImage">OPEN EXISTING IMAGE</string>
     <string name="takeImage">TAKE PHOTO</string>
     <string name="keyword">Key Words</string>
@@ -88,5 +88,10 @@
     <string name="submission_thumbnail">Submission\'s thumbnail</string>
     <string name="title_activity_login">Sign in</string>
     <string name="action_example">Action example</string>
+    <string name="username_hint">Username</string>
+    <string name="email">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="confirm_password_hint">Confirm password</string>
+    <string name="sign_up">Sign up</string>
 
 </resources>

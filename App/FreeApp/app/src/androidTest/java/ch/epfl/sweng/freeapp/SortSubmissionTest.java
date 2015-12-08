@@ -159,7 +159,7 @@ public class SortSubmissionTest {
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_YEAR, random.nextInt(n));
 
-            Submission submission = new Submission.Builder().name(generateString(numberOfChars)).likes(numberOfLikes).endOfEvent(calendar).build();
+            Submission submission = new Submission.Builder().name(generateString(numberOfChars)).rating(numberOfLikes).endOfEvent(calendar).build();
             submissions.add(submission);
 
         }

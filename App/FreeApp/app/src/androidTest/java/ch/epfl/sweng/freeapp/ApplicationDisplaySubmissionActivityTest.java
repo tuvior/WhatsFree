@@ -13,6 +13,7 @@ import ch.epfl.sweng.freeapp.mainScreen.MainScreenActivity;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isClickable;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
@@ -41,6 +42,47 @@ public class ApplicationDisplaySubmissionActivityTest {
         launchExampleSubmissionActivity();
 
         onView(withId(R.id.submissionDescription)).check(matches(withText("example")));
+    }
+
+
+    @Test
+    public void testLikeIsClickable(){
+
+        launchExampleSubmissionActivity();
+        onView(withId(R.id.like)).check(matches(isClickable()));
+
+    }
+    @Test
+    public void testDislikeIsClickable(){
+        launchExampleSubmissionActivity();
+        onView(withId(R.id.dislike)).check(matches(isClickable()));
+
+
+    }
+
+    //Todo
+    @Test
+    public void testWhenSubmissionAlreadyLikedButtonIsHighlighted(){
+
+       // launchExampleSubmissionActivity();
+
+    }
+    //Todo
+    @Test
+    public void testWhenSubmissionAlreadyDislikedButtonHighlighted(){
+
+        //launchExampleSubmissionActivity();
+
+
+    }
+
+    //Todo
+    @Test
+    public void testProblemWithServerToastDisplayedWhenBadInternet(){
+        //launchExampleSubmissionActivity();
+
+
+
     }
 
     /**

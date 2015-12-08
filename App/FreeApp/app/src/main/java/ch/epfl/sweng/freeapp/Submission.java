@@ -4,6 +4,8 @@ package ch.epfl.sweng.freeapp;
 import java.util.Calendar;
 import java.util.Date;
 
+import ch.epfl.sweng.freeapp.mainScreen.Vote;
+
 /**
  * Created by francisdamachi on 14/11/15.
  */
@@ -19,13 +21,12 @@ public class Submission {
     private Date startOfEvent;
     private Date endOfEvent;
 
-    private int likes;
-    private int dislikes;
     private String id;
 
     private double latitude;
     private double longitude;
     private int rating;
+    private Vote vote;
 
     public Submission(String name, String description, SubmissionCategory category, String location, String image, String id) {
         this.name = name;
@@ -44,6 +45,7 @@ public class Submission {
         this.keywords = builder.keywords;
         this.id = builder.id;
         this.image = builder.image;
+        this.rating = builder.rating;
 
 
         if (builder.calendarSubmitted != null) {
@@ -66,6 +68,9 @@ public class Submission {
         }
     }
 
+    public void setRating(int rating){
+        this.rating =  rating;
+    }
     public int getRating() {
         return rating;
     }
@@ -106,21 +111,8 @@ public class Submission {
         return image;
     }
 
-    public int getLikes() {
-        return likes;
-    }
 
-    public void setLikes(int likes) {
-        this.likes = likes;
-    }
 
-    public int getDislikes() {
-        return dislikes;
-    }
-
-    public void setDislikes(int dislikes) {
-        this.dislikes = dislikes;
-    }
 
     public double getLatitude() {
         return latitude;
@@ -132,6 +124,13 @@ public class Submission {
 
     public String getId() {
         return id;
+    }
+
+    public Vote getVote(){
+        return this.vote;
+    }
+    public void setVote (Vote vote){
+        this.vote  = vote;
     }
 
     public static class Builder {
@@ -151,7 +150,8 @@ public class Submission {
         private double longitude;
 
         private String image; //see how to deal with it
-        private int likes;
+        private int rating;
+
 
         public Builder name(String name) {
             this.name = name;
@@ -215,16 +215,18 @@ public class Submission {
             return this;
         }
 
-        public Builder likes(int likes) {
-            this.likes = likes;
-            return this;
-        }
+
 
 
         public Submission build() {
             return new Submission(this);
         }
 
+        public Builder rating(int numberOfLikes) {
+
+            this.rating = numberOfLikes;
+            return this;
+        }
     }
 
 }

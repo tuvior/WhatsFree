@@ -196,7 +196,7 @@ class MyAdapter extends BaseAdapter {
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            row = inflater.inflate(R.layout.custom_row, parent, false);
+            row = inflater.inflate(R.layout.submission_row, parent, false);
 
         } else {
             row = convertView;
