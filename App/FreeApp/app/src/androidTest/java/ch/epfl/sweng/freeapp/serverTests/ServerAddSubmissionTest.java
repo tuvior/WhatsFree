@@ -17,6 +17,7 @@ import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 import ch.epfl.sweng.freeapp.communication.NetworkProvider;
 
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
 
 public class ServerAddSubmissionTest {
     private static final String SERVER_URL = "http://sweng-wiinotfit.appspot.com";

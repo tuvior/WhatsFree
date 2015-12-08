@@ -28,7 +28,7 @@ import ch.epfl.sweng.freeapp.Submission;
 import ch.epfl.sweng.freeapp.SubmissionCategory;
 import ch.epfl.sweng.freeapp.loginAndRegistration.LogInInfo;
 import ch.epfl.sweng.freeapp.loginAndRegistration.RegistrationInfo;
-import ch.epfl.sweng.freeapp.mainScreen.VOTE;
+import ch.epfl.sweng.freeapp.mainScreen.Vote;
 
 
 public class CommunicationLayer implements DefaultCommunicationLayer {

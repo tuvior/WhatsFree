@@ -77,6 +77,10 @@ public class ServerDeleteCategoryTest {private static final String SERVER_URL = 
         return serverResponse.getJSONObject("login").getString("cookie");
     }
 
+    private String getIdFromJson(JSONObject serverResponse) throws JSONException {
+        return serverResponse.getJSONObject("submission").getString("id");
+    }
+
 
     @Test
     public void serverRespondsWithFailureIfNoCategoryParamater() throws CommunicationLayerException, JSONException {
@@ -107,14 +111,15 @@ public class ServerDeleteCategoryTest {private static final String SERVER_URL = 
         JSONObject login = establishConnectionAndReturnJsonResponse("/login?user=deleteTest&password=password", "GET");
         String cookie = getCookieFromJson(login);
 
-        establishConnectionAndReturnJsonResponse("/submission?cookie=" + cookie + "&name=name&category=deleteCategoryTest&location=location&image=image", "POST");
+        JSONObject addSubmission = establishConnectionAndReturnJsonResponse("/submission?cookie=" + cookie + "&name=name&category=deleteCategoryTest&location=location&image=image", "POST");
+        String id = getIdFromJson(addSubmission);
 
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/delete/category?category=deleteCategoryTest", "GET");
         assertEquals("ok", getStatusFromJson(serverResponse, "delete category"));
 
-        JSONObject tryToSearchSubmission = establishConnectionAndReturnJsonResponse("/retrieve?cookie="+cookie+"&flag=5&name=name", "GET");
-        assertEquals("failure", getStatusFromJson(tryToSearchSubmission, "search"));
-        assertEquals("submission", getReasonFromJson(tryToSearchSubmission, "search"));
+        JSONObject tryToRetrieveSubmission = establishConnectionAndReturnJsonResponse("/retrieve?cookie="+cookie+"&flag=1&id="+id, "GET");
+        assertEquals("failure", getStatusFromJson(tryToRetrieveSubmission, "single request"));
+        assertEquals("no corresponding submission", getReasonFromJson(tryToRetrieveSubmission, "single request"));
 
         establishConnectionAndReturnJsonResponse("/delete/user?name=deleteTest", "GET");
         establishConnectionAndReturnJsonResponse("/delete/session?cookie=" + cookie, "GET");

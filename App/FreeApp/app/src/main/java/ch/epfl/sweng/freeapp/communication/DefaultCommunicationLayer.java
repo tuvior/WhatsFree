@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import ch.epfl.sweng.freeapp.Submission;
 import ch.epfl.sweng.freeapp.SubmissionCategory;
-import ch.epfl.sweng.freeapp.mainScreen.VOTE;
+import ch.epfl.sweng.freeapp.mainScreen.Vote;
 
 /**
  * Created by lois on 11/22/15.
@@ -44,5 +44,5 @@ public interface DefaultCommunicationLayer {
     ArrayList<Submission> sendCategoryRequest(SubmissionCategory category) throws CommunicationLayerException;
 
     //TODO : javadoc
-    ResponseStatus sendVote(Submission submission, VOTE vote) throws CommunicationLayerException;
+    ResponseStatus sendVote(Submission submission, Vote vote) throws CommunicationLayerException;
 }

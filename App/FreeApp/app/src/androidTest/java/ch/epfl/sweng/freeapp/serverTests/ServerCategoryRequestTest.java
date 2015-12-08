@@ -174,8 +174,6 @@ public class ServerCategoryRequestTest {
         assertEquals("categorytest", submissionRetrieved.getString("name"));
         assertEquals("image", submissionRetrieved.getString("image"));
         assertEquals(0, submissionRetrieved.getInt("rating"));
-        //All others parameters are not returned, we only test one because we have already tested it on the web
-        assertEquals("", submissionRetrieved.getString("location"));
 
         establishConnectionAndReturnJsonResponse("/delete/user?name=categorytest", "GET");
         establishConnectionAndReturnJsonResponse("/delete/submission?name=categorytest", "GET");
@@ -183,8 +181,6 @@ public class ServerCategoryRequestTest {
 
     }
 
-
-    //TO FIX AND IMPROVE ONCE /delete/category IMPLEMENTED
 
     @Test
     public void serverRespondsWithJSONArrayOfLengthTwo() throws CommunicationLayerException, JSONException {

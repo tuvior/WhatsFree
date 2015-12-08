@@ -3,6 +3,7 @@ package ch.epfl.sweng.freeapp.serverTests;
 
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -63,6 +64,24 @@ public class ServerSearchTest {private static final String SERVER_URL = "http://
         }
     }
 
+    private JSONArray establishConnectionAndReturnJsonResponseAsArray(String urlContd, String requestMethod) throws CommunicationLayerException, JSONException {
+        try {
+            URL url = new URL(SERVER_URL + urlContd);
+            HttpURLConnection conn = networkProvider.getConnection(url);
+            conn.setRequestMethod(requestMethod);
+            conn.setDoInput(true);
+            conn.connect();
+            int response = conn.getResponseCode();
+            if (response < HTTP_SUCCESS_START || response > HTTP_SUCCESS_END) {
+                throw new CommunicationLayerException("Invalid HTTP response code");
+            }
+            String serverResponseString = fetchContent(conn);
+            return new JSONArray(serverResponseString);
+        } catch (IOException e) {
+            throw new CommunicationLayerException();
+        }
+    }
+
     private String getStatusFromJson(JSONObject serverResponse, String option) throws JSONException {
         return serverResponse.getJSONObject(option).getString("status");
     }
@@ -77,44 +96,140 @@ public class ServerSearchTest {private static final String SERVER_URL = "http://
         return serverResponse.getJSONObject("login").getString("cookie");
     }
 
+    private String getIdFromJson(JSONObject serverResponse) throws JSONException {
+        return serverResponse.getJSONObject("submission").getString("id");
+    }
+
+    @Test
+    public void serverRespondsWithFailureIfNoCookieParameter() throws CommunicationLayerException, JSONException {
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/search?", "GET");
+        assertEquals("failure", getStatusFromJson(serverResponse, "search"));
+        assertEquals("cookie", getReasonFromJson(serverResponse, "search"));
+
+    }
+
+    @Test
+    public void serverRespondsWithFailureIfWrongSession() throws CommunicationLayerException, JSONException {
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie=cookie", "GET");
+
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/search?cookie=cookie", "GET");
+        assertEquals("failure", getStatusFromJson(serverResponse, "search"));
+        assertEquals("session", getReasonFromJson(serverResponse, "search"));
+
+    }
+
     @Test
     public void serverRespondsWithFailureIfNoNameParameter() throws CommunicationLayerException, JSONException {
-        establishConnectionAndReturnJsonResponse("/delete/user?name=searchtest", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/user?name=searchTestUser", "GET");
 
-        establishConnectionAndReturnJsonResponse("/register?user=searchtest&password=password&email=searchtest@test.ch", "GET");
-        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=searchtest&password=password", "GET");
+        establishConnectionAndReturnJsonResponse("/register?user=searchTestUser&password=password&email=searchTestEmail", "GET");
+        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=searchTestUser&password=password", "GET");
         String cookie = getCookieFromJson(loginUser);
 
-        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?cookie="+cookie+"&flag=5", "GET");
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/search?cookie="+cookie, "GET");
         assertEquals("failure", getStatusFromJson(serverResponse, "search"));
         assertEquals("name", getReasonFromJson(serverResponse, "search"));
 
-        establishConnectionAndReturnJsonResponse("/delete/user?name=searchtest", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/user?name=searchTestUser", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie=" + cookie, "GET");
+
+    }
+
+    @Test
+    public void serverRespondsWithFailureIfNoCorrespondingSubmission() throws CommunicationLayerException, JSONException {
+        establishConnectionAndReturnJsonResponse("/delete/user?name=searchTestUser", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/submission?name=searchTestSubmission", "GET");
+
+        establishConnectionAndReturnJsonResponse("/register?user=searchTestUser&password=password&email=searchTestEmail", "GET");
+        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=searchTestUser&password=password", "GET");
+        String cookie = getCookieFromJson(loginUser);
+
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/search?cookie="+cookie+"&name=searchTestSubmission", "GET");
+        assertEquals("failure", getStatusFromJson(serverResponse, "search"));
+        assertEquals("no result", getReasonFromJson(serverResponse, "search"));
+
+        establishConnectionAndReturnJsonResponse("/delete/user?name=searchTestUser", "GET");
         establishConnectionAndReturnJsonResponse("/delete/session?cookie="+cookie, "GET");
 
     }
 
     @Test
     public void serverRetrieveSubmission() throws CommunicationLayerException, JSONException {
-        establishConnectionAndReturnJsonResponse("/delete/user?name=searchtest", "GET");
-        establishConnectionAndReturnJsonResponse("/delete/submission?name=searchtestname", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/user?name=searchTestUser", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/submission?name=searchTestSubmission", "GET");
 
-        establishConnectionAndReturnJsonResponse("/register?user=searchtest&password=password&email=searchtest@test.ch", "GET");
-        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=searchtest&password=password", "GET");
+        establishConnectionAndReturnJsonResponse("/register?user=searchTestUser&password=password&email=searchTestEmail", "GET");
+        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=searchTestUser&password=password", "GET");
         String cookie = getCookieFromJson(loginUser);
 
-        JSONObject submission = establishConnectionAndReturnJsonResponse("/submission?cookie="+cookie+"&name=searchtestname&category=category&location=location&image=image", "POST");
+        JSONObject addSubmission = establishConnectionAndReturnJsonResponse("/submission?cookie=" + cookie + "&name=searchTestSubmission&category=category&location=location&image=image", "POST");
+        String id = getIdFromJson(addSubmission);
 
-        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/retrieve?cookie="+cookie+"&flag=5&name=searchtestname", "GET");
-        assertEquals("searchtestname", serverResponse.getString("name"));
-        assertEquals("image", serverResponse.getString("image"));
+        JSONArray serverResponse = establishConnectionAndReturnJsonResponseAsArray("/search?cookie=" + cookie + "&name=searchTestSubmission", "GET");
+        assertEquals(1, serverResponse.length());
 
-        // Search must only return name and image, other fields must be "", we check only one because we've already checked on the web
-        assertEquals("", serverResponse.getString("category"));
+        JSONObject serverJson = new JSONObject(serverResponse.get(0).toString());
+        assertEquals(id, serverJson.getString("id"));
+        assertEquals("searchTestSubmission", serverJson.getString("name"));
+        assertEquals("image", serverJson.getString("image"));
+        assertEquals(0, serverJson.getInt("rating"));
 
 
-        establishConnectionAndReturnJsonResponse("/delete/user?name=searchtest", "GET");
-        establishConnectionAndReturnJsonResponse("/delete/submission?name=searchtestname", "GET");
+
+        establishConnectionAndReturnJsonResponse("/delete/user?name=searchTestUser", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/submission?name=searchTestSubmission", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie="+cookie, "GET");
+    }
+
+
+    @Test
+    public void serverRetrieveSubmissionIfSearchNameInLowerCase() throws CommunicationLayerException, JSONException {
+        establishConnectionAndReturnJsonResponse("/delete/user?name=searchTestUser", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/submission?name=searchTestSubmission", "GET");
+
+        establishConnectionAndReturnJsonResponse("/register?user=searchTestUser&password=password&email=searchTestEmail", "GET");
+        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=searchTestUser&password=password", "GET");
+        String cookie = getCookieFromJson(loginUser);
+
+        JSONObject addSubmission = establishConnectionAndReturnJsonResponse("/submission?cookie=" + cookie + "&name=searchTestSubmission&category=category&location=location&image=image", "POST");
+        String id = getIdFromJson(addSubmission);
+
+        JSONArray serverResponse = establishConnectionAndReturnJsonResponseAsArray("/search?cookie=" + cookie + "&name=searchtestsubmission", "GET");
+        assertEquals(1, serverResponse.length());
+
+        JSONObject serverJson = new JSONObject(serverResponse.get(0).toString());
+        assertEquals(id, serverJson.getString("id"));
+        assertEquals("searchTestSubmission", serverJson.getString("name"));
+        assertEquals("image", serverJson.getString("image"));
+        assertEquals(0, serverJson.getInt("rating"));
+
+
+
+        establishConnectionAndReturnJsonResponse("/delete/user?name=searchTestUser", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/submission?name=searchTestSubmission", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie="+cookie, "GET");
+    }
+
+    @Test
+    public void serverRetrieveArrayOfLengthForty() throws CommunicationLayerException, JSONException {
+        establishConnectionAndReturnJsonResponse("/delete/user?name=searchTestUser", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/submission?name=searchTestSubmission", "GET");
+
+        establishConnectionAndReturnJsonResponse("/register?user=searchTestUser&password=password&email=searchTestEmail", "GET");
+        JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=searchTestUser&password=password", "GET");
+        String cookie = getCookieFromJson(loginUser);
+
+
+        for(int i= 0; i < 20; i++) {
+            establishConnectionAndReturnJsonResponse("/submission?cookie=" + cookie + "&name=searchTestSubmission&category=category&location=location&image=image", "POST");
+
+        }
+
+        JSONArray serverResponse = establishConnectionAndReturnJsonResponseAsArray("/search?cookie=" + cookie + "&name=searchTestSubmission", "GET");
+        assertEquals(20, serverResponse.length());
+
+        establishConnectionAndReturnJsonResponse("/delete/user?name=searchTestUser", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/category?category=category", "GET");
         establishConnectionAndReturnJsonResponse("/delete/session?cookie="+cookie, "GET");
     }
 
