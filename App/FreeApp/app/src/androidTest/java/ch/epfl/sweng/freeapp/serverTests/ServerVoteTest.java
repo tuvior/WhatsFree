@@ -146,8 +146,7 @@ public class ServerVoteTest {
 
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/vote?cookie=" + cookie + "&id=" + id, "GET");
         assertEquals("failure", getStatusFromJson(serverResponse, "vote"));
-        // Remember to fix the server part so that there is only one space
-        assertEquals("no  submission", getReasonFromJson(serverResponse, "vote"));
+        assertEquals("no submission", getReasonFromJson(serverResponse, "vote"));
 
         establishConnectionAndReturnJsonResponse("/delete/user?name=voteTest", "GET");
         establishConnectionAndReturnJsonResponse("/delete/session?cookie=" + cookie, "GET");
