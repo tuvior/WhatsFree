@@ -42,7 +42,7 @@ class submitVote(webapp2.RequestHandler):
                     submission = key.get()
 
                     if not submission:
-                        error = json_error('vote', 'failure', 'no  submission')
+                        error = json_error('vote', 'failure', 'no submission')
                         self.response.write(error)
                     else:
                         value = self.request.get('value')
