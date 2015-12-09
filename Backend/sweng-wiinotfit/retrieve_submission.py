@@ -17,6 +17,10 @@ def json_string(id, name, category , description , location , image , keywords, 
     return json_string
 
 def json_array(id, name, image, rating):
+    json_string = {'id': id, 'name': name, 'image': image, 'rating': rating}
+    return json_string
+
+def json_array_with_location(id, name, image, rating, location):
     json_string = {'id': id, 'name': name, 'image': image, 'rating': rating, 'location': location}
     return json_string
 
@@ -102,13 +106,13 @@ class retrieveSubmission(webapp2.RequestHandler):
                                     submission = submissions[i]
                                     # what's new used for around you too. Server return location so that the app
                                     # can use it to display submissions near user on the map
-                                    json_submission = json_array(submission.key.urlsafe(), submission.name,submission.image, submission.rating, submission.location)
+                                    json_submission = json_array_with_location(submission.key.urlsafe(), submission.name,submission.image, submission.rating, submission.location)
                                     submissions_array.append(json_submission)
 
                             else:
                                 for i in range(0, len(submissions)):
                                     submission = submissions[i]
-                                    json_submission = json_array(submission.key.urlsafe(), submission.name, submission.image, submission.rating, submission.location)
+                                    json_submission = json_array_with_location(submission.key.urlsafe(), submission.name, submission.image, submission.rating, submission.location)
                                     submissions_array.append(json_submission)
 
 
