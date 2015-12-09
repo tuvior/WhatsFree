@@ -19,7 +19,7 @@
             android:layout_column="0"
             android:adjustViewBounds="true"
             android:maxHeight="120sp"
-            android:maxWidth="120sp"
+            android:maxWidth="300sp"
             android:src="@drawable/no_image_available" />
 
         <TextView
