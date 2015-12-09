@@ -393,7 +393,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
                 }
 
                 TextView ratingTextView = (TextView) findViewById(R.id.submissionRating);
-                ratingTextView.setText(String.valueOf(submission.getRating()));
+                ratingTextView.setText("Rating: " + String.valueOf(submission.getRating()));
 
             }
         }
