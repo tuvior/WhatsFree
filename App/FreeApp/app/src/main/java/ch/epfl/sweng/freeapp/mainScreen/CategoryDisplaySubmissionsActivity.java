@@ -123,7 +123,7 @@ public class CategoryDisplaySubmissionsActivity extends ListActivity {
 
             } else {
 
-                SubmissionListAdapter adapter = new SubmissionListAdapter(getApplicationContext(), R.layout.item_list_row, submissions);
+                SubmissionListAdapter adapter = new SubmissionListAdapter(getApplicationContext(), R.layout.submission_row, submissions);
                 setListAdapter(adapter);
             }
 

@@ -250,7 +250,7 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
                 if (userLatLng != null) {
                     SortSubmissionByLocation sortSubmissionByLocation = new SortSubmissionByLocation(getContext(), userLatLng);
                     List<Submission> sortedSubmissions = sortSubmissionByLocation.sort(submissions);
-                    SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, sortedSubmissions);
+                    SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.submission_row, sortedSubmissions);
                     setListAdapter(adapter);
                 }
 
