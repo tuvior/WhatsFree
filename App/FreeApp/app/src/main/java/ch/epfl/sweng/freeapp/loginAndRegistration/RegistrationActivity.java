@@ -135,11 +135,13 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
         if (!isUsernameValid(usernameView.getText().toString())) {
             usernameView.setText(empty);
             valid = false;
+
         }
 
         if (!isEmailValid(emailView.getText().toString())) {
             emailView.setText(empty);
             valid = false;
+
         }
 
 
@@ -147,6 +149,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
             valid = false;
         } else if (!passwordView.getText().toString().equals(confirmPasswordView.getText().toString())) {
             valid = false;
+
         }
 
         if (!valid) {
