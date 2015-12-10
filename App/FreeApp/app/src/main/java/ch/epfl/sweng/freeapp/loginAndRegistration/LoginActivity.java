@@ -19,6 +19,8 @@ import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 import ch.epfl.sweng.freeapp.communication.ResponseStatus;
 import ch.epfl.sweng.freeapp.mainScreen.MainScreenActivity;
 
+import static junit.framework.Assert.assertTrue;
+
 public class LoginActivity extends AppCompatActivity {
 
     private static final int USERNAME_MIN_LENGTH = 6;
@@ -164,13 +166,11 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected ResponseStatus doInBackground(LogInInfo... params) {
 
+            ResponseStatus status;
             try {
-                ResponseStatus status = communicationLayer.sendLogInInfo(params[0]);
+                status = communicationLayer.sendLogInInfo(params[0]);
                 return status;
             } catch (CommunicationLayerException e) {
-                //e.printStackTrace();
-
-                // alertUser(e.getMessage());
                 return null;
             }
 
@@ -211,8 +211,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 } else {
 
-                    assert (responseStatus == ResponseStatus.EMPTY);
-
+                    assertTrue(responseStatus == ResponseStatus.EMPTY);
                     alertUser("Empty Field(s)");
 
                 }

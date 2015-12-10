@@ -95,5 +95,6 @@
     <string name="sign_up">Sign up</string>
     <string name="submission_name">Submission\'s name</string>
     <string name="submission_description">Submission\'s description</string>
+    <string name="submission_name_row">Submission\'s name</string>
 
 </resources>

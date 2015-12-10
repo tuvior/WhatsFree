@@ -161,21 +161,14 @@ public class MapActivity extends AppCompatActivity {
             ArrayList<Submission> submissions;
             CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
 
-            //TODO: remove once debugged
-            ArrayList<Submission> fakeSubmissions = null;
-            FakeCommunicationLayer fakeCommunicationLayer = new FakeCommunicationLayer();
             try {
-                fakeSubmissions = fakeCommunicationLayer.sendSubmissionsRequest();
                 submissions = communicationLayer.sendSubmissionsRequest();
             } catch (CommunicationLayerException e) {
                 e.printStackTrace();
                 return null;
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
 
-            return fakeSubmissions;
-            //return submissions;
+            return submissions;
         }
 
         // onPostExecute displays the results of the AsyncTask.

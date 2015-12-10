@@ -68,7 +68,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
         // Get the message from the intent
         Intent intent = getIntent();
         String submissionId = intent.getStringExtra(MainScreenActivity.SUBMISSION_MESSAGE);
-
+        String hello = submissionId;
         //Check connection
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();

@@ -80,7 +80,11 @@ public class Submission {
     }
 
     public long getSubmitted() {
-        return submitted.getTime();
+        if ( submitted != null ) {
+            return submitted.getTime();
+        }
+
+        return 0;
     }
 
     public long getStartOfEvent() {

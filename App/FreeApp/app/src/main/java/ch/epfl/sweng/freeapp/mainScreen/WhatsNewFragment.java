@@ -110,7 +110,7 @@ public class WhatsNewFragment extends ListFragment {
                             sortSubmissions.sort(cachedSubmissions);
                         }
 
-                        SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, cachedSubmissions);
+                        SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.submission_row, cachedSubmissions);
                         setListAdapter(adapter);
 
                         dialog.dismiss();
@@ -221,7 +221,7 @@ public class WhatsNewFragment extends ListFragment {
                 }
 
 
-                SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, submissions);
+                SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.submission_row, submissions);
                 setListAdapter(adapter);
 
             }

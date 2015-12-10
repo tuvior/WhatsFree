@@ -66,7 +66,6 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
     }
 
 
-    /**
     public void testSuccessfulSubmissionCreationOffline(){
 
         Calendar calendar3 =Calendar.getInstance();
@@ -557,7 +556,5 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
         onView(withId(R.id.createSubmissionButton)).perform(click());
     }
 
-
-    **/
 
 }
