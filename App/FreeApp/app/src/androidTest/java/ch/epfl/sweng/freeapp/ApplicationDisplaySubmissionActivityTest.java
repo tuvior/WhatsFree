@@ -14,6 +14,7 @@ import ch.epfl.sweng.freeapp.mainScreen.MainScreenActivity;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isClickable;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
@@ -27,21 +28,21 @@ public class ApplicationDisplaySubmissionActivityTest {
     @Rule
     public ActivityTestRule<DisplaySubmissionActivity> rule =
             new ActivityTestRule<>(DisplaySubmissionActivity.class, true, false);
-    //The following are know attributes for a specific submission named "example" that is stored in the server
-    String submissionId = "ahFlfnN3ZW5nLXdpaW5vdGZpdHIXCxIKU3VibWlzc2lvbhiAgICA-f6TCgw";
+    //The following are know attributes for a specific submission named "computer" that is stored in the server
+    String submissionId = "ahFlfnN3ZW5nLXdpaW5vdGZpdHIXCxIKU3VibWlzc2lvbhiAgICA-a_xCww";
 
     @Test
     public void testCorrectName() {
         launchExampleSubmissionActivity();
 
-        onView(withId(R.id.submissionName)).check(matches(withText("example")));
+        onView(withId(R.id.submissionName)).check(matches(withText("computer")));
     }
 
     @Test
     public void testCorrectDescription() {
         launchExampleSubmissionActivity();
 
-        onView(withId(R.id.submissionDescription)).check(matches(withText("example")));
+        onView(withId(R.id.submissionDescription)).check(matches(withText("dont work no more")));
     }
 
 
