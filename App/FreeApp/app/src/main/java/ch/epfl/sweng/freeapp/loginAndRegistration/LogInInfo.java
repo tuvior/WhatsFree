@@ -1,6 +1,9 @@
 package ch.epfl.sweng.freeapp.loginAndRegistration;
 
-
+/**
+ * Class representing the info the user will provide whenever he wants to login
+ * This class will be created.
+ */
 public class LogInInfo {
 
     private String username;

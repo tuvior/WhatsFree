@@ -2,8 +2,6 @@ package ch.epfl.sweng.freeapp.communication;
 
 import android.util.Log;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
@@ -363,7 +361,13 @@ public class CommunicationLayer implements DefaultCommunicationLayer {
     }
 
 
-    //TODO: documentation
+    /**
+     * This method helps us create a correct url String in which the values are encoded in UTF-8
+     * It basically helps us create a url for HTTP POST
+     * @param params
+     * @return a
+     * @throws UnsupportedEncodingException
+     */
     private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException {
         StringBuilder result = new StringBuilder();
         boolean first = true;

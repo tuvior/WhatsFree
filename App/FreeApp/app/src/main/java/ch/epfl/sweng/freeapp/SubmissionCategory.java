@@ -1,7 +1,7 @@
 package ch.epfl.sweng.freeapp;
 
 /**
- * Created by lois on 11/10/15.
+ * Enum  which represents the various categories
  */
 public enum SubmissionCategory {
 

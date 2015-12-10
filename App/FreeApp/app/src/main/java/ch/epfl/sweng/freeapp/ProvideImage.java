@@ -3,7 +3,8 @@ package ch.epfl.sweng.freeapp;
 import android.graphics.Bitmap;
 
 /**
- * Created by francisdamachi on 18/11/15.
+ * Class which lets us provide an image. This greatly simplifies testing. Due to the
+ * the ability to inject an image.
  */
 public class ProvideImage {
 

@@ -125,6 +125,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
 
             Vote buttonClicked = Vote.DISLIKE;
 
+
             SubmissionVoteWrapper submissionVoteWrapper = new SubmissionVoteWrapper();
             submissionVoteWrapper.submission = submissionDisplayed;
             submissionVoteWrapper.voteToServer = vote;

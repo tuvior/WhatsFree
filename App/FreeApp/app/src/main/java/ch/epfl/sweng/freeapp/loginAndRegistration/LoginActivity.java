@@ -19,6 +19,9 @@ import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 import ch.epfl.sweng.freeapp.communication.ResponseStatus;
 import ch.epfl.sweng.freeapp.mainScreen.MainScreenActivity;
 
+/**
+ * Activity which enables the user to simply login in the app
+ */
 public class LoginActivity extends AppCompatActivity {
 
     private static final int USERNAME_MIN_LENGTH = 6;
@@ -93,7 +96,14 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    public boolean checkLengthOfUserNameAndPassword(EditText username, EditText password) {
+    /**
+     * Checks the length of username and the password
+     * @param username username of the user
+     * @param password password of the user
+     * @return a boolean if length of the fields are good
+     */
+
+    private boolean checkLengthOfUserNameAndPassword(EditText username, EditText password) {
         String user = username.getText().toString();
         String pass = password.getText().toString();
 

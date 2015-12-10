@@ -1,15 +1,13 @@
 package ch.epfl.sweng.freeapp.loginAndRegistration;
 
 /**
- * Created by francisdamachi on 22/10/15.
+ *
+ * Class instantiated  whenever the user wants to Register
  */
 public class RegistrationInfo {
     private String username;
     private String email;
     private String password;
-
-    public RegistrationInfo() {
-    }
 
     public RegistrationInfo(String username, String password, String email) {
         this.username = username;

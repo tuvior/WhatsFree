@@ -1,7 +1,7 @@
 package ch.epfl.sweng.freeapp.communication;
 
 /**
- * Created by francisdamachi on 23/10/15.
+ * Represents the various the response status' the server can send back
  */
 
 public enum ResponseStatus {

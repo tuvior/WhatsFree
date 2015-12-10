@@ -66,18 +66,6 @@ public class CategoryDisplaySubmissionsActivity extends ListActivity {
         startActivity(intent);
     }
 
-    public ArrayList<Submission> sortSubmissions(ArrayList<Submission> submissions) {
-
-        Collections.sort(submissions, new Comparator<Submission>() {
-            @Override
-            public int compare(Submission lhs, Submission rhs) {
-                return lhs.getCategory().toString().compareTo(rhs.getCategory().toString());
-            }
-        });
-
-        return submissions;
-    }
-
     /*
     Just so far sorts by name
      */

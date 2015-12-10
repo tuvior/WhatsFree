@@ -1,7 +1,8 @@
 package ch.epfl.sweng.freeapp.mainScreen;
 
 /**
- * Created by francisdamachi on 28/11/15.
+ *
+ * Enum representing a vote
  */
 public enum Vote {
 

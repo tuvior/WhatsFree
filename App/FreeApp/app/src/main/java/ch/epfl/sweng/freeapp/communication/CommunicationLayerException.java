@@ -1,7 +1,7 @@
 package ch.epfl.sweng.freeapp.communication;
 
 /**
- * Created by francisdamachi on 22/10/15.
+ * An exception class created each time there is a problem with the server or communication layer
  */
 public class CommunicationLayerException extends Exception {
 

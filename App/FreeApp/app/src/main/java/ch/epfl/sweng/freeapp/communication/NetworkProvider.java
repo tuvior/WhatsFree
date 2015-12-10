@@ -5,7 +5,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by francisdamachi on 22/10/15.
+ * Just a basic basic Network Provider
  */
 public interface NetworkProvider {
 

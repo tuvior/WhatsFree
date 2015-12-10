@@ -1,7 +1,5 @@
 package ch.epfl.sweng.freeapp.communication;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import org.json.JSONException;
 
 import java.util.ArrayList;
@@ -11,7 +9,7 @@ import ch.epfl.sweng.freeapp.SubmissionCategory;
 import ch.epfl.sweng.freeapp.mainScreen.Vote;
 
 /**
- * Created by lois on 11/22/15.
+ * Interface with which helps communicate with the server.
  */
 public interface DefaultCommunicationLayer {
 
@@ -43,6 +41,13 @@ public interface DefaultCommunicationLayer {
      */
     ArrayList<Submission> sendCategoryRequest(SubmissionCategory category) throws CommunicationLayerException;
 
-    //TODO : javadoc
+    /**
+     * The communication layer ask the server to process the vote done by the user
+     * The server will then respond with some type of response.
+     * @param submission The submission
+     * @param vote  The type of vote either like, dislike, or neutral
+     * @return a Response Status
+     * @throws CommunicationLayerException if problem with server.
+     */
     ResponseStatus sendVote(Submission submission, Vote vote) throws CommunicationLayerException;
 }

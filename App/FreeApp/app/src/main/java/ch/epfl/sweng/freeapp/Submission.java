@@ -6,8 +6,10 @@ import java.util.Date;
 
 import ch.epfl.sweng.freeapp.mainScreen.Vote;
 
+
 /**
- * Created by francisdamachi on 14/11/15.
+ * Class which uses a builder Pattern, it  represents a basic submission.
+ * You can construct this class through the constructor or with the builder pattern
  */
 public class Submission {
 
