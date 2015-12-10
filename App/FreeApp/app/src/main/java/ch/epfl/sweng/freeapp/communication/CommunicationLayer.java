@@ -2,8 +2,6 @@ package ch.epfl.sweng.freeapp.communication;
 
 import android.util.Log;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
@@ -146,37 +144,36 @@ public class CommunicationLayer implements DefaultCommunicationLayer {
     @Override
     public Submission fetchSubmissionByName(String name) throws CommunicationLayerException {
 
-        Submission submission;
+
 
         try{
-            String content = fetchStringFrom(SERVER_URL+"/search?name=" + name + cookieSession);
+            String content = fetchStringFrom(SERVER_URL+"/search?name="+name+ "&cookie="+cookieSession);
 
-            JSONObject jsonSubmission = new JSONObject(content);
+            String hello = content;
 
-            //Retrieve specific submission fields
-            if(BuildConfig.DEBUG && !(name.equals(jsonSubmission.getString("name")))){
-                throw new AssertionError();
+            List<Submission> submissionArrayList = jsonArrayToArrayList(new JSONArray(content));
+
+            if(submissionArrayList == null || submissionArrayList.isEmpty()){
+                throw new CommunicationLayerException();
             }
-            String description = jsonSubmission.getString("description");
+            else{
 
-            SubmissionCategory submissionCategory;
-            if(SubmissionCategory.contains(jsonSubmission.getString("category"))) {
-                submissionCategory = SubmissionCategory.valueOf(jsonSubmission.getString("category"));
-            } else {
-                submissionCategory = SubmissionCategory.Miscellaneous;
+                // just return the first submission in the query.
+                return submissionArrayList.get(0);
             }
-            String image = jsonSubmission.getString("image");
-            String location = jsonSubmission.getString("location");
-            String id = jsonSubmission.getString("id");
 
-            submission = new Submission(name, description, submissionCategory, location, image, id);
+
+
 
         }catch(IOException | JSONException e){
             throw new CommunicationLayerException();
         }
 
-        return submission;
     }
+
+
+
+
 
     /**
      * Used by the app to
