@@ -1,4 +1,4 @@
-package ch.epfl.sweng.freeapp;
+package ch.epfl.sweng.freeapp.serverTests;
 
 import android.util.Log;
 
@@ -17,6 +17,7 @@ import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 import ch.epfl.sweng.freeapp.communication.NetworkProvider;
 
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
 
 public class ServerAddSubmissionTest {
     private static final String SERVER_URL = "http://sweng-wiinotfit.appspot.com";
@@ -75,6 +76,10 @@ public class ServerAddSubmissionTest {
         return serverResponse.getJSONObject("login").getString("cookie");
     }
 
+    private String getIdFromJson(JSONObject serverResponse) throws JSONException {
+        return serverResponse.getJSONObject("submission").getString("id");
+    }
+
     @Test
     public void serverRespondsWithFailureIfMissingCookie() throws CommunicationLayerException, JSONException {
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/submission", "POST");
@@ -114,7 +119,8 @@ public class ServerAddSubmissionTest {
     @Test
     public void serverRespondsWithFailureIfCookieNotInDataBase() throws CommunicationLayerException, JSONException {
         //Make sure cookie not in db, since we can directly create entry in db using the web
-        JSONObject deleteUserIfInDB = establishConnectionAndReturnJsonResponse("/delete/session?cookie=cookie", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie=cookie", "GET");
+
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/submission?cookie=cookie&name=name&category=category&location=location&image=image", "POST");
         assertEquals("failure", getStatusFromJson(serverResponse));
         assertEquals("session", getReasonFromJson(serverResponse));
@@ -122,16 +128,20 @@ public class ServerAddSubmissionTest {
 
     @Test
     public void serverRespondsWithOk() throws CommunicationLayerException, JSONException {
-        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete/user?name=submissiontest", "GET");
-        JSONObject createUser = establishConnectionAndReturnJsonResponse("/register?user=submissiontest&password=password&email=submissiontest@test.ch", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/user?name=submissiontest", "GET");
+
+        establishConnectionAndReturnJsonResponse("/register?user=submissiontest&password=password&email=submissiontest@test.ch", "GET");
         JSONObject loginUser = establishConnectionAndReturnJsonResponse("/login?user=submissiontest&password=password", "GET");
         String cookie = getCookieFromJson(loginUser);
-        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/submission?cookie=" + cookie + "&name=name&category=category&location=location&image=image", "POST");
+
+        JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/submission?cookie="+cookie+"&name=name&category=category&location=location&image=image", "POST");
+
         assertEquals("ok", getStatusFromJson(serverResponse));
+        assertNotSame("", getIdFromJson(serverResponse));
 
         //Delete user, session and submission so that it is no more in db
-        JSONObject deleteUserAgain = establishConnectionAndReturnJsonResponse("/delete/user?name=submissiontest", "GET");
-        JSONObject deleteSession = establishConnectionAndReturnJsonResponse("/delete/session?cookie=" + cookie, "GET");
-        JSONObject deleteSubmission = establishConnectionAndReturnJsonResponse("/delete/submission?name=name", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/user?name=submissiontest", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/session?cookie="+cookie, "GET");
+        establishConnectionAndReturnJsonResponse("/delete/submission?name=name", "GET");
     }
 }

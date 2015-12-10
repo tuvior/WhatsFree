@@ -10,6 +10,6 @@ import java.net.URL;
 public interface NetworkProvider {
 
 
-    public HttpURLConnection getConnection(URL url) throws IOException;
+    HttpURLConnection getConnection(URL url) throws IOException;
 
 }

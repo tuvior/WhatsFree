@@ -100,6 +100,7 @@ public class CommunicationLayer implements DefaultCommunicationLayer {
 
 
 
+
     public ResponseStatus sendVote(Submission submission, Vote vote) throws CommunicationLayerException {
 
         if (submission == null) {
@@ -129,19 +130,21 @@ public class CommunicationLayer implements DefaultCommunicationLayer {
 
             JSONObject serverResponseJson = null;
             try {
-                serverResponseJson = jsonObject.getJSONObject("vote");
+                if (jsonObject != null) {
+                    serverResponseJson = jsonObject.getJSONObject("vote");
 
-                if (serverResponseJson.getString("status").equals("failure")) {
+                    if (serverResponseJson.getString("status").equals("failure")) {
 
-                    switch (serverResponseJson.getString("reason")) {
-                        case "session":
-                            return ResponseStatus.SESSION;
-                        case "value":
-                            return ResponseStatus.VALUE;
-                        case "no  submission":
-                            return ResponseStatus.NO_SUBMISSION;
-                        default:
-                            throw new CommunicationLayerException();
+                        switch (serverResponseJson.getString("reason")) {
+                            case "session":
+                                return ResponseStatus.SESSION;
+                            case "value":
+                                return ResponseStatus.VALUE;
+                            case "no  submission":
+                                return ResponseStatus.NO_SUBMISSION;
+                            default:
+                                throw new CommunicationLayerException();
+                        }
                     }
                 }
 
@@ -360,8 +363,6 @@ public class CommunicationLayer implements DefaultCommunicationLayer {
         }
     }
 
-
-    //TODO: documentation
     private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException {
         StringBuilder result = new StringBuilder();
         boolean first = true;
@@ -428,8 +429,11 @@ public class CommunicationLayer implements DefaultCommunicationLayer {
             String name = jsonSubmission.getString("name");
             String image = jsonSubmission.getString("image");
             String id = jsonSubmission.getString("id");
-
-            Submission.Builder builder = new Submission.Builder().name(name).image(image).id(id);
+            String location = null;
+            if(jsonSubmission.has("location")) {
+                location = jsonSubmission.getString("location");
+            }
+            Submission.Builder builder = new Submission.Builder().name(name).image(image).id(id).location(location);
             Submission submission = builder.build();
             submissionsList.add(submission);
         }

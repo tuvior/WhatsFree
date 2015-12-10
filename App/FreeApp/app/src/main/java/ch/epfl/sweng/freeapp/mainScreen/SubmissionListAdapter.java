@@ -33,7 +33,7 @@ public class SubmissionListAdapter extends ArrayAdapter<Submission> {
         if (v == null) {
             LayoutInflater vi;
             vi = LayoutInflater.from(getContext());
-            v = vi.inflate(R.layout.item_list_row, null);
+            v = vi.inflate(R.layout.submission_row, null);
         }
 
         Submission p = getItem(position);

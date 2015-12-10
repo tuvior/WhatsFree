@@ -1,4 +1,4 @@
-package ch.epfl.sweng.freeapp;
+package ch.epfl.sweng.freeapp.serverTests;
 
 import android.util.Log;
 
@@ -101,34 +101,36 @@ public class ServerRegistrationTest {
     @Test
     public void testRegisterServerRespondsWithOkStatus() throws CommunicationLayerException, JSONException {
         //We delete the user if it already exists, so that we can run the test more than once
-        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete/user?name=test", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/user?name=test", "GET");
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/register?user=test&password=test&email=test@test.com", "GET");
         assertEquals("ok", getStatusFromJson(serverResponse));
         //Delete user once again so that it is no more in db
-        JSONObject deleteUserAgain = establishConnectionAndReturnJsonResponse("/delete/user?name=test", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/user?name=test", "GET");
     }
 
 
     @Test
     public void testRegisterServerRespondsWithFailureReasonEmail() throws CommunicationLayerException, JSONException {
         //We create a user with the same email as the next one, in order to have the same email in the database
-        JSONObject createUserWithSameEmail = establishConnectionAndReturnJsonResponse("/register?user=test1&password=password&email=failtest@email.com", "GET");
+        establishConnectionAndReturnJsonResponse("/register?user=test1&password=password&email=failtest@email.com", "GET");
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/register?user=test2&password=test&email=failtest@email.com", "GET");
         assertEquals("failure", getStatusFromJson(serverResponse));
         assertEquals("email", getReasonFromJson(serverResponse));
+
         //Delete user so that it is no more in db
-        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete/user?name=test1", "GET");
+        establishConnectionAndReturnJsonResponse("/delete/user?name=test1", "GET");
     }
 
     @Test
     public void testRegisterServerRespondsWithFailureReasonUserName() throws CommunicationLayerException, JSONException {
         //We create a user with the same username as the next one, in order to have the same username in the database
-        JSONObject createUserWithSameUserName = establishConnectionAndReturnJsonResponse("/register?user=failtest&password=test&email=notused@email.com", "GET");
+        establishConnectionAndReturnJsonResponse("/register?user=failtest&password=test&email=notused@email.com", "GET");
         JSONObject serverResponse = establishConnectionAndReturnJsonResponse("/register?user=failtest&password=abc&email=anothertest@test.com", "GET");
         assertEquals("failure", getStatusFromJson(serverResponse));
         assertEquals("username", getReasonFromJson(serverResponse));
+
         //Delete user so that it is no more in db
-        JSONObject deleteUser = establishConnectionAndReturnJsonResponse("/delete/user?name=failtest", "GET");
+       establishConnectionAndReturnJsonResponse("/delete/user?name=failtest", "GET");
     }
 
 }

@@ -4,6 +4,7 @@ package ch.epfl.sweng.freeapp.mainScreen;
  * Created by lois on 11/6/15.
  */
 
+import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -94,7 +95,6 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
             displayToast("Connection problem");
         }
 
-        //FIXME: Set this in xml for cleaner code???
         //Set listener for mapButton
         ImageButton mapButton = (ImageButton) rootView.findViewById(R.id.mapButton);
         mapButton.setOnClickListener(new View.OnClickListener() {
@@ -156,6 +156,16 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
         mGoogleApiClient.connect();
     }
 
+    /**
+     * Creating google api client object
+     */
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(getContext())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API).build();
+    }
+
     private void displayToast(String message) {
         Context context = getActivity().getApplicationContext();
         int duration = Toast.LENGTH_SHORT;
@@ -186,15 +196,6 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
         return latLng;
     }
 
-    /**
-     * Creating google api client object
-     */
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(getContext())
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API).build();
-    }
 
     /**
      * Method to verify google play services on the device
@@ -221,25 +222,16 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
             ArrayList<Submission> submissions;
             CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
 
-            //TODO: remove once debugged on server side
-            FakeCommunicationLayer fakeCommunicationLayer = new FakeCommunicationLayer();
-            ArrayList<Submission> fakeSubmissions = null;
             try {
                 submissions = communicationLayer.sendSubmissionsRequest();
-                fakeSubmissions = fakeCommunicationLayer.sendSubmissionsRequest();
-
             } catch (CommunicationLayerException e) {
                 e.printStackTrace();
                 return null;
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
 
-            //return submissions;
-            return fakeSubmissions;
+            return submissions;
         }
 
-        // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(ArrayList<Submission> submissions) {
 
@@ -250,7 +242,7 @@ public class AroundYouFragment extends ListFragment implements GoogleApiClient.C
                 if (userLatLng != null) {
                     SortSubmissionByLocation sortSubmissionByLocation = new SortSubmissionByLocation(getContext(), userLatLng);
                     List<Submission> sortedSubmissions = sortSubmissionByLocation.sort(submissions);
-                    SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.item_list_row, sortedSubmissions);
+                    SubmissionListAdapter adapter = new SubmissionListAdapter(getContext(), R.layout.submission_row, sortedSubmissions);
                     setListAdapter(adapter);
                 }
 
