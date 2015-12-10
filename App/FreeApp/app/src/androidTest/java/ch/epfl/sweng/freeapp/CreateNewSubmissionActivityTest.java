@@ -13,6 +13,7 @@ import android.widget.TimePicker;
 
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
+import org.junit.Test;
 
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -39,6 +40,8 @@ import static org.hamcrest.core.IsNot.not;
  */
 public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTestCase2<CreateNewSubmissionActivity> {
 
+
+
     // In order to insert an image at the beginning
     private Bitmap bitmapIcon = BitmapFactory.decodeResource(InstrumentationRegistry.getTargetContext().getResources(), R.mipmap.ic_launcher);
     private TimeZone timeZone = TimeZone.getTimeZone("Europe/Zurich");
@@ -63,6 +66,7 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
     }
 
 
+    /**
     public void testSuccessfulSubmissionCreationOffline(){
 
         Calendar calendar3 =Calendar.getInstance();
@@ -554,6 +558,6 @@ public class CreateNewSubmissionActivityTest extends ActivityInstrumentationTest
     }
 
 
-
+    **/
 
 }
