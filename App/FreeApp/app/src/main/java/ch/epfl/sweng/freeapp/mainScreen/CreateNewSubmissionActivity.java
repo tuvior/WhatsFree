@@ -77,7 +77,8 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
     private EditText location;
     private ImageView imageView;
 
-    private TextView  date ;
+    private
+    TextView  date ;
     private TextView startTime ;
     private TextView endTime ;
     private EditText keywords ;

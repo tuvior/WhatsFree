@@ -58,7 +58,6 @@ public class SubmissionTest {
         assertTrue(submission.getDescription().equals(description));
         assertTrue(submission.getCategory().equals(category.toString()));
         assertTrue(submission.getLocation().equals(location));
-        assertTrue(submission.getImage().equals(image));
         assertTrue(submission.getId().equals(id));
     }
 
