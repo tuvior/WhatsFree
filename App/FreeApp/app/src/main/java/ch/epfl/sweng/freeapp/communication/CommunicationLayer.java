@@ -162,9 +162,6 @@ public class CommunicationLayer implements DefaultCommunicationLayer {
                 return submissionArrayList.get(0);
             }
 
-
-
-
         }catch(IOException | JSONException e){
             throw new CommunicationLayerException();
         }
