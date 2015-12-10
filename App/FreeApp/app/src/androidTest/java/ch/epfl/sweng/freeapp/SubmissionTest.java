@@ -4,6 +4,8 @@ import org.junit.Test;
 
 import java.util.Calendar;
 
+import static junit.framework.Assert.assertTrue;
+
 /**
  * Tests for the Submission class
  */
@@ -20,7 +22,6 @@ public class SubmissionTest {
     private Calendar calendarSubmitted = null;
     private Calendar calendarStartOfEvent = null;
     private Calendar calendarEndOfEvent = null;
-    private int likes = 0;
 
     @Test
     public void testConstructor(){
@@ -45,20 +46,20 @@ public class SubmissionTest {
         Submission submission = builder.build();
         checkSubmissionFields(submission);
 
-        assert(submission.getKeywords().equals(keywords));
-        assert(submission.getSubmitted() == calendarSubmitted.getTime().getTime());
-        assert(submission.getStartOfEvent() == calendarStartOfEvent.getTime().getTime());
-        assert(submission.getEndOfEvent() == calendarEndOfEvent.getTime().getTime());
+        assertTrue(submission.getKeywords().equals(keywords));
+        assertTrue(submission.getSubmitted() == calendarSubmitted.getTime().getTime());
+        assertTrue(submission.getStartOfEvent() == calendarStartOfEvent.getTime().getTime());
+        assertTrue(submission.getEndOfEvent() == calendarEndOfEvent.getTime().getTime());
 
     }
 
     private void checkSubmissionFields(Submission submission){
-        assert(submission.getName().equals(name));
-        assert(submission.getDescription().equals(description));
-        assert(submission.getCategory().equals(category.toString()));
-        assert(submission.getLocation().equals(location));
-        assert(submission.getImage().equals(image));
-        assert(submission.getId().equals(id));
+        assertTrue(submission.getName().equals(name));
+        assertTrue(submission.getDescription().equals(description));
+        assertTrue(submission.getCategory().equals(category.toString()));
+        assertTrue(submission.getLocation().equals(location));
+        assertTrue(submission.getImage().equals(image));
+        assertTrue(submission.getId().equals(id));
     }
 
 }

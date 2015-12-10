@@ -4,6 +4,8 @@ import org.junit.Test;
 
 import ch.epfl.sweng.freeapp.loginAndRegistration.LogInInfo;
 
+import static junit.framework.Assert.assertTrue;
+
 /**
  * Created by lois on 12/7/15.
  */
@@ -16,8 +18,8 @@ public class LogInInfoTest {
     public void testConstructor(){
         LogInInfo logInInfo = new LogInInfo(username, password);
 
-        assert (logInInfo.getUsername().equals(username));
-        assert (logInInfo.getPassword().equals(password));
+        assertTrue(logInInfo.getUsername().equals(username));
+        assertTrue (logInInfo.getPassword().equals(password));
     }
 
 }
