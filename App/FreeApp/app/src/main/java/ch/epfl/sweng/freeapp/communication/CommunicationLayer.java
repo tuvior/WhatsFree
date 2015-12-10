@@ -100,6 +100,7 @@ public class CommunicationLayer implements DefaultCommunicationLayer {
 
 
 
+
     public ResponseStatus sendVote(Submission submission, Vote vote) throws CommunicationLayerException {
 
         if (submission == null) {
