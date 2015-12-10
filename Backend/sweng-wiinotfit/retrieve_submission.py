@@ -10,10 +10,9 @@ from session import Session
 from vote import Vote
 
 
-def json_string(id, name, category , description , location , image , keywords, submitter, tfrom, tto, rating, latitude, longitude, vote):
+def json_string(id, name, category , description , location , image , keywords, submitter, tfrom, tto, rating, vote):
     json_string = {'id': id, 'name': name,'category': category, 'description': description, 'location': location, 'image': image,
-                   'keywords': keywords, 'submitter': submitter, 'from': tfrom, 'to': tto, 'rating': rating, 'latitude': latitude,
-                   'longitude': longitude, 'vote': vote}
+                   'keywords': keywords, 'submitter': submitter, 'from': tfrom, 'to': tto, 'rating': rating, 'vote': vote}
     return json_string
 
 def json_array(id, name, image, rating):
@@ -78,8 +77,7 @@ class retrieveSubmission(webapp2.RequestHandler):
     
                                     string_submission = json_string(submission.key.urlsafe(), submission.name, submission.category, submission.description, submission.location,
                                                                     submission.image, submission.keywords, submission.submitter,
-                                                                    submission.tfrom, submission.tto, submission.rating, submission.latitude,
-                                                                    submission.longitude, vote_val)
+                                                                    submission.tfrom, submission.tto, submission.rating, vote_val)
                                     response = json.dumps(string_submission)
                                     self.response.write(response)
 
