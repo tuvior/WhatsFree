@@ -47,10 +47,6 @@ public class SubmissionTest {
         checkSubmissionFields(submission);
 
         assertTrue(submission.getKeywords().equals(keywords));
-        assertTrue(submission.getSubmitted() == calendarSubmitted.getTime().getTime());
-        assertTrue(submission.getStartOfEvent() == calendarStartOfEvent.getTime().getTime());
-        assertTrue(submission.getEndOfEvent() == calendarEndOfEvent.getTime().getTime());
-
     }
 
     private void checkSubmissionFields(Submission submission){
