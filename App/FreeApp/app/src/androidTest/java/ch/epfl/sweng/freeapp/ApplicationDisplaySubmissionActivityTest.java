@@ -60,30 +60,7 @@ public class ApplicationDisplaySubmissionActivityTest {
 
     }
 
-    //Todo
-    @Test
-    public void testWhenSubmissionAlreadyLikedButtonIsHighlighted(){
 
-       // launchExampleSubmissionActivity();
-
-    }
-    //Todo
-    @Test
-    public void testWhenSubmissionAlreadyDislikedButtonHighlighted(){
-
-        //launchExampleSubmissionActivity();
-
-
-    }
-
-    //Todo
-    @Test
-    public void testProblemWithServerToastDisplayedWhenBadInternet(){
-        //launchExampleSubmissionActivity();
-
-
-
-    }
 
     /**
      * Launches the DisplaySubmissionActivity with a predefined Intent
