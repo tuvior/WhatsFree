@@ -111,6 +111,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
         //Easiest when inside activity, you can return 0  1 -1
         //When starting activity, you can only send 1 -1 and based on the server response//
 
+
         if(submissionDisplayed != null) {
 
             Vote vote = Vote.DISLIKE;
@@ -180,6 +181,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
     }
 
     //class used to pass Multiple arguments in Async task
+
     private class SubmissionVoteWrapper {
         public Submission submission;
         public Vote voteToServer;
@@ -190,6 +192,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
         private Context context;
         private Vote typeVote;
         private Vote buttonClicked;
+
 
 
         public GetVoteTask(Context context, Vote buttonClicked) {
@@ -214,6 +217,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
 
             if (status == null) {
 
+
                 Toast.makeText(context, "Problem from the server side", Toast.LENGTH_SHORT).show();
             } else if (status == ResponseStatus.OK) {
                 if (typeVote == Vote.LIKE) {
@@ -235,6 +239,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
 
                     likedClicked = true;
                     likeButton.setBackgroundResource(android.R.color.holo_blue_light);
+
 
 
                 } else if (typeVote == Vote.DISLIKE) {
@@ -275,6 +280,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
 
                       likedClicked = false;
                       likeButton.setBackgroundResource(defaultColor);
+
 
                     } else {
 
