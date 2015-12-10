@@ -74,7 +74,7 @@
         </GridLayout>
 
 
-        <GridLayout
+        <LinearLayout
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -85,8 +85,6 @@
                 android:id="@+id/setDateButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_column="0"
-                android:layout_row="0"
                 android:onClick="onSetDateClicked"
                 android:text="@string/set_date" />
 
@@ -94,14 +92,12 @@
 
                 android:id="@+id/date"
                 android:layout_width="wrap_content"
-
                 android:layout_height="wrap_content"
-                android:layout_column="1"
                 android:layout_gravity="center"
-                android:layout_row="0" />
+               />
 
 
-        </GridLayout>
+        </LinearLayout>
 
 
         <GridLayout
@@ -153,7 +149,6 @@
             android:orientation="horizontal">
 
             <Button
-                style="?android:attr/buttonBarButtonStyle"
                 android:id="@+id/takePictureButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -161,7 +156,7 @@
                 android:text="@string/takeImage" />
 
             <Button
-                style="?android:attr/buttonBarButtonStyle"
+
                 android:id="@+id/existingPictureButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

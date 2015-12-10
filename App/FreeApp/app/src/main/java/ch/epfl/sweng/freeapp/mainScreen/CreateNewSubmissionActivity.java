@@ -206,13 +206,20 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 
+
+                String hours = correctFormat(hourOfDay);
+                String minuteOfDay = correctFormat(minute);
+
                 if(startOrEnd.getText().toString().equals(startTimeButton.getText().toString())){
+
 
                     // dateOfEvent.setHours(hourOfDay);dateOfEvent.setMinutes(minute);
                     startEventCalendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
                     startEventCalendar.set(Calendar.MINUTE,minute);
 
-                    startTime.setText(hourOfDay+":"+ minute);
+
+
+                    startTime.setText(hours+":"+ minuteOfDay);
 
                     submission.startOfEvent(startEventCalendar);
 
@@ -222,7 +229,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
                     endEventCalendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
                     endEventCalendar.set(Calendar.MINUTE,minute);
 
-                    endTime.setText(hourOfDay+":"+ minute);
+                    endTime.setText(hours+":"+ minuteOfDay);
 
                     submission.endOfEvent(endEventCalendar);
                 }
@@ -233,10 +240,17 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
         timePickerDialog.show();
     }
 
-    //used in order to insert Dependencies
-    public void testSetImage(Bitmap bitmap){
-        imageView.setImageBitmap(bitmap);
+
+    private String correctFormat(int number){
+        String numberString = Integer.toString(number);
+        if(number > 0 && number < 10){
+            numberString = "0"+numberString;
+        }
+
+        return numberString;
+
     }
+
 
 
     public  void onClickTakeImage(View view){

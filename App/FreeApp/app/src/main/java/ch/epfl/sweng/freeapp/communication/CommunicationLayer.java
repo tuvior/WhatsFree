@@ -2,8 +2,6 @@ package ch.epfl.sweng.freeapp.communication;
 
 import android.util.Log;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
