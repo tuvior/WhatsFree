@@ -60,5 +60,6 @@
     <string name="submission_name">Submission\'s name</string>
     <string name="submission_description">Submission\'s description</string>
     <string name="submission_name_row">Submission\'s name</string>
+    <string name="rating">Rating</string>
 
 </resources>
