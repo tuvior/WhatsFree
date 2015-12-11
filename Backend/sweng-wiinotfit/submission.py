@@ -14,5 +14,3 @@ class Submission(ndb.Model):
     submitted = ndb.DateTimeProperty(auto_now_add=True)
     tfrom = ndb.DateTimeProperty()
     tto = ndb.DateTimeProperty()
-    latitude = ndb.FloatProperty()
-    longitude = ndb.FloatProperty()

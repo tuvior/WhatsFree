@@ -1,5 +1,6 @@
 package ch.epfl.sweng.freeapp.mainScreen;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,7 +18,9 @@ import ch.epfl.sweng.freeapp.R;
 import ch.epfl.sweng.freeapp.Submission;
 
 /**
+ *
  * Created by lois on 11/10/15.
+ *
  */
 public class SubmissionListAdapter extends ArrayAdapter<Submission> {
 
@@ -25,6 +28,7 @@ public class SubmissionListAdapter extends ArrayAdapter<Submission> {
         super(context, resource, submissions);
     }
 
+    @SuppressLint("InflateParams")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -47,7 +51,6 @@ public class SubmissionListAdapter extends ArrayAdapter<Submission> {
             }
 
             if (imageView != null) {
-                //TODO: setImage
                 String image = p.getImage();
                 if (image != null) {
                     if (image.length() >= 1000) {
@@ -60,7 +63,6 @@ public class SubmissionListAdapter extends ArrayAdapter<Submission> {
         return v;
     }
 
-    //FIXME: also present in DisplaySubmissionActivity: refactor
     private Bitmap decodeImage(String input) {
 
         byte[] decodedByte = Base64.decode(input, 0);
