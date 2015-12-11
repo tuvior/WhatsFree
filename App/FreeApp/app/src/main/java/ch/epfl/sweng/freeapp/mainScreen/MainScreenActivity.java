@@ -4,18 +4,19 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,6 @@ import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
  * <p/>
  * Tutorial (creating tabs): http://www.androidhive.info/2015/09/android-material-design-working-with-tabs/
  */
-import android.widget.Toast;
 
 public class MainScreenActivity extends AppCompatActivity {
 
@@ -92,7 +92,6 @@ public class MainScreenActivity extends AppCompatActivity {
             String query = intent.getStringExtra(SearchManager.QUERY);
             //use the query to search your data somehow
 
-            Toast.makeText(this, "MainScreenActivity : The query is "+ query, Toast.LENGTH_LONG).show();
              new DownloadSubmissionTask(this).execute(query);
 
         }
@@ -122,57 +121,7 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
 
-    /*
 
-    public void onClickSortSubmission(View view){
-
-        final Dialog dialog = new Dialog(this);
-        dialog.setTitle("Sort Submission");
-        dialog.setContentView(R.layout.sort_submission_dialog);
-        dialog.show();
-
-        final SortSubmission[] sortSubmission = new SortSubmission[1];
-
-        RadioGroup radioGroup = (RadioGroup)dialog.findViewById(R.id.radioGroupFilter);
-
-
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                RadioButton radioButton = (RadioButton)dialog.findViewById(group.getCheckedRadioButtonId());
-
-                switch(radioButton.getId()){
-                    case R.id.byTime : sortSubmission[0] = new SortSubmissionByEndOFEvent();
-                        break;
-                    case R.id.byLikes: sortSubmission[0] = new SortSubmissionByLikes();
-                        break;
-                    case R.id.byName: sortSubmission[0] = new SortSubmissionByName();
-                        break;
-
-                }
-
-            }
-        });
-
-
-
-        final Button okButton = (Button)dialog.findViewById(R.id.dialogOkButton);
-
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                sortSubmissionAlgorithm = sortSubmission[0];
-                dialog.dismiss();
-            }
-        });
-
-
-
-
-    }
- */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -298,7 +247,7 @@ public class MainScreenActivity extends AppCompatActivity {
             }
             // display submission
             else {
-                displayToast("There exists a submission with this name");
+
                 Intent intent = new Intent(context, DisplaySubmissionActivity.class);
                 intent.putExtra(MainScreenActivity.SUBMISSION_MESSAGE, submission.getId());
 
