@@ -10,14 +10,17 @@ from session import Session
 from vote import Vote
 
 
-def json_string(id, name, category , description , location , image , keywords, submitter, tfrom, tto, rating, latitude, longitude, vote):
+def json_string(id, name, category , description , location , image , keywords, submitter, tfrom, tto, rating, vote):
     json_string = {'id': id, 'name': name,'category': category, 'description': description, 'location': location, 'image': image,
-                   'keywords': keywords, 'submitter': submitter, 'from': tfrom, 'to': tto, 'rating': rating, 'latitude': latitude,
-                   'longitude': longitude, 'vote': vote}
+                   'keywords': keywords, 'submitter': submitter, 'from': tfrom, 'to': tto, 'rating': rating, 'vote': vote}
     return json_string
 
 def json_array(id, name, image, rating):
     json_string = {'id': id, 'name': name, 'image': image, 'rating': rating}
+    return json_string
+
+def json_array_with_location(id, name, image, rating, location):
+    json_string = {'id': id, 'name': name, 'image': image, 'rating': rating, 'location': location}
     return json_string
 
 def json_error(option, status, reason):
@@ -74,8 +77,7 @@ class retrieveSubmission(webapp2.RequestHandler):
     
                                     string_submission = json_string(submission.key.urlsafe(), submission.name, submission.category, submission.description, submission.location,
                                                                     submission.image, submission.keywords, submission.submitter,
-                                                                    submission.tfrom, submission.tto, submission.rating, submission.latitude,
-                                                                    submission.longitude, vote_val)
+                                                                    submission.tfrom, submission.tto, submission.rating, vote_val)
                                     response = json.dumps(string_submission)
                                     self.response.write(response)
 
@@ -100,65 +102,21 @@ class retrieveSubmission(webapp2.RequestHandler):
                             if(submissions_number <= len(submissions)):
                                 for i in range(0, submissions_number):
                                     submission = submissions[i]
-                                    # use thumbnail
-                                    json_submission = json_array(submission.key.urlsafe(), submission.name,submission.image, submission.rating)
+                                    # what's new used for around you too. Server return location so that the app
+                                    # can use it to display submissions near user on the map
+                                    json_submission = json_array_with_location(submission.key.urlsafe(), submission.name,submission.image, submission.rating, submission.location)
                                     submissions_array.append(json_submission)
 
                             else:
                                 for i in range(0, len(submissions)):
                                     submission = submissions[i]
-                                    json_submission = json_array(submission.key.urlsafe(), submission.name, submission.image, submission.rating)
+                                    json_submission = json_array_with_location(submission.key.urlsafe(), submission.name, submission.image, submission.rating, submission.location)
                                     submissions_array.append(json_submission)
 
 
                             response = json.dumps(submissions_array)
                             self.response.write(response)
-        
-                    # flag = 3 means that we are requesting submissions for around you
-                    elif flag == '3':
-                        latitude = float(self.request.get('latitude'))
-                        longitude = float(self.request.get('longitude'))
-                        submissions_number = 20
 
-                        if not latitude:
-                            error = json_error('around you', 'failure', 'latitude')
-                            self.response.write(json.dumps(error))
-
-                        elif not longitude:
-                            error = json_error('around you', 'failure', 'longitude')
-                            self.response.write(json.dumps(error))
-
-                        else:
-                            sin_lat = math.sin(latitude)
-                            cos_lat = math.cos(latitude)
-                            R = 6371 * math.pow(10, 3)
-                            max_distance = 1000
-                            around_you_submissions = Submission.query(math.acos(sin_lat*math.sin(Submission.latitude) + 
-                                                                      cos_lat*math.cos(Submission.latitude)*math.cos(longitude - Submission.longitude)) * 
-                                                                      R <= max_distance).fetch(submissions_number)
-
-                            if not around_you_submissions:
-                                error = json_error('around you', 'failure', 'no submissions')
-                                self.response.write(json.dumps(error))
-
-                            else:
-                                submissions_array = []
-                                if(submissions_number <= len(submissions_array)):
-                                    for i in range(0, submissions_number):
-                                        submission = submissions[i]
-                                        json_submission = json_array(submission.key.urlsafe(), submission.name,submission.image, submission.rating)
-                                        submissions_array.append(json_submission)
-
-                                else:
-                                    for i in range(0, len(submissions)):
-                                        submission = submissions[i]
-                                        json_submission = json_array(submission.key.urlsafe(), submission.name,submission.image, submission.rating)
-                                        submissions_array.append(json_submission)
-
-                                response = json.dumps(submissions_array)
-                                self.response.write(response)
-
-        
                     # flag = 4 means that we are requesting submissions for a specific category
                     elif flag == '4':
                         category = self.request.get('category')
@@ -182,14 +140,6 @@ class retrieveSubmission(webapp2.RequestHandler):
                                         submission = submissions[i]
                                         json_submission = json_array(submission.key.urlsafe(), submission.name,submission.image, submission.rating)
                                         submissions_array.append(json_submission)
-
-                                        # Once error fixed do
-
-                                        #image_to_resize = images.Image(submission.image)
-                                        #image_to_resize.resize(width=90, height=90)
-                                        #image_to_resize.im_feeling_lucky()
-
-                                        #thumbnail = image_to_resize.execute_transforms(output_encoding=images.JPEG)
 
                                 else:
                                     for i in range(0, len(submissions)):

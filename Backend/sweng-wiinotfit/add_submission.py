@@ -74,16 +74,8 @@ class addSubmission(webapp2.RequestHandler):
         cookie = self.request.get('cookie')
         subTfrom = self.request.get('from')
         subTto = self.request.get('to')
-        subLatitude = self.request.get('latitude')
-        subLongitude = self.request.get('longitude')
 
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
-
-        # (0, 0) is in the ocean so no problems
-        if not subLatitude:
-            subLatitude = 0
-        if not subLongitude:
-            subLongitude = 0
 
         # Name, Category, Location, Image and Cookie are the required fields. 
         if not cookie:
@@ -101,7 +93,7 @@ class addSubmission(webapp2.RequestHandler):
             session = Session.query(Session.cookie == cookie).get()
             if session:
                 submission = Submission(name = subName,lowerName = subName.lower(), category = subCategory, description = subDescription, location = subLocation, image = subImage, 
-                                        keywords = subKeywords, rating = 0, submitter = session.user, latitude = subLatitude, longitude = subLongitude)
+                                        keywords = subKeywords, rating = 0, submitter = session.user)
                 submission_key = submission.put()      
                 # ndb.Key.urlsafe(), generates a url safe version of the Key
                 self.response.write(json_response(0, submission.key.urlsafe()))
