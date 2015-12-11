@@ -41,7 +41,6 @@ public class FakeCommunicationLayer implements DefaultCommunicationLayer {
 
     public Submission fetchSubmission(String id) {
 
-
         Submission submission;
         switch (id) {
             case "id0":
@@ -100,6 +99,10 @@ public class FakeCommunicationLayer implements DefaultCommunicationLayer {
     }
 
     @Override
+    public Submission fetchSubmissionByName(String name) throws CommunicationLayerException {
+         throw new CommunicationLayerException();
+    }
+
     public ResponseStatus sendAddSubmissionRequest(Submission param) throws CommunicationLayerException {
         return ResponseStatus.OK;
     }
