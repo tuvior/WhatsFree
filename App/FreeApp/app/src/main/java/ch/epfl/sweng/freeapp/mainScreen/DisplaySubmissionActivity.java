@@ -28,6 +28,8 @@ import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
 import ch.epfl.sweng.freeapp.communication.ProvideCommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.ResponseStatus;
 
+import static junit.framework.Assert.assertTrue;
+
 public class DisplaySubmissionActivity extends AppCompatActivity {
 
 
@@ -68,7 +70,6 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
         // Get the message from the intent
         Intent intent = getIntent();
         String submissionId = intent.getStringExtra(MainScreenActivity.SUBMISSION_MESSAGE);
-        String hello = submissionId;
         //Check connection
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -223,7 +224,6 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
                 if (typeVote == Vote.LIKE) {
                     if (dislikedClicked) {  // if i clicked previously the dislike button
                         dislikedClicked = false;
-                        //dislikeButton.setBackgroundResource(defaultColor);
 
                         /**
                          * Set dislike Button to default color; --done
@@ -240,24 +240,17 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
                     likedClicked = true;
                     likeButton.setBackgroundResource(android.R.color.holo_blue_light);
 
-
-
                 } else if (typeVote == Vote.DISLIKE) {
 
                     if (likedClicked) {  // if i clicked previously the like button
                         likedClicked = false;
+
                         /**
                          * Set liked button to default color --done
                          */
-
                     likeButton.setBackgroundResource(defaultColor);
 
                     }
-
-                    /**
-                     * Set Disliked button color to red   --done
-                     * Set dislikedButtonClicked  = true  --done
-                     */
 
                     dislikedClicked = true;
                     dislikeButton.setBackgroundResource(android.R.color.holo_red_light);
@@ -266,7 +259,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
 
                 } else {
 
-                    assert (typeVote == Vote.NEUTRAL);  //Undo action
+                    assertTrue(typeVote == Vote.NEUTRAL);  //Undo action
                     //Case when neutral ,basically we want to undo or action, we have already clicked before.
 
 
@@ -297,7 +290,7 @@ public class DisplaySubmissionActivity extends AppCompatActivity {
 
             }else {
 
-               Toast.makeText(context, "Server problem", Toast.LENGTH_SHORT);
+               Toast.makeText(context, "Server problem", Toast.LENGTH_SHORT).show();
 
             }
         }
