@@ -45,4 +45,7 @@ public interface DefaultCommunicationLayer {
 
     //TODO : javadoc
     ResponseStatus sendVote(Submission submission, Vote vote) throws CommunicationLayerException;
+
+    //TODO : javadoc
+    Submission fetchSubmissionByName(String name) throws CommunicationLayerException;
 }

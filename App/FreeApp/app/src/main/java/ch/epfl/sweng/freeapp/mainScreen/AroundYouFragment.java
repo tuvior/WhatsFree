@@ -4,7 +4,6 @@ package ch.epfl.sweng.freeapp.mainScreen;
  * Created by lois on 11/6/15.
  */
 
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -27,8 +26,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +35,6 @@ import ch.epfl.sweng.freeapp.Submission;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayer;
 import ch.epfl.sweng.freeapp.communication.CommunicationLayerException;
 import ch.epfl.sweng.freeapp.communication.DefaultNetworkProvider;
-import ch.epfl.sweng.freeapp.communication.FakeCommunicationLayer;
 
 
 public class AroundYouFragment extends ListFragment implements GoogleApiClient.ConnectionCallbacks,

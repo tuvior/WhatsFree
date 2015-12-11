@@ -3,6 +3,7 @@ package ch.epfl.sweng.freeapp.mainScreen;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +54,7 @@ public class MainScreenActivity extends AppCompatActivity {
             R.drawable.tab_around_you
     };
 
+    private boolean visibility = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,12 +72,18 @@ public class MainScreenActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
 
         setupTabIcons();
+
+        handleIntent(getIntent());
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
 
-        handleIntent(intent);
+    private void displayToast(String message){
+        Context context = getApplicationContext();
+        CharSequence text = message;
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
+
+        toast.show();
     }
 
     private void handleIntent(Intent intent) {
@@ -83,18 +92,7 @@ public class MainScreenActivity extends AppCompatActivity {
             String query = intent.getStringExtra(SearchManager.QUERY);
             //use the query to search your data somehow
 
-            CommunicationLayer comm = new CommunicationLayer(new DefaultNetworkProvider());
-
-            try {
-                Submission submission = comm.fetchSubmission(query);
-
-                intent = new Intent(this, DisplaySubmissionActivity.class);
-                intent.putExtra(MainScreenActivity.SUBMISSION_MESSAGE, query);
-                startActivity(intent);
-
-            } catch (CommunicationLayerException e) {
-                e.printStackTrace();
-            }
+             new DownloadSubmissionTask(this).execute(query);
 
         }
     }
@@ -115,64 +113,15 @@ public class MainScreenActivity extends AppCompatActivity {
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView =
                 (SearchView) menu.findItem(R.id.action_search).getActionView();
+
         searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(getComponentName()));
+                 searchManager.getSearchableInfo(getComponentName()));
 
         return super.onCreateOptionsMenu(menu);
     }
 
 
-    /*
 
-    public void onClickSortSubmission(View view){
-
-        final Dialog dialog = new Dialog(this);
-        dialog.setTitle("Sort Submission");
-        dialog.setContentView(R.layout.sort_submission_dialog);
-        dialog.show();
-
-        final SortSubmission[] sortSubmission = new SortSubmission[1];
-
-        RadioGroup radioGroup = (RadioGroup)dialog.findViewById(R.id.radioGroupFilter);
-
-
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                RadioButton radioButton = (RadioButton)dialog.findViewById(group.getCheckedRadioButtonId());
-
-                switch(radioButton.getId()){
-                    case R.id.byTime : sortSubmission[0] = new SortSubmissionByEndOFEvent();
-                        break;
-                    case R.id.byLikes: sortSubmission[0] = new SortSubmissionByLikes();
-                        break;
-                    case R.id.byName: sortSubmission[0] = new SortSubmissionByName();
-                        break;
-
-                }
-
-            }
-        });
-
-
-
-        final Button okButton = (Button)dialog.findViewById(R.id.dialogOkButton);
-
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                sortSubmissionAlgorithm = sortSubmission[0];
-                dialog.dismiss();
-            }
-        });
-
-
-
-
-    }
- */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -217,6 +166,23 @@ public class MainScreenActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
     }
 
+    @Override
+    public void onStart(){
+        super.onStart();
+        visibility = true;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        visibility = false;
+    }
+
+    public boolean getVisibility(){
+        return visibility;
+    }
+
+
     /**
      * A viewPagerAdapter is used for populating a viewPager's tabs
      */
@@ -250,4 +216,47 @@ public class MainScreenActivity extends AppCompatActivity {
         }
 
     }
+
+    private class DownloadSubmissionTask extends AsyncTask<String, Void, Submission> {
+
+        Context context;
+
+        private DownloadSubmissionTask(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected Submission doInBackground(String... params) {
+            CommunicationLayer communicationLayer = new CommunicationLayer(new DefaultNetworkProvider());
+            Submission submission = null;
+
+            try {
+                submission = communicationLayer.fetchSubmissionByName(params[0]);
+            } catch (CommunicationLayerException e) {
+                e.printStackTrace();
+            }
+            return submission;
+        }
+
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(Submission submission) {
+
+            if(submission == null){
+                displayToast("No submission exists with this name");
+            }
+            // display submission
+            else {
+
+                Intent intent = new Intent(context, DisplaySubmissionActivity.class);
+                intent.putExtra(MainScreenActivity.SUBMISSION_MESSAGE, submission.getId());
+
+                startActivity(intent);
+            }
+
+        }
+
+    }
+
+
 }

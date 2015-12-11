@@ -6,9 +6,13 @@
     <string name="title_activity_registration">RegistrationActivity</string>
     <string name="username">Username </string>
     <string name="password">Password </string>
-    <string name="Search">Search </string>
+    <string name="Search">Type in your research </string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+
+    <string name="title_activity_categories_tab">CategoriesTabActivity</string>
+
     <string name="title_activity_main_screen">Free App</string>
 
     <string name="title_activity_create_new_submission">CreateNewSubmission</string>
@@ -61,5 +65,6 @@
     <string name="submission_description">Submission\'s description</string>
     <string name="submission_name_row">Submission\'s name</string>
     <string name="rating">Rating</string>
+    <string name="title_activity_display_submissions">Display Submission</string>
 
 </resources>

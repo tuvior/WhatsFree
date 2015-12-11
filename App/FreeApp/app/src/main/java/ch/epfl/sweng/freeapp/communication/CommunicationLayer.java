@@ -158,6 +158,36 @@ public class CommunicationLayer implements DefaultCommunicationLayer {
         return null;
     }
 
+    @Override
+    public Submission fetchSubmissionByName(String name) throws CommunicationLayerException {
+
+
+
+        try{
+            String content = fetchStringFrom(SERVER_URL+"/search?name="+name+ "&cookie="+cookieSession);
+
+            String hello = content;
+
+            List<Submission> submissionArrayList = jsonArrayToArrayList(new JSONArray(content));
+
+            if(submissionArrayList == null || submissionArrayList.isEmpty()){
+                throw new CommunicationLayerException();
+            }
+            else{
+
+                // just return the first submission in the query.
+                return submissionArrayList.get(0);
+            }
+
+        }catch(IOException | JSONException e){
+            throw new CommunicationLayerException();
+        }
+
+    }
+
+
+
+
 
     /**
      * Used by the app to
