@@ -33,6 +33,7 @@ public class CategoryDisplaySubmissionsActivity extends ListActivity {
         // Get the message from the intent
         Intent intent = getIntent();
         String category = intent.getStringExtra(CategoriesFragment.CATEGORY_MESSAGE);
+        String category0 = category;
 
         if (BuildConfig.DEBUG && (!SubmissionCategory.contains(category))) {
             throw new AssertionError();
@@ -123,7 +124,7 @@ public class CategoryDisplaySubmissionsActivity extends ListActivity {
 
             } else {
 
-                SubmissionListAdapter adapter = new SubmissionListAdapter(getApplicationContext(), R.layout.item_list_row, submissions);
+                SubmissionListAdapter adapter = new SubmissionListAdapter(getApplicationContext(), R.layout.submission_row, submissions);
                 setListAdapter(adapter);
             }
 

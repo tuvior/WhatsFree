@@ -63,7 +63,7 @@ public class RegistrationActivityLocalTest {
 
     @Test
     public void testShortUsernameNotAccepted() {
-        int max = activity.USERNAME_MIN_LENGTH - 1;
+        int max = RegistrationActivity.USERNAME_MIN_LENGTH - 1;
         int min = 1;
         assertFalse(activity.isUsernameValid(getRandomGeneratedString(min, max)));
     }
@@ -109,7 +109,7 @@ public class RegistrationActivityLocalTest {
 
     @Test
     public void testInvalidEmailFieldResetOnSignUpClicked() {
-        String validEmail = getRandomValidEmailAddress(15, activity.EMAIL_MAX_LENGTH); // valid email
+        String validEmail = getRandomValidEmailAddress(15, RegistrationActivity.EMAIL_MAX_LENGTH); // valid email
         String regex = "[@]";
         String replacement = "xxx";
         String invalidEmail = validEmail.replaceAll(regex, replacement); // invalid email
@@ -306,7 +306,7 @@ public class RegistrationActivityLocalTest {
 
     @Test
     public void testPasswordInvalidIfNoSpecialCharacter() {
-        String password = getRandomGeneratedString(activity.PASSWORD_MIN_LENGTH, activity.PASSWORD_MAX_LENGTH);
+        String password = getRandomGeneratedString(RegistrationActivity.PASSWORD_MIN_LENGTH, RegistrationActivity.PASSWORD_MAX_LENGTH);
         String specRegex = "[^(a-z)^(A-Z)^(0-9)]";
         String replacement = "a";
         password = password.replaceAll(specRegex, replacement);
@@ -316,7 +316,7 @@ public class RegistrationActivityLocalTest {
 
     @Test
     public void testPasswordInvalidIfNoNumericalCharacter() {
-        String password = getRandomGeneratedString(activity.PASSWORD_MIN_LENGTH, activity.PASSWORD_MAX_LENGTH);
+        String password = getRandomGeneratedString(RegistrationActivity.PASSWORD_MIN_LENGTH, RegistrationActivity.PASSWORD_MAX_LENGTH);
         String digitRegex = "[0-9]";
         String replacement = "a";
         password = password.replaceAll(digitRegex, replacement);
@@ -326,7 +326,7 @@ public class RegistrationActivityLocalTest {
 
     @Test
     public void testPasswordInvalidIfNoUppercaseLetter() {
-        String password = getRandomGeneratedString(activity.PASSWORD_MIN_LENGTH, activity.PASSWORD_MAX_LENGTH);
+        String password = getRandomGeneratedString(RegistrationActivity.PASSWORD_MIN_LENGTH, RegistrationActivity.PASSWORD_MAX_LENGTH);
         String uppercaseRegex = "[A-Z]";
         String replacement = "a";
         password = password.replaceAll(uppercaseRegex, replacement);
@@ -336,7 +336,7 @@ public class RegistrationActivityLocalTest {
 
     @Test
     public void testPasswordInvalidIfWhiteSpaceCharacter() {
-        String password = getRandomGeneratedString(activity.PASSWORD_MIN_LENGTH, activity.PASSWORD_MAX_LENGTH);
+        String password = getRandomGeneratedString(RegistrationActivity.PASSWORD_MIN_LENGTH, RegistrationActivity.PASSWORD_MAX_LENGTH);
 
         Random random = new Random();
         int replacIndex = random.nextInt(password.length());
@@ -348,7 +348,7 @@ public class RegistrationActivityLocalTest {
 
     @Test
     public void testUsernameInvalidIfWhiteSpaceCharacter() {
-        String username = getRandomGeneratedString(activity.USERNAME_MIN_LENGTH, activity.USERNAME_MAX_LENGTH);
+        String username = getRandomGeneratedString(RegistrationActivity.USERNAME_MIN_LENGTH, RegistrationActivity.USERNAME_MAX_LENGTH);
 
         username = username.concat(" ").concat(" Hej");
 
@@ -357,7 +357,7 @@ public class RegistrationActivityLocalTest {
 
     @Test
     public void testEmailInvalidIfWhiteSpaceCharacter() {
-        String email = getRandomValidEmailAddress(15, activity.EMAIL_MAX_LENGTH);
+        String email = getRandomValidEmailAddress(15, RegistrationActivity.EMAIL_MAX_LENGTH);
 
         Random random = new Random();
         int replacIndex = random.nextInt(email.length());
@@ -369,7 +369,7 @@ public class RegistrationActivityLocalTest {
 
     @Test
     public void testEmailInvalidIfNoAtCharacter() {
-        String email = getRandomValidEmailAddress(15, activity.EMAIL_MAX_LENGTH);
+        String email = getRandomValidEmailAddress(15, RegistrationActivity.EMAIL_MAX_LENGTH);
         String regex = "[@]";
         String replacement = "a";
 
@@ -379,7 +379,7 @@ public class RegistrationActivityLocalTest {
 
     @Test
     public void testEmailInvalidIfNoDotCharacter() {
-        String email = getRandomValidEmailAddress(15, activity.EMAIL_MAX_LENGTH);
+        String email = getRandomValidEmailAddress(15, RegistrationActivity.EMAIL_MAX_LENGTH);
         String regex = "[\\.]";
         String replacement = "a";
 
@@ -389,19 +389,19 @@ public class RegistrationActivityLocalTest {
 
     @Test
     public void testUsernameInvalidIfTooManyCharacter() {
-        String username = getRandomGeneratedString(activity.USERNAME_MAX_LENGTH + 1, LONG_FIELD);
+        String username = getRandomGeneratedString(RegistrationActivity.USERNAME_MAX_LENGTH + 1, LONG_FIELD);
         assertFalse(activity.isUsernameValid(username));
     }
 
     @Test
     public void testEmailInvalidIfTooManyCharacter() {
-        String email = getRandomValidEmailAddress(activity.EMAIL_MAX_LENGTH + 1, LONG_FIELD);
+        String email = getRandomValidEmailAddress(RegistrationActivity.EMAIL_MAX_LENGTH + 1, LONG_FIELD);
         assertFalse(activity.isEmailValid(email));
     }
 
     @Test
     public void testPasswordInvalidIfTooManyCharacter() {
-        String password = getRandomGeneratedString(activity.PASSWORD_MAX_LENGTH + 1, LONG_FIELD);
+        String password = getRandomGeneratedString(RegistrationActivity.PASSWORD_MAX_LENGTH + 1, LONG_FIELD);
         assertFalse(activity.isPasswordValid(password));
     }
 

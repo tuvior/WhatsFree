@@ -77,7 +77,8 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
     private EditText location;
     private ImageView imageView;
 
-    private TextView  date ;
+    private
+    TextView  date ;
     private TextView startTime ;
     private TextView endTime ;
     private EditText keywords ;
@@ -88,9 +89,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
     private Spinner spinnerCategory;
     private int textSize = 19;
 
-    private int DATE_DIALOG_ID = 0;
     private Submission.Builder submission = new Submission.Builder();
-
     private ProvideImage provideImage = new ProvideImage();
 
 
@@ -115,13 +114,11 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
         TextView categoriesText = (TextView)findViewById(R.id.categoriesText);
         categoriesText.setTextSize(textSize);
 
-
-        Spinner spinner = (Spinner)findViewById(R.id.categories);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.categories,android.R.layout.simple_spinner_dropdown_item);
         //layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         //Apply adapter to the spinner
-        spinner.setAdapter(adapter);
+        spinnerCategory.setAdapter(adapter);
 
 
     }
@@ -232,12 +229,6 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
         TimePickerDialog timePickerDialog = new TimePickerDialog(this,onTimeSetListener,hours,minutes,true);
         timePickerDialog.show();
     }
-
-    //used in order to insert Dependencies
-    public void testSetImage(Bitmap bitmap){
-        imageView.setImageBitmap(bitmap);
-    }
-
 
     public  void onClickTakeImage(View view){
 
@@ -539,7 +530,7 @@ public class CreateNewSubmissionActivity extends AppCompatActivity {
 
 
     private boolean isWhiteSpaces(String s) {
-        return ((s.length() == 0) || ((s != null) && s.matches("\\s+") ));
+        return ((s.length() == 0) || ( s.matches("\\s+") ));
     }
 
 

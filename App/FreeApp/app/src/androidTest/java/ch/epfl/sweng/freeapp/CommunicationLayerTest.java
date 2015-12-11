@@ -122,24 +122,6 @@ public class CommunicationLayerTest {
     }
 
 
-    //@Test
-    //FIXME : this test fails due to the server not giving back correct  images in base.64
-    /*.
-    public void testRetrievalOfSubmissions() throws CommunicationLayerException {
-
-        ArrayList<Submission > submissionShortcutArrayList;
-        try {
-            submissionShortcutArrayList = communicationLayerOnLine.sendSubmissionsRequest();
-
-            assertEquals(false, submissionShortcutArrayList.isEmpty());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    */
-
     private void configureCrash(int status) throws IOException {
         InputStream dataStream = Mockito.mock(InputStream.class);
         Mockito.when(dataStream.read())
@@ -164,16 +146,6 @@ public class CommunicationLayerTest {
 
 
     }
-
-    @Test
-    public void testDecodeEncodeMethodInDefaultCommunicationLayer() {
-
-        //TODO after refactoring code
-    }
-
-
-
-
 
     @Test
     public void testCreateSubmission() throws CommunicationLayerException, IOException {
