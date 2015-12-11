@@ -3,7 +3,4 @@
     <color name="colorPrimary">#125688</color>
     <color name="colorPrimaryDark">#125688</color>
     <color name="colorAccent">#c8e8ff</color>
-    <color name="view_bg">#b20e0f</color>
-    <color name="white">#ffffff</color>
-    <color name="btn_bg">#3e4a56</color>
 </resources>
